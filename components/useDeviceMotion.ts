@@ -42,6 +42,13 @@ export function useDeviceMotion() {
     setPoint(smooth);
   }, []);
 
+  const disable = useCallback(() => {
+    window.removeEventListener("deviceorientation", onOrientation);
+    sampleRef.current = { x: 0, y: 0 };
+    setPoint({ x: 0, y: 0 });
+    setStatus("ready");
+  }, [onOrientation]);
+
   const enable = useCallback(async () => {
     if (!("DeviceOrientationEvent" in window)) {
       setStatus("unsupported");
@@ -73,5 +80,5 @@ export function useDeviceMotion() {
     window.removeEventListener("deviceorientation", onOrientation);
   }, [onOrientation]);
 
-  return { point, status, enable };
+  return { point, status, enable, disable };
 }
