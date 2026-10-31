@@ -649,24 +649,24 @@ export default function HomePage() {
           </section>
 
           <section className="insight-row reveal" aria-label="ملخص البلاغات">
-            <SpotlightCard className="insight-card" theme="dark" style={{ "--spotlight-card-surface": "rgba(9,39,41,.9)", "--spotlight-card-border": "rgba(151,218,207,.12)", "--spotlight-card-shadow": "0 14px 35px rgba(0,0,0,.12)" } as CSSProperties} spotlightColor="rgba(40, 217, 186, .6)" intensity={0.15} spotlightSize={190}>
+            <div className="insight-card">
               <span className="insight-icon"><FileText size={19} /></span>
               <span className="insight-label">بلاغات معروضة</span>
               <strong>{reportsLoading ? "…" : reportsError ? "—" : reports.length.toLocaleString("ar-IQ")}</strong>
               <small>ضمن البيانات المحمّلة حالياً</small>
-            </SpotlightCard>
-            <SpotlightCard className="insight-card" theme="dark" style={{ "--spotlight-card-surface": "rgba(9,39,41,.9)", "--spotlight-card-border": "rgba(151,218,207,.12)", "--spotlight-card-shadow": "0 14px 35px rgba(0,0,0,.12)" } as CSSProperties} spotlightColor="rgba(242, 174, 87, .52)" intensity={0.14} spotlightSize={180}>
+            </div>
+            <div className="insight-card">
               <span className="insight-icon amber"><Search size={19} /></span>
               <span className="insight-label">بلاغات فقدان</span>
               <strong>{reportsLoading ? "…" : reportsError ? "—" : lostCount.toLocaleString("ar-IQ")}</strong>
               <small>من قائمة النتائج الحالية</small>
-            </SpotlightCard>
-            <SpotlightCard className="insight-card" theme="dark" style={{ "--spotlight-card-surface": "rgba(9,39,41,.9)", "--spotlight-card-border": "rgba(151,218,207,.12)", "--spotlight-card-shadow": "0 14px 35px rgba(0,0,0,.12)" } as CSSProperties} spotlightColor="rgba(94, 171, 255, .52)" intensity={0.14} spotlightSize={180}>
+            </div>
+            <div className="insight-card">
               <span className="insight-icon blue"><HeartHandshake size={19} /></span>
               <span className="insight-label">بلاغات العثور</span>
               <strong>{reportsLoading ? "…" : reportsError ? "—" : foundCount.toLocaleString("ar-IQ")}</strong>
               <small>من قائمة النتائج الحالية</small>
-            </SpotlightCard>
+            </div>
           </section>
           <p className="metric-note">الأرقام أعلاه تُحسب من البلاغات التي أعادها الخادم في هذه الصفحة، وليست إحصاءً وطنياً شاملاً.</p>
 
