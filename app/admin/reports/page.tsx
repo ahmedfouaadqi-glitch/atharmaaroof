@@ -4,11 +4,12 @@ import { useCallback, useEffect, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import {
   ArrowRight, Check, Clock3, Eye, EyeOff, RefreshCw, ShieldCheck,
-  Sparkles, FileText, MapPin, CalendarClock, X
+  Sparkles, FileText, MapPin, CalendarClock, X, Volume2, VolumeX
 } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 import Magnet from "@/components/reactbits/Magnet";
 import SpotlightCard from "@/components/reactbits/SpotlightCard";
+import { useInteractiveSound } from "@/components/useInteractiveSound";
 
 type Report = {
   id: string;
@@ -32,6 +33,7 @@ const statuses: { value: Report["status"]; label: string }[] = [
 ];
 
 export default function AdminReportsPage() {
+  const sound = useInteractiveSound();
   const [status, setStatus] = useState<Report["status"]>("pending");
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
@@ -88,13 +90,22 @@ export default function AdminReportsPage() {
 
   return (
     <ClickSpark className="app-interaction-layer" style={{ minHeight: "100vh" }} sparkColor={["#38e2c5", "#d8fff5"]} sparkSize={8} sparkRadius={30} sparkCount={7} shape="star">
-      <div className="app-shell admin-shell" dir="rtl">
+      <div className="app-shell admin-shell" dir="rtl" onClickCapture={sound.onInteraction}>
         <header className="topbar admin-topbar">
           <Link href="/" className="brand-lockup">
             <AdminBrandMark />
             <span className="brand-copy"><strong>أثر <b>معروف</b></strong><small>لوحة مراجعة البلاغات</small></span>
           </Link>
           <div className="admin-top-actions">
+            <button
+              type="button"
+              className={sound.enabled ? "icon-action sound-on" : "icon-action"}
+              onClick={sound.toggle}
+              data-sound="manual"
+              aria-label={sound.enabled ? "كتم المؤثرات الصوتية" : "تفعيل المؤثرات الصوتية"}
+              aria-pressed={sound.enabled}
+              title={sound.enabled ? "الصوت مفعّل" : "الصوت مكتوم"}
+            >{sound.enabled ? <Volume2 size={17} /> : <VolumeX size={17} />}</button>
             <span className="admin-secure"><ShieldCheck size={15} /> وصول المشرفين فقط</span>
             <Link href="/" className="admin-home-link"><ArrowRight size={15} /> العودة للرئيسية</Link>
           </div>
