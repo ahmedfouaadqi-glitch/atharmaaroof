@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ArrowUp, AudioLines, Mic, MicOff, Phone, PhoneOff, Sparkles, Volume2, VolumeX, X } from "lucide-react";
-import { useInteractiveSound } from "@/components/useInteractiveSound";
 
 type SpeechResult = { transcript: string };
 type SpeechResultItem = { isFinal: boolean; length: number; [index: number]: SpeechResult };
@@ -24,7 +23,6 @@ type RecognitionConstructor = new () => Recognition;
 type VoiceReport = { id: string; public_code: string; title: string; city: string; area?: string | null; kind: string; approx_distance_km?: number };
 
 export default function VoiceAssistant() {
-  const sound = useInteractiveSound();
   const [open, setOpen] = useState(false);
   const [listening, setListening] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -191,7 +189,7 @@ export default function VoiceAssistant() {
 
       {open && (
         <div className="voice-dialog-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
-          <section className="voice-dialog" dir="rtl" role="dialog" aria-modal="true" aria-labelledby="voice-title" onClickCapture={sound.onInteraction}>
+          <section className="voice-dialog" dir="rtl" role="dialog" aria-modal="true" aria-labelledby="voice-title">
             <header className="voice-dialog-header">
               <div className="voice-dialog-brand"><span><Sparkles size={18} /></span><div><b id="voice-title">مساعد أثر معروف</b><small>محادثة صوتية داخل التطبيق</small></div></div>
               <button type="button" className="voice-close" onClick={close} aria-label="إغلاق المحادثة"><X size={18} /></button>
