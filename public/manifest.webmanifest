@@ -1,1 +1,19 @@
-{"name":"أثَر — استرجع ما يهمك","short_name":"أثَر","description":"منصة عراقية للمفقودات والمعثورات","lang":"ar","dir":"rtl","start_url":"/","display":"standalone","background_color":"#f6f7f4","theme_color":"#f6f7f4","icons":[]}
+{
+  "name": "أثر معروف",
+  "short_name": "أثر معروف",
+  "description": "منصة عراقية آمنة للمفقودات والمعثورات.",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#061719",
+  "theme_color": "#061719",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icon.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any maskable" },
+    { "src": "/icon.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
