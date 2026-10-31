@@ -46,12 +46,12 @@ There is no client-side admin flag. Authorization requires all three checks: the
 insert into public.athar_admins (user_id)
 select id
 from auth.users
-where lower(email) = lower('admin@example.com')
+where lower(email) = lower('ahmedmaaroof814@gmail.com')
 on conflict (user_id) do nothing;
 ```
 
 4. Add the email to the `ATHAR_ADMIN_EMAILS` environment variable in Vercel.
-5. Sign in at `/control-center`. The server checks the allowlist and `athar_admins` membership before allowing access to `/admin/reports`.
+5. Sign in at `/control-center` using the administrator's Supabase Auth credentials. The server checks the email allowlist and `athar_admins` membership before allowing access to `/admin/reports`. The fixed passcode shared in chat is not embedded in source code; rotate any password that has been shared in a chat.
 
 To revoke a specific administrator, remove only that verified account's membership row:
 
@@ -59,7 +59,7 @@ To revoke a specific administrator, remove only that verified account's membersh
 delete from public.athar_admins
 where user_id = (
   select id from auth.users
-  where lower(email) = lower('admin@example.com')
+  where lower(email) = lower('ahmedmaaroof814@gmail.com')
 );
 ```
 
