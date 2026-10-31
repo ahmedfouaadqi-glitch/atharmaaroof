@@ -7,7 +7,7 @@ import VoiceAssistant from "@/components/VoiceAssistant";
 import { useInteractiveSound } from "@/components/useInteractiveSound";
 import Link from "next/link";
 import {
-  ArrowUp, Bell, Check, CheckCircle2, ChevronLeft, Clock3,
+  ArrowUp, Bell, BookOpen, Check, CheckCircle2, ChevronLeft, CircleHelp, Clock3,
   CreditCard, Download, FileText, Fingerprint, HeartHandshake, House,
   KeyRound, MapPin, MapPinned, Menu, Plus, Search, ShieldCheck,
   Smartphone, Sparkles, Volume2, VolumeX, Wallet, X, Navigation, LocateFixed, UserRoundCheck
