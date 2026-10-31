@@ -51,9 +51,9 @@ function parseIntent(input: string) {
   const text = normalize(input);
   const city = CITIES.find((item) => item.aliases.some((alias) => text.includes(normalize(alias))))?.name ?? null;
   const category = CATEGORIES.find((item) => item.aliases.some((alias) => text.includes(normalize(alias))))?.name ?? null;
-  const kind = /\b(فقدت|ضاع|ضاعت|مفقود|مفقودة|انفقد)\b/.test(text)
+  const kind = ["فقدت", "ضاع", "ضاعت", "مفقود", "مفقودة", "انفقد"].some((word) => text.includes(word))
     ? "lost"
-    : /\b(لقيت|وجدت|عثرت|معثور|لكيت)\b/.test(text)
+    : ["لقيت", "وجدت", "عثرت", "معثور", "لكيت"].some((word) => text.includes(word))
       ? "found"
       : null;
 
@@ -158,26 +158,21 @@ export async function POST(request: NextRequest) {
       return query;
     };
 
-    const queries = selectedTerms.length
-      ? selectedTerms.flatMap((term) => columns.map((column) => baseQuery().ilike(column, "%" + escapeLike(term) + "%")))
-      : [baseQuery()];
+    let query = baseQuery();
+    if (selectedTerms.length) {
+      const filters = selectedTerms.flatMap((term) =>
+        columns.map((column) => column + ".ilike.%" + escapeLike(term) + "%")
+      );
+      query = query.or(filters.join(","));
+    }
 
-    const results = await Promise.all(queries);
-    const failed = results.filter((result) => result.error);
-    if (failed.length === results.length) {
-      console.error("ATHAR assistant search failed", failed[0]?.error?.code);
+    const { data, error } = await query;
+    if (error) {
+      console.error("ATHAR assistant search failed", error.code);
       return NextResponse.json({ error: "تعذر الاتصال بسجلات البلاغات. تحقق من إعداد قاعدة البيانات." }, { status: 503 });
     }
 
-    const unique = new Map<string, Record<string, unknown>>();
-    for (const result of results) {
-      for (const report of (result.data ?? []) as Array<Record<string, unknown>>) {
-        unique.set(String(report.id), report);
-      }
-    }
-    const reports = Array.from(unique.values())
-      .sort((a, b) => Date.parse(String(b.created_at)) - Date.parse(String(a.created_at)))
-      .slice(0, 8);
+    const reports = ((data ?? []) as Array<Record<string, unknown>>).slice(0, 8);
 
     const assistant = await generateAnswer(input, intent, reports);
     return NextResponse.json({
