@@ -99,7 +99,8 @@ export default function HomePage() {
   const [nearbyError, setNearbyError] = useState("");
   const [nearbyRadiusKm] = useState(5);
   const sound = useInteractiveSound();
-  const deviceMotion = useDeviceMotion();
+  const heroVisualRef = useRef<HTMLDivElement>(null);
+  const deviceMotion = useDeviceMotion(heroVisualRef);
   const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(null);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [isIOSDevice, setIsIOSDevice] = useState(false);
@@ -597,19 +598,7 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div
-                  className="hero-visual"
-                  style={{
-                    "--motion-back-x": (deviceMotion.point.x * -8).toFixed(2) + "px",
-                    "--motion-back-y": (deviceMotion.point.y * -8).toFixed(2) + "px",
-                    "--motion-front-x": (deviceMotion.point.x * 10).toFixed(2) + "px",
-                    "--motion-front-y": (deviceMotion.point.y * 9).toFixed(2) + "px",
-                    "--motion-chip-x": (deviceMotion.point.x * 5).toFixed(2) + "px",
-                    "--motion-chip-y": (deviceMotion.point.y * 5).toFixed(2) + "px",
-                    "--device-tilt-x": (deviceMotion.point.y * -3.5).toFixed(2) + "deg",
-                    "--device-tilt-y": (deviceMotion.point.x * 4.2).toFixed(2) + "deg"
-                  } as CSSProperties}
-                >
+                <div className="hero-visual" ref={heroVisualRef}>
                   <div className="hero-visual-art" aria-hidden="true">
                   <div className="visual-glow" />
                   <div className="visual-ring ring-a" />
