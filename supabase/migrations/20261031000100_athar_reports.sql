@@ -53,10 +53,10 @@ create policy "Owners can create their own reports"
   on public.athar_reports for insert to authenticated
   with check ((select auth.uid()) = owner_id);
 
-create policy "Owners can update their own reports"
+create policy "Owners can update their own pending reports"
   on public.athar_reports for update to authenticated
-  using ((select auth.uid()) = owner_id)
-  with check ((select auth.uid()) = owner_id);
+  using ((select auth.uid()) = owner_id and status = 'pending')
+  with check ((select auth.uid()) = owner_id and status = 'pending');
 
 create or replace view public.athar_public_reports
 with (security_invoker = true)
