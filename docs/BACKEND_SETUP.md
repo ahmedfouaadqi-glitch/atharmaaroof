@@ -4,7 +4,7 @@
 - Supabase cookie-aware server client for Next.js route handlers.
 - `GET /api/reports`: lists only public-safe fields from `athar_public_reports`; supports optional `city`, `kind`, and bounded `limit`.
 - `POST /api/reports`: validates a report, requires a signed-in Supabase user, and inserts an owner-bound row.
-- SQL migration for private reports, owner-scoped RLS policies, a public-safe view, and an explicit `athar_admins` role table.
+- SQL migration for private reports, owner-scoped RLS policies, a public-safe view, an explicit `athar_admins` role table, and a status-change audit table.
 - `GET /api/admin/reports?status=pending` and `PATCH /api/admin/reports` for authenticated admin review; status changes go through a database function that verifies admin membership.
 - The endpoint rejects long digit sequences and common identity/payment-secret terms as a conservative input check. This is not a complete DLP system.
 
@@ -37,7 +37,7 @@ on conflict (user_id) do nothing;
 
 ## Explicit limitations
 - The project code is not yet confirmed as migrated to the live Supabase project; verify the migration list and test the endpoints after applying it.
-- The admin moderation API and Arabic review UI are available at `/admin/reports`; initial admin membership still must be assigned manually in Supabase after signup. CAPTCHA/abuse controls, image upload/redaction, matching, notifications, audit log, and production rate limiting are not implemented.
+- The admin moderation API and Arabic review UI are available at `/admin/reports`; initial admin membership still must be assigned manually in Supabase after signup. CAPTCHA/abuse controls, image upload/redaction, matching, notifications, and production rate limiting are not implemented. Status-change audit events are stored in the database, but a dedicated audit-history screen is not included yet.
 - The landing page now reads public reports from `GET /api/reports` and submits through `POST /api/reports`; it does not substitute demo reports if the API fails. Actual operation still depends on a configured and migrated Supabase project.
 - New reports default to `pending` and are excluded from public listings until an authenticated administrator explicitly publishes them.
 - Do not collect national identity numbers, payment card numbers, CVV, PIN, OTP, or exact GPS coordinates. Never publish phone numbers or identity-document images.
