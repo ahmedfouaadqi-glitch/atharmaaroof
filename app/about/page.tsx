@@ -1,49 +1,100 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpLeft, BrainCircuit, BriefcaseBusiness, MapPin, ShieldCheck } from "lucide-react";
+import {
+  ArrowUpLeft, HeartHandshake, MapPin, Search, ShieldCheck, Sparkles, Users
+} from "lucide-react";
 import InfoPageShell from "@/components/InfoPageShell";
 
 export const metadata: Metadata = {
-  title: "عن أثر معروف | المبادرة وصاحبها",
-  description: "الرؤية والملكية والتطوير في منصة أثر معروف."
+  title: "عن أثر معروف | المبادرة",
+  description: "تعرف على مبادرة أثر معروف للمفقودات والمعثورات في العراق."
 };
+
+const principles = [
+  {
+    Icon: HeartHandshake,
+    title: "خدمة المجتمع",
+    text: "تسهيل إعادة المستندات والأغراض المفقودة إلى أصحابها عبر بلاغات واضحة."
+  },
+  {
+    Icon: ShieldCheck,
+    title: "الخصوصية أولاً",
+    text: "تقليل البيانات المنشورة، واحترام موافقة المستخدم على مشاركة موقعه."
+  },
+  {
+    Icon: Search,
+    title: "بحث منظم",
+    text: "جمع البلاغات في مكان واحد وتسهيل الوصول إلى النتائج ذات الصلة."
+  },
+  {
+    Icon: Users,
+    title: "مسؤولية مشتركة",
+    text: "مشاركة واعية تحمي بيانات الأشخاص وتدعم التحقق قبل تسليم المستند."
+  }
+];
+
+const steps = [
+  ["01", "أنشئ بلاغاً", "اختر نوع البلاغ والمدينة وأضف وصفاً عاماً دون أرقام المستندات أو صورها."],
+  ["02", "تتم المراجعة", "تُراجع البلاغات قبل ظهورها في البحث العام للحد من المعلومات الحساسة والمضللة."],
+  ["03", "تابع بأمان", "استخدم معلومات البلاغ العامة للتحقق والتواصل بطريقة آمنة."]
+];
 
 export default function AboutPage() {
   return (
     <InfoPageShell
       kicker="عن المبادرة"
-      title="أثر معروف — كل ما ضاع، له أثر"
-      description="منصة عراقية تنظم بلاغات المفقودات والمعثورات وتقرّب نتائج البحث من مكان المستخدم بموافقته."
+      title="أثر معروف — لأن كل شيء له أثر"
+      description="مبادرة عراقية مجتمعية تساعد على تنظيم بلاغات المفقودات والمعثورات وتقريبها إلى أصحابها."
     >
-      <section className="founder-card">
-        <span className="founder-avatar"><MapPin size={24} /></span>
+      <section className="about-intro-card">
+        <span className="about-intro-icon"><MapPin size={27} /></span>
         <div>
-          <span className="section-kicker">صاحب المبادرة والرؤية المنتجية</span>
-          <h2>أحمد معروف</h2>
-          <p>قيادي في العمليات والإدارة التنفيذية وتطوير الأعمال، بخبرة مهنية تتجاوز 15 عاماً بحسب سيرته الذاتية في مجالات المدفوعات الإلكترونية والمشاريع الحكومية والعمليات الميدانية وإدارة الفرق.</p>
+          <span className="section-kicker">رسالتنا</span>
+          <h2>أن يصل كل مستند مفقود إلى صاحبه</h2>
+          <p>توفّر «أثر معروف» مساحة موحدة للبحث والإبلاغ، وتساعد المستخدم على الوصول إلى البلاغات ذات الصلة دون كشف بياناته الحساسة.</p>
         </div>
       </section>
-      <section>
-        <h2>من الخبرة التشغيلية إلى منتج يخدم الناس</h2>
-        <p>تعكس «أثر معروف» توجهاً يجمع بين فهم العمليات الميدانية، وتنظيم البلاغات، وتحسين تجربة المستخدم، وبناء خدمة رقمية عملية. قيادة المبادرة وتوجيه المنتج وتشغيله وتطويره تعود إلى أحمد معروف.</p>
+
+      <section className="info-section-block">
+        <div className="info-section-title">
+          <span>مبادئ المبادرة</span>
+          <small>ما يوجّه طريقة تقديم الخدمة</small>
+        </div>
+        <div className="info-card-grid">
+          {principles.map(({ Icon, title, text }) => (
+            <article className="info-feature-card" key={title}>
+              <span className="info-feature-icon"><Icon size={23} /></span>
+              <h2>{title}</h2>
+              <p>{text}</p>
+            </article>
+          ))}
+        </div>
       </section>
-      <div className="about-pillars">
-        <article><BriefcaseBusiness size={22} /><b>العمليات والمشاريع</b><p>تخطيط الإجراءات، إدارة الفرق، جودة الخدمة، ومتابعة مؤشرات الأداء.</p></article>
-        <article><BrainCircuit size={22} /><b>المنتجات والذكاء الاصطناعي</b><p>تطوير منتجات رقمية وتوظيف الذكاء الاصطناعي وتحسين الظهور في محركات البحث وإجاباتها.</p></article>
-        <article><ShieldCheck size={22} /><b>خدمة موثوقة</b><p>الخصوصية أولاً، موقع بإذن المستخدم، وبلاغات تمر بالمراجعة قبل النشر.</p></article>
-      </div>
-      <section>
-        <h2>مشاريع رقمية أخرى وفق السيرة الذاتية</h2>
-        <ul>
-          <li><b>MAAROOF AI:</b> منصة في مجالات GEO وSEO وAEO لقياس وتحسين الظهور الرقمي.</li>
-          <li><b>Mshawir:</b> منصة محلية لطلب نقل الركاب وتقدير الأجرة وتتبع الرحلة.</li>
-          <li><b>Urstory / بصمة حكاية:</b> منصة لإنشاء قصص شخصية باستخدام الذكاء الاصطناعي.</li>
-        </ul>
+
+      <section className="info-section-block">
+        <div className="info-section-title">
+          <span>كيف تعمل المبادرة؟</span>
+          <small>ثلاث خطوات واضحة</small>
+        </div>
+        <div className="about-steps-grid">
+          {steps.map(([number, title, text]) => (
+            <article className="about-step-card" key={number}>
+              <span>{number}</span>
+              <h2>{title}</h2>
+              <p>{text}</p>
+            </article>
+          ))}
+        </div>
       </section>
-      <section>
-        <h2>الملكية والمسؤولية</h2>
-        <p>اسم «أثر معروف» وهويته ورؤيته المنتجية تخص المبادرة التي يقودها أحمد معروف. تخضع إدارة البلاغات والمراجعة والصلاحيات لضوابط تشغيلية منفصلة، ولا تعني الملكية الشخصية إعفاء المنصة من مسؤوليات الخصوصية والأمان والقوانين النافذة.</p>
+
+      <section className="about-boundary-card">
+        <Sparkles size={20} />
+        <div>
+          <h2>دور المنصة وحدوده</h2>
+          <p>أثر معروف مبادرة مستقلة وليست جهة حكومية أو جهة إصدار للمستندات. تساعد المنصة في تنظيم البلاغات والبحث، لكنها لا تثبت الملكية ولا تضمن استعادة كل مفقود. يجب التحقق من هوية صاحب المستند قبل تسليمه.</p>
+        </div>
       </section>
+
       <Link className="about-cta" href="/"><span>ابدأ باستخدام أثر معروف</span><ArrowUpLeft size={17} /></Link>
     </InfoPageShell>
   );
