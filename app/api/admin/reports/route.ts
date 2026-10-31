@@ -18,6 +18,14 @@ async function getAdminClient() {
     return { response: NextResponse.json({ error: "يلزم تسجيل الدخول." }, { status: 401 }) };
   }
 
+  const approvedEmails = (process.env.ATHAR_ADMIN_EMAILS ?? "")
+    .split(",")
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean);
+  if (!user.email || !approvedEmails.includes(user.email.toLowerCase())) {
+    return { response: NextResponse.json({ error: "هذا الحساب غير مخوّل للإدارة." }, { status: 403 }) };
+  }
+
   const { data: admin, error } = await supabase
     .from("athar_admins")
     .select("user_id")
