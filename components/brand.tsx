@@ -3,23 +3,24 @@ export function BrandMark({ className = "" }: { className?: string }) {
     <span className={("brand-mark " + className).trim()} aria-hidden="true">
       <svg viewBox="0 0 64 64" fill="none">
         <defs>
-          <linearGradient id="athar-mark-bg" x1="8" y1="4" x2="58" y2="62" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#145D59" />
-            <stop offset="1" stopColor="#082D32" />
+          <linearGradient id="athar-trail" x1="10" y1="52" x2="56" y2="7" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#17B99D" />
+            <stop offset=".55" stopColor="#41E4C4" />
+            <stop offset="1" stopColor="#B5FFF0" />
           </linearGradient>
-          <linearGradient id="athar-mark-accent" x1="34" y1="30" x2="56" y2="57" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#75F1D9" />
-            <stop offset="1" stopColor="#23B99F" />
-          </linearGradient>
+          <radialGradient id="athar-pin" cx="0" cy="0" r="1" gradientTransform="translate(44 19) rotate(90) scale(17)" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#A8FFED" />
+            <stop offset="1" stopColor="#17B99D" />
+          </radialGradient>
         </defs>
-        <rect x="2" y="2" width="60" height="60" rx="19" fill="url(#athar-mark-bg)" />
-        <rect x="2.75" y="2.75" width="58.5" height="58.5" rx="18.25" stroke="#8CE8D5" strokeOpacity=".24" strokeWidth="1.5" />
-        <path d="M17 12.5h18.8L44 20.7v17.1" stroke="#D9FFF6" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M35.5 13v8.1a1.6 1.6 0 0 0 1.6 1.6h6.2" stroke="#D9FFF6" strokeOpacity=".82" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M17 12.5v28.8a4 4 0 0 0 4 4h9" stroke="#D9FFF6" strokeWidth="3" strokeLinecap="round" />
-        <path d="M22 28h13M22 35h9" stroke="#78DCC8" strokeWidth="2.6" strokeLinecap="round" />
-        <circle cx="43.5" cy="44" r="13.5" fill="url(#athar-mark-accent)" stroke="#082D32" strokeWidth="2" />
-        <path d="m37.8 44.1 3.8 3.8 7.7-8.2" stroke="#063638" strokeWidth="3.1" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M9 50.5C18 48 20.5 40 28 35.5C33 32.5 37 28.8 41 24" stroke="url(#athar-trail)" strokeWidth="4.2" strokeLinecap="round" />
+        <ellipse cx="13.8" cy="43.8" rx="3.1" ry="5.3" transform="rotate(37 13.8 43.8)" fill="#67EBD0" />
+        <ellipse cx="21.4" cy="38.3" rx="2.5" ry="4.2" transform="rotate(38 21.4 38.3)" fill="#42DCC0" />
+        <ellipse cx="28.3" cy="32.1" rx="2.1" ry="3.5" transform="rotate(38 28.3 32.1)" fill="#28C6AA" />
+        <path d="M43 7.5C34.9 7.5 28.5 13.9 28.5 22c0 10.2 14.5 24.2 14.5 24.2S57.5 32.2 57.5 22C57.5 13.9 51.1 7.5 43 7.5Z" fill="url(#athar-pin)" stroke="#D3FFF5" strokeOpacity=".75" strokeWidth="1.5" />
+        <circle cx="43" cy="22" r="7.1" fill="#073A39" />
+        <circle cx="43" cy="22" r="3.2" fill="#9BFFE8" />
+        <path d="M14 55.5c8.6 1.2 17-2.2 22.1-8.6" stroke="#5FDCC4" strokeOpacity=".56" strokeWidth="1.6" strokeLinecap="round" />
       </svg>
     </span>
   );
