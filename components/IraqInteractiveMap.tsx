@@ -9,6 +9,7 @@ const IRAQ_BOUNDS: LatLngBoundsExpression = [
   [29.05, 38.77],
   [37.38, 48.56]
 ];
+const MAX_BOUNDS: LatLngBoundsExpression = [[28.65, 38.25], [37.8, 49.15]];
 
 const cities = [
   { id: "baghdad", name: "بغداد", position: [33.3152, 44.3661] as [number, number], tone: "gold" },
@@ -40,7 +41,7 @@ export default function IraqInteractiveMap() {
         boundsOptions={{ padding: [26, 26] }}
         minZoom={5}
         maxZoom={12}
-        maxBounds={[[28.65, 38.25], [37.8, 49.15]]}
+        maxBounds={MAX_BOUNDS}
         maxBoundsViscosity={0.72}
         scrollWheelZoom={true}
         zoomControl={false}
