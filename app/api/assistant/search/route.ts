@@ -1,0 +1,192 @@
+import { NextRequest, NextResponse } from "next/server";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+const CITIES = [
+  { name: "بغداد", aliases: ["بغداد", "الكرادة", "الرصافة", "الاعظمية", "الأعظمية", "المنصور", "زيونة", "الجادرية", "الشعب", "الدورة"] },
+  { name: "كربلاء", aliases: ["كربلاء", "كربلا"] },
+  { name: "النجف", aliases: ["النجف", "نجف"] },
+  { name: "البصرة", aliases: ["البصرة", "بصرة"] },
+  { name: "سامراء", aliases: ["سامراء", "سامرا"] }
+] as const;
+
+const CATEGORIES = [
+  { name: "بطاقة وطنية", aliases: ["بطاقة وطنية", "البطاقة الوطنية", "الهوية الوطنية", "هوية وطنية", "هوية"] },
+  { name: "بطاقة سكن", aliases: ["بطاقة سكن", "بطاقة السكن", "سكن"] },
+  { name: "بطاقة تموينية", aliases: ["بطاقة تموينية", "التموينية", "تموينية"] },
+  { name: "إجازة سياقة", aliases: ["اجازة سياقة", "إجازة سياقة", "سنوية سياقة", "رخصة قيادة", "رخصة"] },
+  { name: "سنوية سيارة", aliases: ["سنوية سيارة", "سنوية", "مركبة", "سيارة"] },
+  { name: "بطاقة مصرفية", aliases: ["بطاقة مصرفية", "بطاقة بنك", "بطاقة مصرف", "ماستر كارد", "فيزا"] },
+  { name: "محفظة", aliases: ["محفظة", "محفظتي"] },
+  { name: "مفاتيح", aliases: ["مفاتيح", "مفتاح"] }
+] as const;
+
+const STOP_WORDS = new Set([
+  "من", "في", "على", "الى", "إلى", "عن", "أنا", "اني", "إن", "هذا", "هذه",
+  "اليوم", "امس", "أمس", "قبل", "بعد", "مفقود", "مفقودة", "ضاع", "ضاعت",
+  "فقدت", "لقيت", "وجدت", "عثر", "عثرت", "على", "اريد", "أريد", "ابحث",
+  "بحث", "ساعدني", "وين", "اين", "وينها", "موجودة", "موجود", "لو"
+]);
+
+function normalize(value: string) {
+  return value
+    .normalize("NFKC")
+    .replace(/[\u064B-\u065F\u0670]/g, "")
+    .replace(/[إأآ]/g, "ا")
+    .replace(/ة/g, "ه")
+    .replace(/ى/g, "ي")
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLocaleLowerCase("ar");
+}
+
+function escapeLike(value: string) {
+  return value.replace(/[\\%_]/g, (char) => "\\" + char);
+}
+
+function parseIntent(input: string) {
+  const text = normalize(input);
+  const city = CITIES.find((item) => item.aliases.some((alias) => text.includes(normalize(alias))))?.name ?? null;
+  const category = CATEGORIES.find((item) => item.aliases.some((alias) => text.includes(normalize(alias))))?.name ?? null;
+  const kind = /\b(فقدت|ضاع|ضاعت|مفقود|مفقودة|انفقد)\b/.test(text)
+    ? "lost"
+    : /\b(لقيت|وجدت|عثرت|معثور|لكيت)\b/.test(text)
+      ? "found"
+      : null;
+
+  let remainder = text;
+  for (const item of CITIES) for (const alias of item.aliases) remainder = remainder.replaceAll(normalize(alias), " ");
+  for (const item of CATEGORIES) for (const alias of item.aliases) remainder = remainder.replaceAll(normalize(alias), " ");
+  const terms = remainder.split(" ").filter((term) => term.length > 1 && !STOP_WORDS.has(term)).slice(0, 4);
+  return { city, category, kind, terms };
+}
+
+async function generateAnswer(input: string, intent: ReturnType<typeof parseIntent>, reports: Array<Record<string, unknown>>) {
+  const endpoint = process.env.ATHAR_AI_CHAT_COMPLETIONS_URL;
+  const apiKey = process.env.ATHAR_AI_API_KEY;
+  const model = process.env.ATHAR_AI_MODEL;
+
+  if (endpoint && apiKey && model) {
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + apiKey
+        },
+        body: JSON.stringify({
+          model,
+          temperature: 0.15,
+          max_tokens: 220,
+          messages: [
+            {
+              role: "system",
+              content: "أنت مساعد منصة أثر معروف للمفقودات والمعثورات في العراق. أجب بالعربية العراقية الواضحة. اعتمد حصراً على البلاغات المنشورة المرفقة. لا تخترع بلاغات أو بيانات اتصال أو أرقام مستمسكات. لا تطلب من المستخدم نشر رقم الهوية أو صورة البطاقة. إذا لم توجد نتائج، قل ذلك بوضوح."
+            },
+            {
+              role: "user",
+              content: JSON.stringify({ question: input, intent, published_reports: reports })
+            }
+          ]
+        }),
+        signal: AbortSignal.timeout(6500),
+        cache: "no-store"
+      });
+      if (response.ok) {
+        const payload = await response.json();
+        const text = payload?.choices?.[0]?.message?.content;
+        if (typeof text === "string" && text.trim()) return { reply: text.trim().slice(0, 700), mode: "ai" as const };
+      }
+    } catch {
+      // Continue with verified database-only guidance when the model provider is unavailable.
+    }
+  }
+
+  if (reports.length) {
+    return {
+      reply: "وجدت " + reports.length.toLocaleString("ar-IQ") +
+        " بلاغاً منشوراً يطابق بعض وصفك. راجع المدينة ونوع الغرض قبل التواصل عبر القنوات الآمنة للمنصة.",
+      mode: "guided_search" as const
+    };
+  }
+  return {
+    reply: "لم أجد بلاغاً منشوراً يطابق هذا الوصف حالياً. جرّب كتابة نوع المستند والمدينة أو أعد المحاولة لاحقاً.",
+    mode: "guided_search" as const
+  };
+}
+
+export async function POST(request: NextRequest) {
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "اكتب طلب البحث بصورة صحيحة." }, { status: 400 });
+  }
+
+  const input = typeof (body as Record<string, unknown>)?.query === "string"
+    ? (body as Record<string, string>).query.trim().slice(0, 120)
+    : "";
+  if (input.length < 2) {
+    return NextResponse.json({ error: "اكتب وصفاً قصيراً للمفقود أو المعثور عليه." }, { status: 400 });
+  }
+  const digits = input.replace(/\D/g, "");
+  if (digits.length >= 8 || /\b(CVV|CVC|PIN|OTP)\b|الرقم الوطني|رقم البطاقة|رمز التحقق/i.test(input)) {
+    return NextResponse.json({ error: "لا تكتب أرقام المستمسكات أو بيانات البطاقة أو رموز التحقق. استخدم وصفاً عاماً." }, { status: 400 });
+  }
+
+  try {
+    const supabase = await createSupabaseServerClient();
+    const intent = parseIntent(input);
+    const selectedTerms = [...new Set([
+      ...(intent.category ? [intent.category] : []),
+      ...intent.terms,
+      ...(!intent.category && intent.terms.length === 0 ? [normalize(input)] : [])
+    ])].filter(Boolean).slice(0, 3);
+
+    const columns = ["title", "category", "area"] as const;
+    const baseQuery = () => {
+      let query = supabase
+        .from("athar_public_reports")
+        .select("id,public_code,kind,category,title,city,area,details,status,created_at")
+        .order("created_at", { ascending: false })
+        .limit(12);
+      if (intent.city) query = query.eq("city", intent.city);
+      if (intent.kind) query = query.eq("kind", intent.kind);
+      return query;
+    };
+
+    const queries = selectedTerms.length
+      ? selectedTerms.flatMap((term) => columns.map((column) => baseQuery().ilike(column, "%" + escapeLike(term) + "%")))
+      : [baseQuery()];
+
+    const results = await Promise.all(queries);
+    const failed = results.filter((result) => result.error);
+    if (failed.length === results.length) {
+      console.error("ATHAR assistant search failed", failed[0]?.error?.code);
+      return NextResponse.json({ error: "تعذر الاتصال بسجلات البلاغات. تحقق من إعداد قاعدة البيانات." }, { status: 503 });
+    }
+
+    const unique = new Map<string, Record<string, unknown>>();
+    for (const result of results) {
+      for (const report of (result.data ?? []) as Array<Record<string, unknown>>) {
+        unique.set(String(report.id), report);
+      }
+    }
+    const reports = Array.from(unique.values())
+      .sort((a, b) => Date.parse(String(b.created_at)) - Date.parse(String(a.created_at)))
+      .slice(0, 8);
+
+    const assistant = await generateAnswer(input, intent, reports);
+    return NextResponse.json({
+      assistant: { ...assistant, source: "athar_public_reports", intent },
+      reports
+    }, {
+      headers: { "Cache-Control": "no-store, max-age=0" }
+    });
+  } catch {
+    return NextResponse.json({ error: "المساعد غير مهيأ بعد. تحقق من اتصال Supabase." }, { status: 503 });
+  }
+}
