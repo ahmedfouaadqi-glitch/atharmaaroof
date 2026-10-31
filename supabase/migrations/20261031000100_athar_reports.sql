@@ -31,6 +31,29 @@ create policy "Admins can verify their own role"
   on public.athar_admins for select to authenticated
   using ((select auth.uid()) = user_id);
 
+create table if not exists public.athar_report_status_events (
+  id uuid primary key default gen_random_uuid(),
+  report_id uuid not null references public.athar_reports(id) on delete cascade,
+  actor_id uuid not null references auth.users(id) on delete restrict,
+  previous_status text not null check (previous_status in ('pending', 'published', 'matched', 'returned', 'hidden')),
+  new_status text not null check (new_status in ('pending', 'published', 'matched', 'returned', 'hidden')),
+  created_at timestamptz not null default now()
+);
+
+create index if not exists athar_report_status_events_report_idx
+  on public.athar_report_status_events (report_id, created_at desc);
+
+alter table public.athar_report_status_events enable row level security;
+revoke all on public.athar_report_status_events from anon, authenticated;
+grant select on public.athar_report_status_events to authenticated;
+
+create policy "Admins can read moderation history"
+  on public.athar_report_status_events for select to authenticated
+  using (exists (
+    select 1 from public.athar_admins a
+    where a.user_id = (select auth.uid())
+  ));
+
 alter table public.athar_reports enable row level security;
 
 revoke all on public.athar_reports from anon, authenticated;
@@ -110,7 +133,9 @@ returns table (id uuid, public_code text, status text, updated_at timestamptz)
 language plpgsql
 security definer
 set search_path = ''
-as $$
+as $
+declare
+  v_previous_status text;
 begin
   if auth.uid() is null or not exists (
     select 1
@@ -124,13 +149,29 @@ begin
     raise exception 'invalid status' using errcode = '22023';
   end if;
 
-  return query
-    update public.athar_reports r
-    set status = p_new_status, updated_at = now()
-    where r.id = p_report_id
-    returning r.id, r.public_code, r.status, r.updated_at;
+  select r.status into v_previous_status
+  from public.athar_reports r
+  where r.id = p_report_id
+  for update;
+
+  if not found then
+    return;
+  end if;
+
+  update public.athar_reports r
+  set status = p_new_status, updated_at = now()
+  where r.id = p_report_id
+  returning r.id, r.public_code, r.status, r.updated_at
+  into id, public_code, status, updated_at;
+
+  insert into public.athar_report_status_events
+    (report_id, actor_id, previous_status, new_status)
+  values
+    (p_report_id, auth.uid(), v_previous_status, p_new_status);
+
+  return next;
 end;
-$$;
+$;
 
 revoke all on function public.athar_admin_set_report_status(uuid, text) from public, anon;
 grant execute on function public.athar_admin_set_report_status(uuid, text) to authenticated;
