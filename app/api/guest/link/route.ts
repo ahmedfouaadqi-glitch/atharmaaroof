@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error("ATHAR guest identity link failed", error.code);
       if (error.code === "email_exists" || error.code === "user_already_exists") {
-        return NextResponse.json({ error: "هذا البريد مرتبط بحساب آخر. استخدم بريدك الحالي لتسجيل الدخول بدلاً من ربطه بهوية زائر." }, { status: 409 });
+        return NextResponse.json({ error: "هذا البريد مرتبط بحساب آخر. لا ندمج البلاغات بين حسابين تلقائياً. استخدم بريداً غير مرتبط لحفظ هوية الزائر، أو ادخل إلى حسابك الحالي واطلب معالجة الربط من الدعم." }, { status: 409 });
       }
       return NextResponse.json({ error: "تعذر إرسال رسالة ربط الهوية. تحقق من إعداد البريد في Supabase." }, { status: 400 });
     }
