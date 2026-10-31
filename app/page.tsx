@@ -251,7 +251,7 @@ export default function HomePage() {
       gravity={0.35}
       glow={0.45}
     >
-      <div className="app-shell" dir="rtl" onClickCapture={sound.onInteraction}>
+      <div className="app-shell" dir="rtl" onClickCapture={sound.onInteraction} onPointerOverCapture={sound.onHover}>
         <div className="ambient ambient-one" aria-hidden="true" />
         <div className="ambient ambient-two" aria-hidden="true" />
 
