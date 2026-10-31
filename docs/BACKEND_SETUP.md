@@ -29,8 +29,9 @@
 ```
 
 ## Explicit limitations
-- No live Supabase project has been connected or migrated by this commit.
+- No live Supabase project has been connected or migrated yet.
 - Sign-up/login UI, CAPTCHA/abuse controls, report moderation, image upload, matching, notifications, and production rate limiting are not implemented.
-- The existing landing page still shows demo seed reports and a local preview form; wire its submit/list flows to these endpoints only after auth is implemented and integration tests pass.
+- The landing page now reads public reports from `GET /api/reports` and submits through `POST /api/reports`; it does not substitute demo reports if the API fails. Actual operation still depends on a configured and migrated Supabase project.
+- New reports default to `pending` and are excluded from public listings until reviewed and explicitly published. A secure moderation/admin workflow is not implemented yet.
 - Do not collect national identity numbers, payment card numbers, CVV, PIN, OTP, or exact GPS coordinates. Never publish phone numbers or identity-document images.
 - The public view intentionally omits owner identifiers. RLS remains enabled on the underlying table.
