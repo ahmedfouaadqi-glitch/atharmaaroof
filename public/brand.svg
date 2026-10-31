@@ -1,19 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 116" fill="none" role="img" aria-labelledby="title desc">
-<title id="title">أثر معروف</title>
-<desc id="desc">شعار أثر معروف: مسار أثر ينتهي بعلامة موقع، رمز للعثور على المفقودات</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 176" fill="none" role="img" aria-labelledby="title desc">
+<title id="title">أثر معروف — ATHAR MAAROOF</title>
+<desc id="desc">شعار أثر معروف: مسار أثر وبصمة مع الاسم العربي والإنجليزي.</desc>
 <defs>
-<linearGradient id="trail" x1="12" y1="92" x2="110" y2="8" gradientUnits="userSpaceOnUse"><stop stop-color="#17B99D"/><stop offset=".55" stop-color="#41E4C4"/><stop offset="1" stop-color="#B5FFF0"/></linearGradient>
-<radialGradient id="pin" cx="0" cy="0" r="1" gradientTransform="translate(75 30) rotate(90) scale(30)" gradientUnits="userSpaceOnUse"><stop stop-color="#A8FFED"/><stop offset="1" stop-color="#17B99D"/></radialGradient>
+  <linearGradient id="sweep" x1="15" y1="148" x2="151" y2="8" gradientUnits="userSpaceOnUse"><stop stop-color="#13B89F"/><stop offset=".56" stop-color="#35E4C4"/><stop offset="1" stop-color="#A9FFF0"/></linearGradient>
+  <linearGradient id="stroke" x1="91" y1="9" x2="138" y2="151" gradientUnits="userSpaceOnUse"><stop stop-color="#F8FFFF"/><stop offset="1" stop-color="#25C7B0"/></linearGradient>
 </defs>
-<path d="M12 96C30 89 34 72 50 62C61 55 71 45 80 34" stroke="url(#trail)" stroke-width="8" stroke-linecap="round"/>
-<ellipse cx="22" cy="80" rx="5" ry="9" transform="rotate(37 22 80)" fill="#67EBD0"/>
-<ellipse cx="40" cy="66" rx="4" ry="7" transform="rotate(38 40 66)" fill="#42DCC0"/>
-<ellipse cx="57" cy="51" rx="3.4" ry="5.6" transform="rotate(38 57 51)" fill="#28C6AA"/>
-<path d="M77 5C61 5 48 18 48 34c0 20 29 48 29 48s29-28 29-48C106 18 93 5 77 5Z" fill="url(#pin)" stroke="#D3FFF5" stroke-opacity=".75" stroke-width="3"/>
-<circle cx="77" cy="34" r="14" fill="#073A39"/><circle cx="77" cy="34" r="6.2" fill="#9BFFE8"/>
-<path d="M20 107c19 3 38-4 49-18" stroke="#5FDCC4" stroke-opacity=".56" stroke-width="3" stroke-linecap="round"/>
-<g font-family="Arial, Tahoma, sans-serif" font-weight="700" direction="rtl" text-anchor="end">
-<text x="540" y="67" font-size="51" fill="#EAF8F3">أثر <tspan fill="#41E4C4">معروف</tspan></text>
-<text x="540" y="94" font-size="17" font-weight="400" fill="#82A69E">كل ما ضاع، له أثر</text>
+<path d="M18 145C4 112 11 73 38 45C60 22 90 13 115 15" stroke="url(#sweep)" stroke-width="13" stroke-linecap="round"/>
+<path d="M22 134C32 93 61 65 97 55" stroke="#27D7BA" stroke-width="7" stroke-linecap="round"/>
+<path d="M82 151L98 35L142 35L119 151" stroke="url(#stroke)" stroke-width="13" stroke-linejoin="round"/>
+<path d="M98 19H144" stroke="#F5FFFF" stroke-width="11" stroke-linecap="round"/>
+<circle cx="114" cy="36" r="14" fill="#2FDCC0" stroke="#9CFFEB" stroke-width="3"/>
+<path d="M46 118C46 98 61 83 80 83C99 83 113 97 113 116" stroke="#13BDA5" stroke-width="6" stroke-linecap="round"/>
+<path d="M56 123C56 107 66 96 80 96C94 96 104 108 104 121" stroke="#16CDB0" stroke-width="5" stroke-linecap="round"/>
+<path d="M68 128C68 117 73 109 80 109C87 109 92 117 92 128" stroke="#35E5C6" stroke-width="4.5" stroke-linecap="round"/>
+<path d="M80 129V138" stroke="#B6FFF0" stroke-width="4.5" stroke-linecap="round"/>
+<g font-family="Arial,Tahoma,sans-serif" text-anchor="end" direction="rtl">
+  <text x="602" y="91" fill="#F2FBF8" font-size="64" font-weight="700">أثر معروف</text>
+  <text x="602" y="125" fill="#9CBDB4" font-size="22" letter-spacing="5" direction="ltr">ATHAR MAAROOF</text>
+  <text x="602" y="158" fill="#35DCC0" font-size="20">لأن كل شيء له أثر... ونوصله لأصحابه</text>
 </g>
 </svg>
