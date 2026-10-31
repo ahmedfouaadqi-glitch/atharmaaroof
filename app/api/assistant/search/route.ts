@@ -143,7 +143,6 @@ export async function POST(request: NextRequest) {
     const selectedTerms = [...new Set([
       ...(intent.category ? [intent.category] : []),
       ...intent.terms,
-      ...(!intent.category && intent.terms.length === 0 ? [normalize(input)] : [])
     ])].filter(Boolean).slice(0, 3);
 
     const columns = ["title", "category", "area"] as const;
