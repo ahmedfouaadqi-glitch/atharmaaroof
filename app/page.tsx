@@ -12,7 +12,7 @@ import {
   KeyRound, MapPin, MapPinned, Menu, Plus, Search, ShieldCheck,
   Smartphone, Sparkles, Volume2, VolumeX, Wallet, X, Navigation, LocateFixed, UserRoundCheck
 } from "lucide-react";
-import SpotlightCard from "@/components/reactbits/SpotlightCard";
+import AtharReferenceHome from "@/components/AtharReferenceHome";
 
 type Report = {
   id: string;
@@ -549,161 +549,29 @@ export default function HomePage() {
         </div>
 
         <main className="page-content">
-          <section className="hero-section reveal">
-            <SpotlightCard
-              className="hero-card"
-              theme="dark"
-              spotlightColor="rgba(48, 222, 195, 0.92)"
-              intensity={0.32}
-              spotlightSize={310}
-              softness={0.72}
-              borderGlow={0.72}
-              proximity={80}
-              smoothing={0.34}
-              ambient={typeof window !== "undefined" && !window.matchMedia("(pointer: coarse)").matches}
-              grain={0.035}
-            >
-              <div className="hero-grid">
-                <div className="hero-copy">
-                  <div className="assistant-status"><span className="online-pulse" /> مساعد البلاغات <Sparkles size={15} /><small>متاح لمساعدتك</small></div>
-                  <p className="greeting">أهلاً بيك في <b>أثر معروف</b></p>
-                  <h1>مفقودك مو نهاية الحكاية،<br /><em>خلّينا نساعدك يرجع.</em></h1>
-                  <p className="hero-description">سجّل بلاغ فقدان أو عثور، وابحث بين البلاغات المنشورة. يمكنك العثور على الأقرب بموافقتك على مشاركة الموقع.</p>
-
-                  <form className="assistant-input" onSubmit={handleAssistantSubmit}>
-                    <span className="assistant-input-mark"><Sparkles size={20} /></span>
-                    <input
-                      value={assistantText}
-                      onChange={(event) => setAssistantText(event.target.value)}
-                      placeholder="اسأل أثر معروف: فقدت بطاقة وطنية في بغداد..."
-                      aria-label="اسأل مساعد أثر معروف عن المفقودات"
-                      maxLength={120}
-                    />
-                    <button type="submit" aria-label="اسأل المساعد" disabled={assistantSearching || assistantText.trim().length < 2}>
-                      {assistantSearching ? <span className="assistant-spinner" /> : <ArrowUp size={20} />}
-                    </button>
-                  </form>
-                  <div className="assistant-input-caption"><span><Sparkles size={12} /> مساعد البحث في البلاغات المنشورة</span><small>لا ترسل أرقام الهوية أو صور المستندات</small></div>
-                  {assistantReply && (
-                    <section className="assistant-response" aria-live="polite">
-                      <div className="assistant-response-heading">
-                        <span className="assistant-response-icon"><Sparkles size={15} /></span>
-                        <b>{assistantMode === "ai" ? "مساعد أثر معروف" : "نتيجة البحث الذكي"}</b>
-                        <small>{assistantMode === "ai" ? "مساعد متصل" : "مطابقة مباشرة مع البلاغات"}</small>
-                      </div>
-                      <p>{assistantReply}</p>
-                      {assistantMatches.length > 0 && (
-                        <div className="assistant-match-list">
-                          {assistantMatches.slice(0, 3).map((match) => (
-                            <article className="assistant-match" key={match.id}>
-                              <span className={match.kind === "found" ? "assistant-match-icon found" : "assistant-match-icon lost"}>
-                                {match.kind === "found" ? <CheckCircle2 size={15} /> : <FileText size={15} />}
-                              </span>
-                              <span><b>{match.title}</b><small>{match.city}{match.area ? " · " + match.area : ""} · {match.public_code}</small></span>
-                            </article>
-                          ))}
-                        </div>
-                      )}
-                      {assistantMatches.length > 0 && (
-                        <button className="assistant-results-link" onClick={() => { setReports(assistantMatches); setQuery(""); scrollTo("reports", "reports"); }}>
-                          عرض البلاغات المطابقة <ChevronLeft size={15} />
-                        </button>
-                      )}
-                    </section>
-                  )}
-                  <div className="hero-tools-row">
-                    <VoiceAssistant />
-                    <button className="nearby-search-button" type="button" onClick={() => void searchNearbyReports()} disabled={nearbySearching}>
-                      {nearbySearching ? <span className="assistant-spinner" /> : <Navigation size={16} />}
-                      {nearbySearching ? "يحدد موقعك..." : "البلاغات القريبة مني"}
-                    </button>
-                  </div>
-                  {nearbyError && <p className="nearby-inline-error" role="alert">{nearbyError}</p>}
-                  <div className="quick-actions">
-                    <span>جرّب البحث عن:</span>
-                    {quickActions.map((item) => {
-                      const Icon = item.icon;
-                      return (
-                        <button key={item.label} onClick={() => { setAssistantText(item.label); void runAssistantSearch(item.label); }}>
-                          <Icon size={13} />{item.label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="hero-visual" ref={heroVisualRef}>
-                  <div className="hero-visual-art" aria-hidden="true">
-                  <div className="visual-glow" />
-                  <div className="visual-ring ring-a" />
-                  <div className="visual-ring ring-b" />
-                  <div className="document-card document-back">
-                    <div className="document-top"><span /> <span /> <span /></div>
-                    <div className="document-avatar"><Fingerprint size={29} /></div>
-                    <div className="document-lines"><i /><i /><i /></div>
-                    <small>مستند شخصي</small>
-                  </div>
-                  <div className="document-card document-front">
-                    <div className="document-icon"><FileText size={23} /></div>
-                    <i /><i className="line-short" />
-                    <div className="verified-seal"><Check size={16} /></div>
-                  </div>
-                  <div className="floating-chip chip-top privacy-float"><ShieldCheck size={15} /> خصوصيتك أولاً</div>
-                  <div className="floating-chip chip-bottom"><MapPin size={14} /> نطاق مكاني تقريبي</div>
-                  </div>
-                  {deviceMotion.status !== "unsupported" && (
-                    <button
-                      className={deviceMotion.status === "enabled" ? "motion-toggle enabled" : "motion-toggle"}
-                      onClick={() => deviceMotion.status === "enabled" ? deviceMotion.disable() : void enableDeviceMotion()}
-                      aria-pressed={deviceMotion.status === "enabled"}
-                    >
-                      <Smartphone size={13} />
-                      {deviceMotion.status === "enabled" ? "إيقاف حركة الجهاز" : "تفعيل حركة الجهاز"}
-                    </button>
-                  )}
-                </div>
-              </div>
-              <div className="hero-foot">
-                <span><ShieldCheck size={15} /> لا نطلب صورة المستمسك</span>
-                <span><LockKeyholeMini /> بياناتك ليست معروضة للعامة</span>
-                <span><MapPin size={14} /> تغطية مدن عراقية</span>
-              </div>
-            </SpotlightCard>
-          </section>
-
-          <section className="insight-row reveal" aria-label="ملخص البلاغات">
-            <div className="insight-card">
-              <span className="insight-icon"><FileText size={19} /></span>
-              <span className="insight-label">بلاغات معروضة</span>
-              <strong>{reportsLoading ? "…" : reportsError ? "—" : reports.length.toLocaleString("ar-IQ")}</strong>
-              <small>ضمن البيانات المحمّلة حالياً</small>
-            </div>
-            <div className="insight-card">
-              <span className="insight-icon amber"><Search size={19} /></span>
-              <span className="insight-label">بلاغات فقدان</span>
-              <strong>{reportsLoading ? "…" : reportsError ? "—" : lostCount.toLocaleString("ar-IQ")}</strong>
-              <small>من قائمة النتائج الحالية</small>
-            </div>
-            <div className="insight-card">
-              <span className="insight-icon blue"><HeartHandshake size={19} /></span>
-              <span className="insight-label">بلاغات العثور</span>
-              <strong>{reportsLoading ? "…" : reportsError ? "—" : foundCount.toLocaleString("ar-IQ")}</strong>
-              <small>من قائمة النتائج الحالية</small>
-            </div>
-          </section>
-          <p className="metric-note">الأرقام أعلاه تُحسب من البلاغات التي أعادها الخادم في هذه الصفحة، وليست إحصاءً وطنياً شاملاً.</p>
-
-          <section className="action-panel reveal">
-            <div className="action-copy">
-              <span className="section-kicker"><Sparkles size={14} /> ابدأ بخطوة واضحة</span>
-              <h2>شنو اللي صار وياك؟</h2>
-              <p>اختار نوع البلاغ حتى نوجّهك للنموذج المناسب.</p>
-            </div>
-            <div className="action-buttons">
-              <button className="primary-action" onClick={() => openReportForm("lost")}><Search size={18} /> فقدت مستمسكاً <ChevronLeft size={17} /></button>
-              <button className="secondary-action" onClick={() => openReportForm("found")}><Plus size={18} /> عثرت على مستمسك <ChevronLeft size={17} /></button>
-            </div>
-          </section>
+          <AtharReferenceHome
+            stageRef={heroVisualRef}
+            assistantText={assistantText}
+            setAssistantText={setAssistantText}
+            onAssistantSubmit={handleAssistantSubmit}
+            onQuickSearch={(value) => { setAssistantText(value); void runAssistantSearch(value); }}
+            assistantSearching={assistantSearching}
+            assistantReply={assistantReply}
+            assistantMode={assistantMode}
+            assistantMatches={assistantMatches}
+            onShowMatches={() => {
+              setReports(assistantMatches);
+              setQuery("");
+              scrollTo("reports", "reports");
+            }}
+            nearbySearching={nearbySearching}
+            nearbyError={nearbyError}
+            onNearbySearch={() => void searchNearbyReports()}
+            motionStatus={deviceMotion.status}
+            onEnableMotion={() => void enableDeviceMotion()}
+            onDisableMotion={deviceMotion.disable}
+            onOpenReportForm={openReportForm}
+          />
 
           <section className="reports-section reveal" id="reports">
             <div className="section-heading">
