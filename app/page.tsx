@@ -13,6 +13,7 @@ import {
   Smartphone, Sparkles, Volume2, VolumeX, Wallet, X, Navigation, LocateFixed, UserRoundCheck
 } from "lucide-react";
 import AtharReferenceHome from "@/components/AtharReferenceHome";
+import ThemeToggle from "@/components/ThemeToggle";
 
 type Report = {
   id: string;
@@ -492,6 +493,7 @@ export default function HomePage() {
           </nav>
 
           <div className="header-actions">
+            <ThemeToggle compact />
             <button
               className={sound.enabled ? "icon-action sound-on" : "icon-action"}
               onClick={sound.toggle}
@@ -520,6 +522,10 @@ export default function HomePage() {
               <button onClick={() => scrollTo("home", "home")}><House size={17} /> الرئيسية</button>
               <button onClick={() => scrollTo("reports", "reports")}><FileText size={17} /> البلاغات</button>
               <button onClick={() => scrollTo("safety", "safety")}><ShieldCheck size={17} /> الأمان والخصوصية</button>
+              <Link href="/about"><BookOpen size={17} /> عن المبادرة</Link>
+              <Link href="/privacy"><ShieldCheck size={17} /> سياسة الخصوصية</Link>
+              <Link href="/terms"><FileText size={17} /> سياسة الاستخدام</Link>
+              <Link href="/faq"><CircleHelp size={17} /> الأسئلة الشائعة</Link>
               <Link href="/login"><Fingerprint size={17} /> حسابي وتسجيل الدخول</Link>
             </div>
           )}
