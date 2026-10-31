@@ -171,7 +171,7 @@ a { color: inherit; }
 .secondary-action { color: #bde5dc; background: rgba(255,255,255,.035); border-color: rgba(138,208,195,.16); }
 .primary-action:hover, .secondary-action:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0,0,0,.18); }
 .reports-section { margin-top: 52px; scroll-margin-top: 100px; }
-.section-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 20px; }
+.section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; margin-bottom: 20px; }
 .text-button { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); padding: 9px 12px; border-radius: 12px; color: #9bb8b1; background: rgba(255,255,255,.02); font-size: 10px; cursor: pointer; }
 .text-button:hover { color: var(--mint); border-color: rgba(54,223,194,.35); }
 .reports-toolbar { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; margin-bottom: 13px; }
