@@ -34,7 +34,7 @@ create policy "Admins can verify their own role"
 alter table public.athar_reports enable row level security;
 
 revoke all on public.athar_reports from anon, authenticated;
-grant select (id, public_code, kind, category, title, city, area, details, status, created_at)
+grant select (id, public_code, kind, category, title, city, area, details, status, created_at, updated_at)
   on public.athar_reports to anon, authenticated;
 grant insert (owner_id, kind, category, title, city, area, details)
   on public.athar_reports to authenticated;
