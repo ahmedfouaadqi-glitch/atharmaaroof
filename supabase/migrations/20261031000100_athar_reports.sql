@@ -90,7 +90,6 @@ create policy "Admins can read all reports"
     where a.user_id = (select auth.uid())
   ));
 
-grant update (status) on public.athar_reports to authenticated;
 
 create policy "Admins can moderate report status"
   on public.athar_reports for update to authenticated
@@ -102,3 +101,36 @@ create policy "Admins can moderate report status"
     select 1 from public.athar_admins a
     where a.user_id = (select auth.uid())
   ));
+
+create or replace function public.athar_admin_set_report_status(
+  p_report_id uuid,
+  p_new_status text
+)
+returns table (id uuid, public_code text, status text, updated_at timestamptz)
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if auth.uid() is null or not exists (
+    select 1
+    from public.athar_admins a
+    where a.user_id = auth.uid()
+  ) then
+    raise exception 'forbidden' using errcode = '42501';
+  end if;
+
+  if p_new_status not in ('pending', 'published', 'matched', 'returned', 'hidden') then
+    raise exception 'invalid status' using errcode = '22023';
+  end if;
+
+  return query
+    update public.athar_reports r
+    set status = p_new_status, updated_at = now()
+    where r.id = p_report_id
+    returning r.id, r.public_code, r.status, r.updated_at;
+end;
+$$;
+
+revoke all on function public.athar_admin_set_report_status(uuid, text) from public, anon;
+grant execute on function public.athar_admin_set_report_status(uuid, text) to authenticated;
