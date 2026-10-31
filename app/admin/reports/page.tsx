@@ -75,7 +75,7 @@ export default function AdminReportsPage() {
       });
       const payload = await response.json();
       if (response.status === 401) {
-        window.location.assign("/login");
+        window.location.assign("/admin/login");
         return;
       }
       if (response.status === 403) throw new Error("هذا الحساب ليس ضمن مشرفي أثر معروف.");
