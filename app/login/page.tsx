@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { useState, type FormEvent, type CSSProperties } from "react";
 import Link from "next/link";
 import { ArrowRight, LockKeyhole, ShieldCheck } from "lucide-react";
 
@@ -72,7 +72,7 @@ export default function LoginPage() {
   );
 }
 
-function tabStyle(active: boolean): React.CSSProperties {
+function tabStyle(active: boolean): CSSProperties {
   return { flex: 1, border: "1px solid " + (active ? "#b8d8c4" : "#e5ebe5"), background: active ? "#eaf5ee" : "#fff", color: active ? "#23694e" : "#7b877f", borderRadius: 9, padding: 11, fontWeight: active ? 700 : 500, cursor: "pointer" };
 }
 const labelStyle: React.CSSProperties = { display: "grid", gap: 7, fontSize: 13, fontWeight: 700 };
