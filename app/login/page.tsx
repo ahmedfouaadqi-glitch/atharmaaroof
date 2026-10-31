@@ -3,7 +3,6 @@
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Fingerprint, LockKeyhole, ShieldCheck, Volume2, VolumeX } from "lucide-react";
-import ClickSpark from "@/components/reactbits/ClickSpark";
 import { useInteractiveSound } from "@/components/useInteractiveSound";
 import { BrandMark } from "@/components/brand";
 
@@ -45,8 +44,7 @@ export default function LoginPage() {
   }
 
   return (
-    <ClickSpark className="auth-interaction-layer" style={{ minHeight: "100vh" }} sparkColor="#39e2c3" shape="star" sparkCount={7}>
-      <main className="auth-page" dir="rtl" onClickCapture={sound.onInteraction} onPointerOverCapture={sound.onHover}>
+    <main className="auth-page" dir="rtl" onClickCapture={sound.onInteraction} onPointerOverCapture={sound.onHover}>
         <div className="auth-orbit auth-orbit-a" />
         <div className="auth-orbit auth-orbit-b" />
         <section className="auth-card">
@@ -87,7 +85,7 @@ export default function LoginPage() {
           <div className="auth-footer"><LockKeyhole size={13} /> حماية الحساب تعتمد على إعدادات المصادقة في الخادم.</div>
         </section>
       </main>
-    </ClickSpark>
+
   );
 }
 
