@@ -75,13 +75,15 @@ export default function PrivacyPage() {
         <p>تُستخدم مبادئ اللائحة العامة لحماية البيانات الأوروبية GDPR، اللائحة (EU) 2016/679، وتوجيه الخصوصية الإلكترونية 2002/58/EC، وقانون خصوصية المستهلك في كاليفورنيا CCPA كما عُدّل بموجب CPRA لعام 2020 ودخلت تعديلاته حيز التنفيذ في 1 يناير 2023، كمرجعيات دولية عندما ينطبق نطاقها القانوني على الخدمة أو المستخدم.</p>
         <div className="legal-source-links">
           <a href="https://iq.parliament.iq/%D8%A7%D9%84%D8%AF%D8%B3%D8%AA%D9%88%D8%B1-%D8%A7%D9%84%D8%B9%D8%B1%D8%A7%D9%82%D9%8A/" target="_blank" rel="noreferrer">الدستور العراقي — مجلس النواب</a>
-          <a href="https://iraqld.msla.iq/legislations/showlegislation?lawbookid=29855" target="_blank" rel="noreferrer">قانون رقم 78 لسنة 2012 — قاعدة التشريعات العراقية</a>
-          <a href="https://www.moj.gov.iq/view.6152/" target="_blank" rel="noreferrer">قانون حماية المستهلك — وزارة العدل</a>
+          <a href="https://www.moj.gov.iq/view.205/" target="_blank" rel="noreferrer">قانون رقم 78 لسنة 2012 — الوقائع العراقية، العدد 4256</a>
+          <a href="https://www.moj.gov.iq/upload/pdf/%D9%82%D8%A7%D9%86%D9%88%D9%86%20%D8%AD%D9%85%D8%A7%D9%8A%D8%A9%20%D8%A7%D9%84%D9%85%D8%B3%D8%AA%D9%87%D9%84%D9%83.pdf" target="_blank" rel="noreferrer">قانون حماية المستهلك رقم 1 لسنة 2010 — نسخة وزارة العدل</a>
           <a href="https://eur-lex.europa.eu/eli/reg/2016/679/" target="_blank" rel="noreferrer">GDPR — EUR-Lex</a>
           <a href="https://eur-lex.europa.eu/eli/dir/2002/58/oj" target="_blank" rel="noreferrer">ePrivacy Directive 2002/58/EC — EUR-Lex</a>
           <a href="https://www.oag.ca.gov/privacy/ccpa" target="_blank" rel="noreferrer">CCPA / CPRA — California DOJ</a>
+          <a href="https://moj.gov.iq/view.10456/" target="_blank" rel="noreferrer">وزارة العدل — متابعة موضوع حماية البيانات الشخصية، 16 أغسطس 2026</a>
+          <a href="https://iq.parliament.iq/blog/%D9%84%D8%AC%D9%86%D8%A9-%D8%A7%D9%84%D8%A3%D9%85%D9%86-%D9%88%D8%A7%D9%84%D8%AF%D9%81%D8%A7%D8%B9-%D8%A7%D9%84%D9%86%D9%8A%D8%A7%D8%A8%D9%8A%D8%A9-%D8%AA%D9%86%D8%A7%D9%82%D8%B4-%D9%85%D9%82%D8%AA-7/" target="_blank" rel="noreferrer">مجلس النواب — مناقشة مقترح قانون جرائم تقنية المعلومات</a>
         </div>
-        <p className="legal-disclaimer">حتى 1 نوفمبر 2026، لم نتحقق من نشر قانون اتحادي عراقي شامل لحماية البيانات الشخصية في الوقائع العراقية؛ وكانت وزارة العدل قد أشارت في 16 أغسطس 2026 إلى بحث موضوع حماية البيانات الشخصية ضمن أعمال مراجعة تشريعية. كما أن مقترح قانون جرائم تقنية المعلومات كان لا يزال قيد الدراسة البرلمانية في أكتوبر 2026؛ لذلك لا تصفه المنصة هنا بأنه قانون نافذ. هذه الصفحة سياسة تشغيلية وليست استشارة قانونية أو شهادة امتثال، وتحتاج مراجعة محامٍ عراقي قبل اعتمادها كصيغة نهائية.</p>
+        <p className="legal-disclaimer">حتى 1 نوفمبر 2026، لم نعثر على قانون اتحادي عراقي شامل لحماية البيانات الشخصية منشور في الوقائع العراقية. أشارت وزارة العدل في 16 أغسطس 2026 إلى بحث موضوع حماية البيانات الشخصية ضمن ملفات التعديلات التشريعية. كذلك ناقش مجلس النواب مقترح قانون مكافحة جرائم تقنية المعلومات في ورشة يوم 18 أكتوبر 2026؛ وتلك أخبار عن مقترح قيد الدراسة وليست دليلاً على قانون نافذ. لا تقدّم المنصة هذه المقترحات بوصفها تشريعات نافذة. هذه الصفحة سياسة تشغيلية وليست استشارة قانونية أو شهادة امتثال، وتحتاج مراجعة محامٍ عراقي قبل اعتمادها كصيغة نهائية.</p>
       </section>
       <section className="info-next-links">
         <Link href="/terms">اقرأ شروط الاستخدام</Link>
