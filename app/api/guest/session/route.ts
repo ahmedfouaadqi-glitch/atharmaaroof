@@ -23,7 +23,7 @@ export async function POST() {
     }
 
     const isAnonymous = Boolean((user as typeof user & { is_anonymous?: boolean }).is_anonymous);
-    const guestCode = isAnonymous ? "ATH-" + user.id.replace(/-/g, "").slice(-6).toUpperCase() : null;
+    const guestCode = isAnonymous ? "ATH-" + user.id.replace(/-/g, "").slice(-8).toUpperCase() : null;
 
     return NextResponse.json({
       ok: true,
