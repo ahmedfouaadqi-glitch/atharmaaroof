@@ -844,6 +844,21 @@ export default function HomePage() {
                     <small>{guestCode ? "معرّفك: " + guestCode + " · " : ""}{guestMessage || "تظل الجلسة مرتبطة بهذا المتصفح. اربطها بوسيلة دخول دائمة لاستعادتها بعد حذف البيانات."}</small>
                   </span>
                 </div>
+                {guestCode && (
+                  <div className="guest-recovery">
+                    <button type="button" className="guest-recovery-toggle" onClick={() => setGuestLinkOpen((value) => !value)}>
+                      {guestLinkOpen ? "إغلاق حفظ الهوية" : "حفظ هويتي لاستعادتها من جهاز آخر"}
+                    </button>
+                    {guestLinkOpen && (
+                      <form className="guest-recovery-form" onSubmit={linkGuestIdentity}>
+                        <p>أضف بريدك وأكّد الرسالة التي تصلك. بعد التأكيد تستطيع استعادة هذه الهوية عبر البريد دون فقدان البلاغات المرتبطة بها.</p>
+                        <input type="email" required value={guestEmail} onChange={(event) => setGuestEmail(event.target.value)} placeholder="بريدك الإلكتروني" autoComplete="email" />
+                        <button type="submit" disabled={guestLinkBusy || !guestEmail.trim()}>{guestLinkBusy ? "جارٍ الإرسال..." : "إرسال رابط التأكيد"}</button>
+                        {guestLinkMessage && <small role="status">{guestLinkMessage}</small>}
+                      </form>
+                    )}
+                  </div>
+                )}
                 <div className="privacy-warning"><ShieldCheck size={18} /><span>لا تكتب الرقم الوطني أو رقم البطاقة أو PIN أو CVV أو OTP.</span></div>
                 <button className="form-submit" type="submit" disabled={busy}>{busy ? "جارٍ إرسال البلاغ..." : "إرسال البلاغ"} <ArrowUp size={17} /></button>
                 <small className="form-footnote">لا يتطلب تسجيل دخول تقليدي. البلاغ لا يظهر للعامة قبل مراجعته ونشره.</small>
