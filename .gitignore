@@ -1,0 +1,27 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+
+# Next.js build output
+/.next/
+/out/
+/build/
+/dist/
+
+# Netlify and Vercel local state
+/.netlify/
+/.vercel/
+
+# local environment files (keep the example template)
+/.env
+/.env.*
+!/.env.example
+
+# TypeScript and test output
+*.tsbuildinfo
+/coverage/
+
+# local OS/editor files
+.DS_Store
+Thumbs.db
