@@ -840,7 +840,7 @@ export default function HomePage() {
                 <div className="guest-session-note">
                   <UserRoundCheck size={16} />
                   <span>
-                    <b>{guestStatus === "pending" ? "جارٍ إعداد هوية زائر..." : guestStatus === "ready" ? "تم إنشاء هوية زائر تلقائياً" : guestStatus === "error" ? "تعذر إعداد هوية الزائر" : "لا تحتاج إلى تسجيل دخول لإرسال البلاغ"}</b>
+                    <b>{guestStatus === "pending" ? "جارٍ إعداد هوية زائر..." : guestStatus === "ready" ? (guestCode ? "تم إنشاء هوية زائر تلقائياً" : "تم استخدام حسابك المسجل") : guestStatus === "error" ? "تعذر إعداد هوية الزائر" : "لا تحتاج إلى تسجيل دخول لإرسال البلاغ"}</b>
                     <small>{guestCode ? "معرّفك: " + guestCode + " · " : ""}{guestMessage || "تظل الجلسة مرتبطة بهذا المتصفح. اربطها بوسيلة دخول دائمة لاستعادتها بعد حذف البيانات."}</small>
                   </span>
                 </div>
