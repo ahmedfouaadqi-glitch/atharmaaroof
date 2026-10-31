@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, type FormEvent, type CSSProperties } from "react";
+import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { ArrowRight, LockKeyhole, ShieldCheck } from "lucide-react";
+import { ArrowRight, CheckCircle2, Fingerprint, LockKeyhole, ShieldCheck } from "lucide-react";
+import ClickSpark from "@/components/reactbits/ClickSpark";
 
 export default function LoginPage() {
   const [mode, setMode] = useState<"login" | "signup">("login");
@@ -21,7 +22,7 @@ export default function LoginPage() {
       const response = await fetch("/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: mode === "signup" ? "signup" : "login", email, password }),
+        body: JSON.stringify({ action: mode === "signup" ? "signup" : "login", email, password })
       });
       const result = await response.json();
       if (!response.ok) {
@@ -41,42 +42,41 @@ export default function LoginPage() {
   }
 
   return (
-    <main dir="rtl" style={{ minHeight: "100vh", background: "#f6f7f4", display: "grid", placeItems: "center", padding: 20, color: "#23312b", fontFamily: "Arial, sans-serif" }}>
-      <section style={{ width: "100%", maxWidth: 440, background: "#fff", border: "1px solid #e5ebe5", borderRadius: 22, padding: 28, boxShadow: "0 20px 70px #173c2d12" }}>
-        <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "#246246", textDecoration: "none", fontWeight: 700 }}>
-          <ArrowRight size={18} /> العودة إلى أثَر
-        </Link>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 26 }}>
-          <div style={{ width: 46, height: 46, display: "grid", placeItems: "center", borderRadius: 14, background: "#eaf5ee", color: "#23694e" }}><LockKeyhole size={22} /></div>
-          <div><h1 style={{ margin: 0, fontSize: 26 }}>حساب أثَر</h1><p style={{ margin: "6px 0 0", color: "#748178", fontSize: 13 }}>لحفظ البلاغات وربطها بصاحبها</p></div>
-        </div>
-        <div style={{ display: "flex", gap: 8, margin: "24px 0 18px" }}>
-          <button type="button" onClick={() => { setMode("login"); setError(""); setMessage(""); }} style={tabStyle(mode === "login")}>تسجيل الدخول</button>
-          <button type="button" onClick={() => { setMode("signup"); setError(""); setMessage(""); }} style={tabStyle(mode === "signup")}>إنشاء حساب</button>
-        </div>
-        <form onSubmit={submit} style={{ display: "grid", gap: 14 }}>
-          <label style={labelStyle}>البريد الإلكتروني<input required type="email" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} style={inputStyle} placeholder="name@example.com" /></label>
-          <label style={labelStyle}>كلمة المرور<input required type="password" minLength={10} maxLength={128} autoComplete={mode === "signup" ? "new-password" : "current-password"} value={password} onChange={e => setPassword(e.target.value)} style={inputStyle} placeholder="10 أحرف على الأقل" /></label>
-          <p style={{ margin: 0, color: "#7d8981", fontSize: 12, lineHeight: 1.8 }}>لا تستخدم كلمة مرور سبق أن استخدمتها في موقع آخر.</p>
-          {error && <p role="alert" style={noticeStyle("#fff0ee", "#a33a2e")}>{error}</p>}
-          {message && <p role="status" style={noticeStyle("#eaf5ee", "#23694e")}>{message}</p>}
-          <button disabled={busy} type="submit" style={{ border: 0, borderRadius: 10, padding: 14, background: busy ? "#8da99b" : "#1d6c59", color: "#fff", fontWeight: 700, cursor: busy ? "wait" : "pointer" }}>
-            {busy ? "جارٍ التنفيذ…" : mode === "signup" ? "إنشاء الحساب" : "دخول آمن"}
-          </button>
-        </form>
-        <div style={{ display: "flex", gap: 9, alignItems: "flex-start", marginTop: 22, padding: 12, borderRadius: 12, background: "#f3f8f3", color: "#347c5b", fontSize: 12, lineHeight: 1.8 }}>
-          <ShieldCheck size={18} style={{ flexShrink: 0, marginTop: 2 }} /><span>لا تضع أرقام الهوية أو بيانات البطاقة المصرفية في اسم الحساب أو أي حقل عام. استخدم بريداً يمكنك الوصول إليه لتأكيد الحساب.</span>
-        </div>
-      </section>
-    </main>
+    <ClickSpark className="auth-interaction-layer" style={{ minHeight: "100vh" }} sparkColor="#39e2c3" sparkShape="star" sparkCount={7}>
+      <main className="auth-page" dir="rtl">
+        <div className="auth-orbit auth-orbit-a" />
+        <div className="auth-orbit auth-orbit-b" />
+        <section className="auth-card">
+          <Link href="/" className="auth-back"><ArrowRight size={17} /> العودة إلى أثر معروف</Link>
+          <div className="auth-brand">
+            <AuthBrandMark />
+            <div><strong>أثر <b>معروف</b></strong><small>حسابك ومساحة بلاغاتك</small></div>
+          </div>
+          <div className="auth-intro">
+            <span className="auth-kicker"><Fingerprint size={15} /> وصول آمن</span>
+            <h1>{mode === "login" ? "مرحباً بعودتك" : "أنشئ حسابك"}</h1>
+            <p>استخدم حسابك لمتابعة البلاغات وربطها بك بأمان.</p>
+          </div>
+          <div className="auth-tabs">
+            <button type="button" onClick={() => { setMode("login"); setError(""); setMessage(""); }} className={mode === "login" ? "selected" : ""}>تسجيل الدخول</button>
+            <button type="button" onClick={() => { setMode("signup"); setError(""); setMessage(""); }} className={mode === "signup" ? "selected" : ""}>إنشاء حساب</button>
+          </div>
+          <form className="auth-form" onSubmit={submit}>
+            <label>البريد الإلكتروني<input required type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="name@example.com" /></label>
+            <label>كلمة المرور<input required type="password" minLength={10} maxLength={128} autoComplete={mode === "signup" ? "new-password" : "current-password"} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="10 أحرف على الأقل" /></label>
+            <small className="auth-hint">لا تستخدم كلمة مرور سبق أن استخدمتها في موقع آخر.</small>
+            {error && <p className="auth-alert error" role="alert">{error}</p>}
+            {message && <p className="auth-alert success" role="status"><CheckCircle2 size={17} />{message}</p>}
+            <button className="auth-submit" type="submit" disabled={busy}>{busy ? "جارٍ التنفيذ…" : mode === "signup" ? "إنشاء الحساب" : "دخول آمن"} <ArrowRight size={17} /></button>
+          </form>
+          <div className="auth-safety"><ShieldCheck size={19} /><span>لا تضع رقم الهوية أو بيانات البطاقة المصرفية أو رموز التحقق في بيانات الحساب أو البلاغات العامة.</span></div>
+          <div className="auth-footer"><LockKeyhole size={13} /> حماية الحساب تعتمد على إعدادات المصادقة في الخادم.</div>
+        </section>
+      </main>
+    </ClickSpark>
   );
 }
 
-function tabStyle(active: boolean): CSSProperties {
-  return { flex: 1, border: "1px solid " + (active ? "#b8d8c4" : "#e5ebe5"), background: active ? "#eaf5ee" : "#fff", color: active ? "#23694e" : "#7b877f", borderRadius: 9, padding: 11, fontWeight: active ? 700 : 500, cursor: "pointer" };
-}
-const labelStyle: React.CSSProperties = { display: "grid", gap: 7, fontSize: 13, fontWeight: 700 };
-const inputStyle: React.CSSProperties = { width: "100%", boxSizing: "border-box", border: "1px solid #dfe7df", borderRadius: 9, padding: 12, outlineColor: "#1d6c59", background: "#fff", color: "#23312b" };
-function noticeStyle(background: string, color: string): React.CSSProperties {
-  return { margin: 0, background, color, padding: 12, borderRadius: 9, fontSize: 13, lineHeight: 1.8 };
+function AuthBrandMark() {
+  return <span className="brand-mark"><svg viewBox="0 0 56 56" fill="none"><rect x="10" y="7" width="29" height="40" rx="8" stroke="currentColor" strokeWidth="2.8"/><path d="M31 8v10h8M17 25h14M17 32h10" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/><circle cx="39" cy="39" r="11" fill="#2ADDC0" stroke="#09272A" strokeWidth="2.5"/><path d="m34 39 3.2 3.2 6.3-7" stroke="#063638" strokeWidth="2.7" strokeLinecap="round" strokeLinejoin="round"/></svg></span>;
 }
