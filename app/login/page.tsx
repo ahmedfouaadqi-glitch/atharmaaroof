@@ -12,6 +12,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [magicBusy, setMagicBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -40,6 +41,26 @@ export default function LoginPage() {
       setError("تعذر الاتصال بالخادم. تحقق من الاتصال والإعدادات.");
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function sendMagicLink() {
+    setMagicBusy(true);
+    setError("");
+    setMessage("");
+    try {
+      const response = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "magic_link", email })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "تعذر إرسال رابط الدخول.");
+      setMessage(result.message || "تحقق من بريدك لإكمال الدخول.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "تعذر إرسال رابط الدخول.");
+    } finally {
+      setMagicBusy(false);
     }
   }
 
@@ -80,6 +101,11 @@ export default function LoginPage() {
             {error && <p className="auth-alert error" role="alert">{error}</p>}
             {message && <p className="auth-alert success" role="status"><CheckCircle2 size={17} />{message}</p>}
             <button className="auth-submit" type="submit" disabled={busy}>{busy ? "جارٍ التنفيذ…" : mode === "signup" ? "إنشاء الحساب" : "دخول آمن"} <ArrowRight size={17} /></button>
+            {mode === "login" && (
+              <button className="auth-magic-link" type="button" onClick={() => void sendMagicLink()} disabled={magicBusy || !email.trim()}>
+                {magicBusy ? "جارٍ إرسال الرابط..." : "إرسال رابط دخول إلى بريدي"}
+              </button>
+            )}
           </form>
           <div className="auth-safety"><ShieldCheck size={19} /><span>لا تضع رقم الهوية أو بيانات البطاقة المصرفية أو رموز التحقق في بيانات الحساب أو البلاغات العامة.</span></div>
           <div className="auth-footer"><LockKeyhole size={13} /> حماية الحساب تعتمد على إعدادات المصادقة في الخادم.</div>
