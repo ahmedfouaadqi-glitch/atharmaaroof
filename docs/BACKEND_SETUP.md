@@ -37,8 +37,8 @@ on conflict (user_id) do nothing;
 
 ## Explicit limitations
 - The project code is not yet confirmed as migrated to the live Supabase project; verify the migration list and test the endpoints after applying it.
-- An admin moderation API and database role gate exist, but there is no dedicated admin UI yet. CAPTCHA/abuse controls, image upload/redaction, matching, notifications, audit log, and production rate limiting are not implemented.
+- The admin moderation API and Arabic review UI are available at `/admin/reports`; initial admin membership still must be assigned manually in Supabase after signup. CAPTCHA/abuse controls, image upload/redaction, matching, notifications, audit log, and production rate limiting are not implemented.
 - The landing page now reads public reports from `GET /api/reports` and submits through `POST /api/reports`; it does not substitute demo reports if the API fails. Actual operation still depends on a configured and migrated Supabase project.
-- New reports default to `pending` and are excluded from public listings until reviewed and explicitly published. A secure moderation/admin workflow is not implemented yet.
+- New reports default to `pending` and are excluded from public listings until an authenticated administrator explicitly publishes them.
 - Do not collect national identity numbers, payment card numbers, CVV, PIN, OTP, or exact GPS coordinates. Never publish phone numbers or identity-document images.
 - The public view intentionally omits owner identifiers. RLS remains enabled on the underlying table.
