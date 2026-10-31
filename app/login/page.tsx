@@ -42,7 +42,7 @@ export default function LoginPage() {
   }
 
   return (
-    <ClickSpark className="auth-interaction-layer" style={{ minHeight: "100vh" }} sparkColor="#39e2c3" sparkShape="star" sparkCount={7}>
+    <ClickSpark className="auth-interaction-layer" style={{ minHeight: "100vh" }} sparkColor="#39e2c3" shape="star" sparkCount={7}>
       <main className="auth-page" dir="rtl">
         <div className="auth-orbit auth-orbit-a" />
         <div className="auth-orbit auth-orbit-b" />
