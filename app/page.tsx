@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent } from "react";
+import { useInteractiveSound } from "@/components/useInteractiveSound";
 import Link from "next/link";
 import {
   ArrowUp, Bell, Check, CheckCircle2, ChevronLeft, CircleHelp, Clock3,
@@ -58,13 +59,12 @@ export default function HomePage() {
   const [details, setDetails] = useState("");
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState("");
-  const [soundEnabled, setSoundEnabled] = useState(false);
+  const sound = useInteractiveSound();
   const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(null);
   const [showInstallHelp, setShowInstallHelp] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeNav, setActiveNav] = useState("home");
   const [reloadKey, setReloadKey] = useState(0);
-  const audioRef = useRef<AudioContext | null>(null);
   const toastTimer = useRef<number | null>(null);
 
   const shownReports = useMemo(() => {
@@ -79,41 +79,9 @@ export default function HomePage() {
   const lostCount = reports.filter((report) => report.kind === "lost").length;
   const foundCount = reports.filter((report) => report.kind === "found").length;
 
-  function playSound(type: "tap" | "success" | "open" | "toggle" = "tap", force = false) {
-    if (!soundEnabled && !force) return;
-    try {
-      const AudioContextClass = window.AudioContext;
-      if (!AudioContextClass) return;
-      const context = audioRef.current ?? (audioRef.current = new AudioContextClass());
-      if (context.state === "suspended") void context.resume();
-      const oscillator = context.createOscillator();
-      const gain = context.createGain();
-      const now = context.currentTime;
-      const tones = {
-        tap: [520, 680],
-        success: [620, 880],
-        open: [440, 620],
-        toggle: [360, 540]
-      } as const;
-      const [start, end] = tones[type];
-      oscillator.type = type === "success" ? "sine" : "triangle";
-      oscillator.frequency.setValueAtTime(start, now);
-      oscillator.frequency.exponentialRampToValueAtTime(end, now + 0.09);
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(type === "tap" ? 0.025 : 0.04, now + 0.012);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + (type === "success" ? 0.24 : 0.15));
-      oscillator.connect(gain);
-      gain.connect(context.destination);
-      oscillator.start(now);
-      oscillator.stop(now + (type === "success" ? 0.25 : 0.16));
-    } catch {
-      // Audio feedback is optional; the interface remains fully usable without it.
-    }
-  }
-
   function notify(message: string, tone: "tap" | "success" | "open" | "toggle" = "tap") {
     setToast(message);
-    playSound(tone);
+    if (tone !== "tap") sound.play(tone);
     if (toastTimer.current !== null) window.clearTimeout(toastTimer.current);
     toastTimer.current = window.setTimeout(() => setToast(""), 3600);
   }
@@ -122,7 +90,7 @@ export default function HomePage() {
     setActiveNav(nav);
     setMenuOpen(false);
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-    playSound("tap");
+    
   }
 
   function openReportForm(nextKind: "lost" | "found", nextCategory?: string) {
@@ -130,7 +98,7 @@ export default function HomePage() {
     if (nextCategory) setCategory(nextCategory);
     setFormOpen(true);
     setShowInstallHelp(false);
-    playSound("open");
+    
   }
 
   useEffect(() => {
@@ -173,7 +141,6 @@ export default function HomePage() {
     return () => {
       window.removeEventListener("beforeinstallprompt", onBeforeInstall);
       if (toastTimer.current !== null) window.clearTimeout(toastTimer.current);
-      void audioRef.current?.close();
     };
   }, []);
 
@@ -249,7 +216,7 @@ export default function HomePage() {
   }
 
   async function installApplication() {
-    playSound("tap");
+    
     if (!installPrompt) {
       setShowInstallHelp((value) => !value);
       return;
@@ -284,7 +251,7 @@ export default function HomePage() {
       gravity={0.35}
       glow={0.45}
     >
-      <div className="app-shell" dir="rtl">
+      <div className="app-shell" dir="rtl" onClickCapture={sound.onInteraction}>
         <div className="ambient ambient-one" aria-hidden="true" />
         <div className="ambient ambient-two" aria-hidden="true" />
 
@@ -305,18 +272,18 @@ export default function HomePage() {
 
           <div className="header-actions">
             <button
-              className={soundEnabled ? "icon-action sound-on" : "icon-action"}
+              className={sound.enabled ? "icon-action sound-on" : "icon-action"}
               onClick={() => {
-                const next = !soundEnabled;
-                setSoundEnabled(next);
-                if (next) playSound("toggle", true);
-                else playSound("tap", true);
+                const next = !sound.enabled;
+                sound.setEnabled(next);
+                if (next) sound.play("toggle", true);
+                else ;
               }}
-              aria-label={soundEnabled ? "كتم المؤثرات الصوتية" : "تفعيل المؤثرات الصوتية"}
-              aria-pressed={soundEnabled}
-              title={soundEnabled ? "الصوت مفعّل" : "الصوت مكتوم"}
+              aria-label={sound.enabled ? "كتم المؤثرات الصوتية" : "تفعيل المؤثرات الصوتية"}
+              aria-pressed={sound.enabled}
+              title={sound.enabled ? "الصوت مفعّل" : "الصوت مكتوم"}
             >
-              {soundEnabled ? <Volume2 size={19} /> : <VolumeX size={19} />}
+              {sound.enabled ? <Volume2 size={19} /> : <VolumeX size={19} />}
             </button>
             <button className="icon-action install-action" onClick={() => void installApplication()} aria-label="تثبيت التطبيق" title="تثبيت التطبيق">
               <Download size={18} />
@@ -468,7 +435,7 @@ export default function HomePage() {
                 <h2>بلاغات المفقودات والمعثورات</h2>
                 <p>تظهر هنا البلاغات التي نُشرت بعد مراجعتها، دون بيانات اتصال شخصية.</p>
               </div>
-              <button className="text-button" onClick={() => { setCity("الكل"); setFilter("all"); setQuery(""); playSound("tap"); }}>إعادة ضبط <X size={15} /></button>
+              <button className="text-button" onClick={() => { setCity("الكل"); setFilter("all"); setQuery("");  }}>إعادة ضبط <X size={15} /></button>
             </div>
 
             <div className="reports-toolbar">
