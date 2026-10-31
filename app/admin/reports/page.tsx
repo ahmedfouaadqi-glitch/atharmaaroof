@@ -90,7 +90,7 @@ export default function AdminReportsPage() {
 
   return (
     <ClickSpark className="app-interaction-layer" style={{ minHeight: "100vh" }} sparkColor={["#38e2c5", "#d8fff5"]} sparkSize={8} sparkRadius={30} sparkCount={7} shape="star">
-      <div className="app-shell admin-shell" dir="rtl" onClickCapture={sound.onInteraction}>
+      <div className="app-shell admin-shell" dir="rtl" onClickCapture={sound.onInteraction} onPointerOverCapture={sound.onHover}>
         <header className="topbar admin-topbar">
           <Link href="/" className="brand-lockup">
             <AdminBrandMark />
