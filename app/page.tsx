@@ -458,7 +458,7 @@ export default function HomePage() {
             <BrandMark />
             <span className="brand-copy">
               <strong>أثر <b>معروف</b></strong>
-              <small>مفقوداتك تلقى طريقها</small>
+              <small>كل ما ضاع، له أثر</small>
             </span>
           </Link>
 
@@ -708,6 +708,23 @@ export default function HomePage() {
               <button className="text-button" onClick={() => { setCity("الكل"); setFilter("all"); setQuery("");  }}>إعادة ضبط <X size={15} /></button>
             </div>
 
+            {nearbyReports.length > 0 && (
+              <section className="nearby-results" aria-live="polite">
+                <div className="nearby-results-heading">
+                  <span><Navigation size={16} /> بلاغات قريبة منك</span>
+                  <small>داخل نطاق {nearbyRadiusKm} كم · المسافة تقريبية</small>
+                  <button type="button" onClick={() => setNearbyReports([])} aria-label="إخفاء البلاغات القريبة"><X size={15} /></button>
+                </div>
+                {nearbyReports.map((report) => (
+                  <article className="nearby-result-item" key={report.id}>
+                    <span className="nearby-result-icon"><MapPin size={17} /></span>
+                    <div><b>{report.title}</b><small>{report.city}{report.area ? " · " + report.area : ""} · {report.public_code}</small></div>
+                    <strong>{report.approx_distance_km !== undefined ? (report.approx_distance_km < 1 ? "أقل من 1 كم" : "نحو " + report.approx_distance_km + " كم") : ""}</strong>
+                  </article>
+                ))}
+              </section>
+            )}
+            {nearbyError && <p className="nearby-inline-error" role="alert">{nearbyError}</p>}
             <div className="reports-toolbar">
               <label className="report-search">
                 <Search size={18} />
@@ -771,7 +788,12 @@ export default function HomePage() {
           <footer className="site-footer">
             <div className="footer-brand"><BrandMark /><span><b>أثر معروف</b><small>منصة عراقية للمفقودات والمعثورات</small></span></div>
             <span>© {new Date().getFullYear()} أثر معروف. جميع الحقوق محفوظة.</span>
-            <a href="https://reactbits.dev/" target="_blank" rel="noreferrer">تفاعلات مستلهمة من React Bits</a>
+            <nav className="footer-links">
+              <Link href="/about">عن المبادرة</Link>
+              <Link href="/privacy">سياسة الخصوصية</Link>
+              <Link href="/terms">شروط الاستخدام</Link>
+              <Link href="/faq">الأسئلة الشائعة</Link>
+            </nav>
           </footer>
         </main>
 
@@ -801,9 +823,23 @@ export default function HomePage() {
                 <label>المدينة<select value={formCity} onChange={(event) => setFormCity(event.target.value)}>{cities.slice(1).map((item) => <option key={item}>{item}</option>)}</select></label>
                 <label>المنطقة التقريبية <small>اختياري</small><input value={area} onChange={(event) => setArea(event.target.value)} maxLength={100} placeholder="مثلاً: الكرادة" /></label>
                 <label>تفاصيل عامة غير حساسة <small>اختياري</small><textarea value={details} onChange={(event) => setDetails(event.target.value)} maxLength={500} placeholder="اكتب وصفاً عاماً لا يكشف أرقاماً أو معلومات خاصة." /></label>
+                <div className="report-location-choice">
+                  <div><LocateFixed size={17} /><span><b>موقع تقريبي للبلاغ</b><small>اختياري. لا يُرفق إلا بموافقتك، ويُختزل إلى نطاق تقريبي.</small></span></div>
+                  <button type="button" onClick={() => void attachApproximateReportLocation()} disabled={reportLocationBusy}>
+                    {reportLocationBusy ? "جارٍ تحديد الموقع..." : reportLocation ? "تم إرفاق الموقع" : "مشاركة موقع تقريبي"}
+                  </button>
+                  {reportLocation && <small className="location-selected"><ShieldCheck size={12} /> تم التقاط الإحداثيات. سيخزن الخادم تقريباً على مستوى كيلومتر، وليس موقعك الدقيق.</small>}
+                </div>
+                <div className="guest-session-note">
+                  <UserRoundCheck size={16} />
+                  <span>
+                    <b>{guestStatus === "pending" ? "جارٍ إعداد هوية زائر..." : guestStatus === "ready" ? "تم إنشاء هوية زائر تلقائياً" : guestStatus === "error" ? "تعذر إعداد هوية الزائر" : "لا تحتاج إلى تسجيل دخول لإرسال البلاغ"}</b>
+                    <small>{guestCode ? "معرّفك: " + guestCode + " · " : ""}{guestMessage || "تظل الجلسة مرتبطة بهذا المتصفح. اربطها بوسيلة دخول دائمة لاستعادتها بعد حذف البيانات."}</small>
+                  </span>
+                </div>
                 <div className="privacy-warning"><ShieldCheck size={18} /><span>لا تكتب الرقم الوطني أو رقم البطاقة أو PIN أو CVV أو OTP.</span></div>
                 <button className="form-submit" type="submit" disabled={busy}>{busy ? "جارٍ إرسال البلاغ..." : "إرسال البلاغ"} <ArrowUp size={17} /></button>
-                <small className="form-footnote">يتطلب تسجيل الدخول. البلاغ لا يظهر للعامة قبل مراجعته ونشره.</small>
+                <small className="form-footnote">لا يتطلب تسجيل دخول تقليدي. البلاغ لا يظهر للعامة قبل مراجعته ونشره.</small>
               </form>
             </section>
           </div>
