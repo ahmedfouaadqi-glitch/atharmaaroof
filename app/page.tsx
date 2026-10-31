@@ -3,15 +3,15 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent } from "react";
 import { BrandMark } from "@/components/brand";
 import { useDeviceMotion } from "@/components/useDeviceMotion";
+import VoiceAssistant from "@/components/VoiceAssistant";
 import { useInteractiveSound } from "@/components/useInteractiveSound";
 import Link from "next/link";
 import {
   ArrowUp, Bell, Check, CheckCircle2, ChevronLeft, CircleHelp, Clock3,
   CreditCard, Download, FileText, Fingerprint, HeartHandshake, House,
   KeyRound, MapPin, MapPinned, Menu, Plus, Search, ShieldCheck,
-  Smartphone, Sparkles, Volume2, VolumeX, Wallet, X
+  Smartphone, Sparkles, Volume2, VolumeX, Wallet, X, Navigation, LocateFixed, UserRoundCheck
 } from "lucide-react";
-import ClickSpark from "@/components/reactbits/ClickSpark";
 import Magnet from "@/components/reactbits/Magnet";
 import SpotlightCard from "@/components/reactbits/SpotlightCard";
 
@@ -25,6 +25,7 @@ type Report = {
   kind: "lost" | "found";
   status: "pending" | "published" | "matched" | "returned" | "hidden" | string;
   created_at: string;
+  approx_distance_km?: number;
 };
 
 type InstallPromptEvent = Event & {
@@ -44,6 +45,29 @@ const quickActions = [
   { label: "محفظة", icon: Wallet },
   { label: "مفاتيح", icon: KeyRound }
 ];
+
+type BrowserLocation = { latitude: number; longitude: number };
+
+function readBrowserLocation(): Promise<BrowserLocation> {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error("المتصفح لا يدعم تحديد الموقع."));
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => resolve({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      }),
+      (error) => {
+        if (error.code === error.PERMISSION_DENIED) reject(new Error("لم تسمح بمشاركة موقعك. يمكنك البحث بالمدينة بدلاً من ذلك."));
+        else if (error.code === error.TIMEOUT) reject(new Error("انتهت مهلة تحديد الموقع. حاول مرة أخرى."));
+        else reject(new Error("تعذر تحديد الموقع. تحقق من إعدادات الجهاز."));
+      },
+      { enableHighAccuracy: false, timeout: 12000, maximumAge: 60000 }
+    );
+  });
+}
 
 export default function HomePage() {
   const [reports, setReports] = useState<Report[]>([]);
@@ -65,6 +89,15 @@ export default function HomePage() {
   const [details, setDetails] = useState("");
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState("");
+  const [guestCode, setGuestCode] = useState("");
+  const [guestStatus, setGuestStatus] = useState<"idle" | "pending" | "ready" | "error">("idle");
+  const [guestMessage, setGuestMessage] = useState("");
+  const [reportLocation, setReportLocation] = useState<BrowserLocation | null>(null);
+  const [reportLocationBusy, setReportLocationBusy] = useState(false);
+  const [nearbyReports, setNearbyReports] = useState<Report[]>([]);
+  const [nearbySearching, setNearbySearching] = useState(false);
+  const [nearbyError, setNearbyError] = useState("");
+  const [nearbyRadiusKm] = useState(5);
   const sound = useInteractiveSound();
   const deviceMotion = useDeviceMotion();
   const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(null);
@@ -108,7 +141,21 @@ export default function HomePage() {
     if (nextCategory) setCategory(nextCategory);
     setFormOpen(true);
     setShowInstallHelp(false);
-    
+    setReportLocation(null);
+    setGuestMessage("");
+    setGuestStatus("pending");
+    void fetch("/api/guest/session", { method: "POST", cache: "no-store" })
+      .then(async (response) => {
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error || "تعذر إنشاء هوية الزائر.");
+        setGuestCode(payload.guestCode ?? "");
+        setGuestStatus("ready");
+        setGuestMessage(payload.recoverability ?? "");
+      })
+      .catch((error) => {
+        setGuestStatus("error");
+        setGuestMessage(error instanceof Error ? error.message : "تعذر إنشاء هوية الزائر.");
+      });
   }
 
   useEffect(() => {
@@ -120,7 +167,7 @@ export default function HomePage() {
         const params = new URLSearchParams({ limit: "24" });
         if (city !== "الكل") params.set("city", city);
         if (filter !== "all") params.set("kind", filter);
-        const response = await fetch("/api/reports?" + params.toString(), { cache: "no-store" });
+        const response = await fetch("/api/reports?" + params.toString(), { cache: "default" });
         const payload = await response.json();
         if (!response.ok) throw new Error(payload.error || "تعذر تحميل البلاغات.");
         if (!cancelled) {
@@ -262,6 +309,43 @@ export default function HomePage() {
   function handleAssistantSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     void runAssistantSearch(assistantText);
+  }
+
+  async function searchNearbyReports() {
+    setNearbySearching(true);
+    setNearbyError("");
+    try {
+      const location = await readBrowserLocation();
+      const response = await fetch("/api/reports/nearby", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ latitude: location.latitude, longitude: location.longitude, radiusKm: nearbyRadiusKm }),
+        cache: "no-store"
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "تعذر البحث عن البلاغات القريبة.");
+      setNearbyReports((payload.reports ?? []) as Report[]);
+      document.getElementById("reports")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      notify("اكتمل البحث القريب. لم نحفظ إحداثيات جهازك.", "success");
+    } catch (error) {
+      setNearbyError(error instanceof Error ? error.message : "تعذر تحديد موقعك.");
+      setNearbyReports([]);
+    } finally {
+      setNearbySearching(false);
+    }
+  }
+
+  async function attachApproximateReportLocation() {
+    setReportLocationBusy(true);
+    try {
+      const location = await readBrowserLocation();
+      setReportLocation(location);
+      notify("تم التقاط موقع تقريبي لإرفاقه بالبلاغ بعد اختزاله على الخادم.", "success");
+    } catch (error) {
+      notify(error instanceof Error ? error.message : "تعذر تحديد الموقع.");
+    } finally {
+      setReportLocationBusy(false);
+    }
   }
 
   async function enableDeviceMotion() {
