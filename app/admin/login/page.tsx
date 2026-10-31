@@ -52,7 +52,7 @@ export default function AdminLoginPage() {
           >{sound.enabled ? <Volume2 size={17} /> : <VolumeX size={17} />}</button>
         </div>
         <div className="admin-auth-brand">
-          <BrandMark className="brand-mark" />
+          <BrandMark />
           <div><strong>أثر <b>معروف</b></strong><small>منطقة إدارة محمية</small></div>
         </div>
         <div className="auth-intro">
