@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import {
-  ArrowRight, Check, Clock3, Eye, EyeOff, RefreshCw, ShieldCheck,
+  ArrowRight, Check, Clock3, Eye, EyeOff, RefreshCw, ShieldCheck, LogOut,
   Sparkles, FileText, MapPin, CalendarClock, X, Volume2, VolumeX
 } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
@@ -41,6 +41,7 @@ export default function AdminReportsPage() {
   const [busyId, setBusyId] = useState("");
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [signingOut, setSigningOut] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -62,6 +63,19 @@ export default function AdminReportsPage() {
   }, [status]);
 
   useEffect(() => { void load(); }, [load]);
+
+  async function signOut() {
+    setSigningOut(true);
+    try {
+      await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "logout" })
+      });
+    } finally {
+      window.location.replace("/admin/login");
+    }
+  }
 
   async function moderate(report: Report, nextStatus: Report["status"]) {
     setBusyId(report.id);
@@ -108,7 +122,9 @@ export default function AdminReportsPage() {
               title={sound.enabled ? "الصوت مفعّل" : "الصوت مكتوم"}
             >{sound.enabled ? <Volume2 size={17} /> : <VolumeX size={17} />}</button>
             <span className="admin-secure"><ShieldCheck size={15} /> وصول المشرفين فقط</span>
-            <Link href="/" className="admin-home-link"><ArrowRight size={15} /> العودة للرئيسية</Link>
+            <button className="admin-home-link" onClick={() => void signOut()} disabled={signingOut}>
+              <LogOut size={15} /> {signingOut ? "جارٍ الخروج..." : "تسجيل الخروج"}
+            </button>
           </div>
         </header>
 
