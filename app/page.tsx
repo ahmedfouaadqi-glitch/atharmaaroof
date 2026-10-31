@@ -693,7 +693,7 @@ export default function HomePage() {
                 <div className="nearby-results-heading">
                   <span><Navigation size={16} /> بلاغات قريبة منك</span>
                   <small>داخل نطاق {nearbyRadiusKm} كم · المسافة تقريبية</small>
-                  <button type="button" onClick={() => setNearbyReports([])} aria-label="إخفاء البلاغات القريبة"><X size={15} /></button>
+                  <button type="button" onClick={() => { setNearbyReports([]); setNearbyMessage(""); }} aria-label="إخفاء البلاغات القريبة"><X size={15} /></button>
                 </div>
                 {nearbyReports.map((report) => (
                   <article className="nearby-result-item" key={report.id}>
@@ -705,6 +705,7 @@ export default function HomePage() {
               </section>
             )}
             {nearbyError && <p className="nearby-inline-error" role="alert">{nearbyError}</p>}
+            {nearbyMessage && <p className="nearby-empty-message">{nearbyMessage}</p>}
             <div className="reports-toolbar">
               <label className="report-search">
                 <Search size={18} />
