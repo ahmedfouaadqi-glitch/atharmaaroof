@@ -21,7 +21,16 @@ create index if not exists athar_reports_public_lookup_idx
 alter table public.athar_reports enable row level security;
 
 revoke all on public.athar_reports from anon, authenticated;
-grant select, insert, update on public.athar_reports to authenticated;
+grant select (id, public_code, kind, category, title, city, area, details, status, created_at)
+  on public.athar_reports to anon, authenticated;
+grant insert (owner_id, kind, category, title, city, area, details)
+  on public.athar_reports to authenticated;
+grant update (kind, category, title, city, area, details)
+  on public.athar_reports to authenticated;
+
+create policy "Published reports are publicly readable"
+  on public.athar_reports for select to anon, authenticated
+  using (status = 'published');
 
 create policy "Owners can read their own reports"
   on public.athar_reports for select to authenticated
