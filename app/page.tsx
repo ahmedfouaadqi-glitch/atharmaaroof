@@ -91,6 +91,10 @@ export default function HomePage() {
   const [guestCode, setGuestCode] = useState("");
   const [guestStatus, setGuestStatus] = useState<"idle" | "pending" | "ready" | "error">("idle");
   const [guestMessage, setGuestMessage] = useState("");
+  const [guestLinkOpen, setGuestLinkOpen] = useState(false);
+  const [guestEmail, setGuestEmail] = useState("");
+  const [guestLinkBusy, setGuestLinkBusy] = useState(false);
+  const [guestLinkMessage, setGuestLinkMessage] = useState("");
   const [reportLocation, setReportLocation] = useState<BrowserLocation | null>(null);
   const [reportLocationBusy, setReportLocationBusy] = useState(false);
   const [nearbyReports, setNearbyReports] = useState<Report[]>([]);
@@ -144,6 +148,9 @@ export default function HomePage() {
     setShowInstallHelp(false);
     setReportLocation(null);
     setGuestMessage("");
+    setGuestLinkOpen(false);
+    setGuestLinkMessage("");
+    setGuestEmail("");
     setGuestStatus("pending");
     void fetch("/api/guest/session", { method: "POST", cache: "no-store" })
       .then(async (response) => {
@@ -365,6 +372,27 @@ export default function HomePage() {
   function dismissInstallBanner() {
     setShowInstallBanner(false);
     try { localStorage.setItem("athar-maaroof-install-dismissed", "1"); } catch { /* storage can be unavailable */ }
+  }
+
+  async function linkGuestIdentity(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setGuestLinkBusy(true);
+    setGuestLinkMessage("");
+    try {
+      const response = await fetch("/api/guest/link", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: guestEmail })
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "تعذر ربط الهوية.");
+      setGuestLinkMessage(payload.message ?? "تحقق من بريدك لإكمال ربط هوية الزائر.");
+      notify("أرسلنا رابط تأكيد البريد.", "success");
+    } catch (error) {
+      setGuestLinkMessage(error instanceof Error ? error.message : "تعذر ربط هوية الزائر.");
+    } finally {
+      setGuestLinkBusy(false);
+    }
   }
 
   async function submitReport(event: FormEvent<HTMLFormElement>) {
