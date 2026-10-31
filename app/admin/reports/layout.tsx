@@ -11,11 +11,11 @@ export default async function ProtectedAdminReportsLayout({ children }: { childr
   try {
     supabase = await createSupabaseServerClient();
   } catch {
-    redirect("/admin/login?reason=setup");
+    redirect("/control-center?reason=setup");
   }
 
   const { data: { user }, error: authError } = await supabase.auth.getUser();
-  if (authError || !user) redirect("/admin/login");
+  if (authError || !user) redirect("/control-center");
 
   const { data: admin, error: roleError } = await supabase
     .from("athar_admins")
@@ -23,8 +23,8 @@ export default async function ProtectedAdminReportsLayout({ children }: { childr
     .eq("user_id", user.id)
     .maybeSingle();
 
-  if (roleError) redirect("/admin/login?reason=setup");
-  if (!admin) redirect("/admin/login?reason=unauthorized");
+  if (roleError) redirect("/control-center?reason=setup");
+  if (!admin) redirect("/control-center?reason=unauthorized");
 
   return children;
 }
