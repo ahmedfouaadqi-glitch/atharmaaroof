@@ -75,6 +75,7 @@ export default function HomePage() {
   const [activeNav, setActiveNav] = useState("home");
   const [reloadKey, setReloadKey] = useState(0);
   const toastTimer = useRef<number | null>(null);
+  const autoMotionStarted = useRef(false);
 
   const shownReports = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase("ar");
@@ -141,6 +142,7 @@ export default function HomePage() {
   useEffect(() => {
     let cancelled = false;
     let installTimer: number | null = null;
+    let serviceWorkerTimer: number | null = null;
     let idleHandle: number | null = null;
 
     const userAgent = navigator.userAgent || "";
@@ -184,7 +186,7 @@ export default function HomePage() {
         cancelIdleCallback?: (handle: number) => void;
       };
       if (idleWindow.requestIdleCallback) idleHandle = idleWindow.requestIdleCallback(register, { timeout: 3500 });
-      else installTimer = window.setTimeout(register, 900);
+      else serviceWorkerTimer = window.setTimeout(register, 900);
     }
 
     return () => {
@@ -192,6 +194,7 @@ export default function HomePage() {
       window.removeEventListener("beforeinstallprompt", onBeforeInstall);
       window.removeEventListener("appinstalled", onInstalled);
       if (installTimer !== null) window.clearTimeout(installTimer);
+      if (serviceWorkerTimer !== null) window.clearTimeout(serviceWorkerTimer);
       if (idleHandle !== null) {
         const idleWindow = window as Window & { cancelIdleCallback?: (handle: number) => void };
         idleWindow.cancelIdleCallback?.(idleHandle);
@@ -199,6 +202,13 @@ export default function HomePage() {
       if (toastTimer.current !== null) window.clearTimeout(toastTimer.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (deviceMotion.status === "ready" && !isIOSDevice && !autoMotionStarted.current) {
+      autoMotionStarted.current = true;
+      void deviceMotion.enable();
+    }
+  }, [deviceMotion.status, deviceMotion.enable, isIOSDevice]);
 
   useEffect(() => {
     const nodes = document.querySelectorAll<HTMLElement>(".reveal");
@@ -538,11 +548,11 @@ export default function HomePage() {
                   {deviceMotion.status !== "unsupported" && (
                     <button
                       className={deviceMotion.status === "enabled" ? "motion-toggle enabled" : "motion-toggle"}
-                      onClick={() => void enableDeviceMotion()}
+                      onClick={() => deviceMotion.status === "enabled" ? deviceMotion.disable() : void enableDeviceMotion()}
                       aria-pressed={deviceMotion.status === "enabled"}
                     >
                       <Smartphone size={13} />
-                      {deviceMotion.status === "enabled" ? "حركة الجهاز مفعّلة" : "تفعيل حركة الجهاز"}
+                      {deviceMotion.status === "enabled" ? "إيقاف حركة الجهاز" : "تفعيل حركة الجهاز"}
                     </button>
                   )}
                 </div>
