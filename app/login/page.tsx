@@ -2,10 +2,12 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Fingerprint, LockKeyhole, ShieldCheck } from "lucide-react";
+import { ArrowRight, CheckCircle2, Fingerprint, LockKeyhole, ShieldCheck, Volume2, VolumeX } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
+import { useInteractiveSound } from "@/components/useInteractiveSound";
 
 export default function LoginPage() {
+  const sound = useInteractiveSound();
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -43,11 +45,22 @@ export default function LoginPage() {
 
   return (
     <ClickSpark className="auth-interaction-layer" style={{ minHeight: "100vh" }} sparkColor="#39e2c3" shape="star" sparkCount={7}>
-      <main className="auth-page" dir="rtl">
+      <main className="auth-page" dir="rtl" onClickCapture={sound.onInteraction}>
         <div className="auth-orbit auth-orbit-a" />
         <div className="auth-orbit auth-orbit-b" />
         <section className="auth-card">
-          <Link href="/" className="auth-back"><ArrowRight size={17} /> العودة إلى أثر معروف</Link>
+          <div className="auth-topline">
+            <Link href="/" className="auth-back"><ArrowRight size={17} /> العودة إلى أثر معروف</Link>
+            <button
+              type="button"
+              className={sound.enabled ? "auth-sound sound-on" : "auth-sound"}
+              onClick={sound.toggle}
+              data-sound="manual"
+              aria-label={sound.enabled ? "كتم المؤثرات الصوتية" : "تفعيل المؤثرات الصوتية"}
+              aria-pressed={sound.enabled}
+              title={sound.enabled ? "الصوت مفعّل" : "الصوت مكتوم"}
+            >{sound.enabled ? <Volume2 size={17} /> : <VolumeX size={17} />}</button>
+          </div>
           <div className="auth-brand">
             <AuthBrandMark />
             <div><strong>أثر <b>معروف</b></strong><small>حسابك ومساحة بلاغاتك</small></div>
