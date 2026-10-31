@@ -3,13 +3,14 @@
 import { useCallback, useEffect, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import {
-  ArrowRight, Check, Clock3, Eye, EyeOff, RefreshCw, ShieldCheck,
+  ArrowRight, Check, Clock3, Eye, EyeOff, RefreshCw, ShieldCheck, LogOut,
   Sparkles, FileText, MapPin, CalendarClock, X, Volume2, VolumeX
 } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 import Magnet from "@/components/reactbits/Magnet";
 import SpotlightCard from "@/components/reactbits/SpotlightCard";
 import { useInteractiveSound } from "@/components/useInteractiveSound";
+import { BrandMark } from "@/components/brand";
 
 type Report = {
   id: string;
@@ -40,6 +41,7 @@ export default function AdminReportsPage() {
   const [busyId, setBusyId] = useState("");
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [signingOut, setSigningOut] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -48,7 +50,7 @@ export default function AdminReportsPage() {
       const response = await fetch("/api/admin/reports?status=" + status, { cache: "no-store" });
       const payload = await response.json();
       if (response.status === 401) {
-        window.location.assign("/login");
+        window.location.assign("/admin/login");
         return;
       }
       if (!response.ok) throw new Error(payload.error || "تعذر تحميل البلاغات.");
@@ -62,6 +64,19 @@ export default function AdminReportsPage() {
 
   useEffect(() => { void load(); }, [load]);
 
+  async function signOut() {
+    setSigningOut(true);
+    try {
+      await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "logout" })
+      });
+    } finally {
+      window.location.replace("/admin/login");
+    }
+  }
+
   async function moderate(report: Report, nextStatus: Report["status"]) {
     setBusyId(report.id);
     setError("");
@@ -74,7 +89,7 @@ export default function AdminReportsPage() {
       });
       const payload = await response.json();
       if (response.status === 401) {
-        window.location.assign("/login");
+        window.location.assign("/admin/login");
         return;
       }
       if (response.status === 403) throw new Error("هذا الحساب ليس ضمن مشرفي أثر معروف.");
@@ -93,7 +108,7 @@ export default function AdminReportsPage() {
       <div className="app-shell admin-shell" dir="rtl" onClickCapture={sound.onInteraction} onPointerOverCapture={sound.onHover}>
         <header className="topbar admin-topbar">
           <Link href="/" className="brand-lockup">
-            <AdminBrandMark />
+            <BrandMark />
             <span className="brand-copy"><strong>أثر <b>معروف</b></strong><small>لوحة مراجعة البلاغات</small></span>
           </Link>
           <div className="admin-top-actions">
@@ -107,7 +122,9 @@ export default function AdminReportsPage() {
               title={sound.enabled ? "الصوت مفعّل" : "الصوت مكتوم"}
             >{sound.enabled ? <Volume2 size={17} /> : <VolumeX size={17} />}</button>
             <span className="admin-secure"><ShieldCheck size={15} /> وصول المشرفين فقط</span>
-            <Link href="/" className="admin-home-link"><ArrowRight size={15} /> العودة للرئيسية</Link>
+            <button className="admin-home-link" onClick={() => void signOut()} disabled={signingOut}>
+              <LogOut size={15} /> {signingOut ? "جارٍ الخروج..." : "تسجيل الخروج"}
+            </button>
           </div>
         </header>
 
@@ -179,6 +196,3 @@ export default function AdminReportsPage() {
   );
 }
 
-function AdminBrandMark() {
-  return <span className="brand-mark" aria-hidden="true"><svg viewBox="0 0 56 56" fill="none"><rect x="10" y="7" width="29" height="40" rx="8" stroke="currentColor" strokeWidth="2.8"/><path d="M31 8v10h8M17 25h14M17 32h10" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/><circle cx="39" cy="39" r="11" fill="#2ADDC0" stroke="#09272A" strokeWidth="2.5"/><path d="m34 39 3.2 3.2 6.3-7" stroke="#063638" strokeWidth="2.7" strokeLinecap="round" strokeLinejoin="round"/></svg></span>;
-}

@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
   }
 
   const action = body.action;
-  if (action !== "signup" && action !== "login" && action !== "logout") {
+  if (action !== "signup" && action !== "login" && action !== "admin_login" && action !== "logout") {
     return NextResponse.json({ error: "عملية غير مدعومة." }, { status: 400 });
   }
 
@@ -50,9 +50,30 @@ export async function POST(request: NextRequest) {
       }, { status: 201 });
     }
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) return NextResponse.json({ error: "البريد أو كلمة المرور غير صحيحة." }, { status: 401 });
-    return NextResponse.json({ ok: true });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error || !data.user) {
+      return NextResponse.json({ error: "البريد أو كلمة المرور غير صحيحة." }, { status: 401 });
+    }
+
+    if (action === "admin_login") {
+      const { data: admin, error: roleError } = await supabase
+        .from("athar_admins")
+        .select("user_id")
+        .eq("user_id", data.user.id)
+        .maybeSingle();
+
+      if (roleError || !admin) {
+        await supabase.auth.signOut();
+        if (roleError) {
+          console.error("ATHAR admin login role lookup failed", roleError.code);
+          return NextResponse.json({ error: "تعذر التحقق من صلاحية الإدارة. تحقق من إعداد قاعدة البيانات." }, { status: 503 });
+        }
+        return NextResponse.json({ error: "هذا الحساب غير مخوّل لدخول لوحة الإدارة." }, { status: 403 });
+      }
+      return NextResponse.json({ ok: true, role: "admin" });
+    }
+
+    return NextResponse.json({ ok: true, role: "user" });
   } catch {
     return NextResponse.json({ error: "خدمة الحسابات غير مهيأة بعد. تحقق من إعدادات الخادم." }, { status: 503 });
   }

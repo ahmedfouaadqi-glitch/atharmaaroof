@@ -1,5 +1,5 @@
 const CACHE_NAME = "athar-maarouf-static-v1";
-const STATIC_ASSETS = ["/icon.svg", "/manifest.webmanifest"];
+const STATIC_ASSETS = ["/icon.svg", "/brand.svg", "/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -25,7 +25,7 @@ self.addEventListener("fetch", (event) => {
   // Never cache authentication, personal reports, admin responses, or APIs.
   if (url.pathname.startsWith("/api/") || url.pathname.startsWith("/auth/") || url.pathname.startsWith("/login") || url.pathname.startsWith("/admin")) return;
 
-  if (url.pathname.startsWith("/_next/static/") || url.pathname === "/icon.svg" || url.pathname === "/manifest.webmanifest") {
+  if (url.pathname.startsWith("/_next/static/") || url.pathname === "/icon.svg" || url.pathname === "/brand.svg" || url.pathname === "/manifest.webmanifest") {
     event.respondWith(
       caches.match(request).then((cached) => {
         if (cached) return cached;

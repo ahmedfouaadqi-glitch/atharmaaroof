@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent } from "react";
+import { BrandMark } from "@/components/brand";
+import { useDeviceMotion } from "@/components/useDeviceMotion";
 import { useInteractiveSound } from "@/components/useInteractiveSound";
 import Link from "next/link";
 import {
@@ -51,6 +53,10 @@ export default function HomePage() {
   const [filter, setFilter] = useState<"all" | "lost" | "found">("all");
   const [query, setQuery] = useState("");
   const [assistantText, setAssistantText] = useState("");
+  const [assistantReply, setAssistantReply] = useState("");
+  const [assistantMatches, setAssistantMatches] = useState<Report[]>([]);
+  const [assistantMode, setAssistantMode] = useState<"ai" | "guided_search" | null>(null);
+  const [assistantSearching, setAssistantSearching] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
   const [kind, setKind] = useState<"lost" | "found">("lost");
   const [category, setCategory] = useState(categories[0]);
@@ -60,12 +66,16 @@ export default function HomePage() {
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState("");
   const sound = useInteractiveSound();
+  const deviceMotion = useDeviceMotion();
   const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(null);
+  const [showInstallBanner, setShowInstallBanner] = useState(false);
+  const [isIOSDevice, setIsIOSDevice] = useState(false);
   const [showInstallHelp, setShowInstallHelp] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeNav, setActiveNav] = useState("home");
   const [reloadKey, setReloadKey] = useState(0);
   const toastTimer = useRef<number | null>(null);
+  const autoMotionStarted = useRef(false);
 
   const shownReports = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase("ar");
@@ -107,7 +117,7 @@ export default function HomePage() {
       setReportsLoading(true);
       setReportsError("");
       try {
-        const params = new URLSearchParams({ limit: "40" });
+        const params = new URLSearchParams({ limit: "24" });
         if (city !== "الكل") params.set("city", city);
         if (filter !== "all") params.set("kind", filter);
         const response = await fetch("/api/reports?" + params.toString(), { cache: "no-store" });
@@ -130,19 +140,75 @@ export default function HomePage() {
   }, [city, filter, reloadKey]);
 
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      void navigator.serviceWorker.register("/sw.js").catch(() => undefined);
+    let cancelled = false;
+    let installTimer: number | null = null;
+    let serviceWorkerTimer: number | null = null;
+    let idleHandle: number | null = null;
+
+    const userAgent = navigator.userAgent || "";
+    const isIPadOS = navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+    const ios = /iPhone|iPad|iPod/i.test(userAgent) || isIPadOS;
+    setIsIOSDevice(ios);
+
+    const standalone = window.matchMedia("(display-mode: standalone)").matches ||
+      Boolean((navigator as Navigator & { standalone?: boolean }).standalone);
+    let dismissed = false;
+    try {
+      dismissed = localStorage.getItem("athar-maaroof-install-dismissed") === "1";
+    } catch {
+      dismissed = false;
     }
+
+    if (!standalone && !dismissed) {
+      installTimer = window.setTimeout(() => {
+        if (!cancelled) setShowInstallBanner(true);
+      }, ios || window.matchMedia("(max-width: 1024px), (pointer: coarse)").matches ? 1600 : 4200);
+    }
+
     const onBeforeInstall = (event: Event) => {
       event.preventDefault();
       setInstallPrompt(event as InstallPromptEvent);
+      if (!dismissed && !standalone) setShowInstallBanner(true);
+    };
+    const onInstalled = () => {
+      setShowInstallBanner(false);
+      try { localStorage.setItem("athar-maaroof-installed", "1"); } catch { /* storage can be unavailable */ }
     };
     window.addEventListener("beforeinstallprompt", onBeforeInstall);
+    window.addEventListener("appinstalled", onInstalled);
+
+    if ("serviceWorker" in navigator) {
+      const register = () => {
+        if (!cancelled) void navigator.serviceWorker.register("/sw.js", { updateViaCache: "none" }).catch(() => undefined);
+      };
+      const idleWindow = window as Window & {
+        requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+        cancelIdleCallback?: (handle: number) => void;
+      };
+      if (idleWindow.requestIdleCallback) idleHandle = idleWindow.requestIdleCallback(register, { timeout: 3500 });
+      else serviceWorkerTimer = window.setTimeout(register, 900);
+    }
+
     return () => {
+      cancelled = true;
       window.removeEventListener("beforeinstallprompt", onBeforeInstall);
+      window.removeEventListener("appinstalled", onInstalled);
+      if (installTimer !== null) window.clearTimeout(installTimer);
+      if (serviceWorkerTimer !== null) window.clearTimeout(serviceWorkerTimer);
+      if (idleHandle !== null) {
+        const idleWindow = window as Window & { cancelIdleCallback?: (handle: number) => void };
+        idleWindow.cancelIdleCallback?.(idleHandle);
+      }
       if (toastTimer.current !== null) window.clearTimeout(toastTimer.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (deviceMotion.status === "ready" && !isIOSDevice && !autoMotionStarted.current) {
+      autoMotionStarted.current = true;
+      void deviceMotion.enable();
+    }
+  }, [deviceMotion.status, deviceMotion.enable, isIOSDevice]);
 
   useEffect(() => {
     const nodes = document.querySelectorAll<HTMLElement>(".reveal");
@@ -163,14 +229,54 @@ export default function HomePage() {
     return () => observer.disconnect();
   }, [reports.length, reportsLoading, formOpen]);
 
+  async function runAssistantSearch(rawQuery: string) {
+    const value = rawQuery.trim();
+    if (!value || assistantSearching) return;
+
+    setAssistantSearching(true);
+    setAssistantReply("");
+    setAssistantMatches([]);
+    setAssistantMode(null);
+    try {
+      const response = await fetch("/api/assistant/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: value }),
+        cache: "no-store"
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "تعذر تنفيذ البحث.");
+      setAssistantReply(payload.assistant?.reply ?? "اكتمل البحث في البلاغات المنشورة.");
+      setAssistantMode(payload.assistant?.mode ?? "guided_search");
+      setAssistantMatches((payload.reports ?? []) as Report[]);
+      setAssistantText(value);
+    } catch (error) {
+      setAssistantReply(error instanceof Error ? error.message : "تعذر الاتصال بالمساعد.");
+      setAssistantMode("guided_search");
+      setAssistantMatches([]);
+    } finally {
+      setAssistantSearching(false);
+    }
+  }
+
   function handleAssistantSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const value = assistantText.trim();
-    if (!value) return;
-    setQuery(value);
-    setAssistantText("");
-    notify("بحثنا في البلاغات المنشورة حسب الوصف. لا نعرض نتائج تجريبية.", "success");
-    scrollTo("reports", "reports");
+    void runAssistantSearch(assistantText);
+  }
+
+  async function enableDeviceMotion() {
+    const enabled = await deviceMotion.enable();
+    notify(
+      enabled
+        ? "تم تفعيل الاستجابة لحركة الجهاز. يمكنك إيقافها من إعدادات الموقع في المتصفح."
+        : "لم يسمح المتصفح بقراءة حركة الجهاز. يمكنك الاستمرار باستخدام اللمس والمؤشر.",
+      enabled ? "success" : "tap"
+    );
+  }
+
+  function dismissInstallBanner() {
+    setShowInstallBanner(false);
+    try { localStorage.setItem("athar-maaroof-install-dismissed", "1"); } catch { /* storage can be unavailable */ }
   }
 
   async function submitReport(event: FormEvent<HTMLFormElement>) {
@@ -216,18 +322,25 @@ export default function HomePage() {
   }
 
   async function installApplication() {
-    
     if (!installPrompt) {
       setShowInstallHelp((value) => !value);
+      setShowInstallBanner(true);
       return;
     }
     try {
       await installPrompt.prompt();
       const choice = await installPrompt.userChoice;
       setInstallPrompt(null);
-      notify(choice.outcome === "accepted" ? "تم إرسال طلب تثبيت أثر معروف." : "يمكنك تثبيت التطبيق لاحقاً من قائمة المتصفح.", "success");
+      if (choice.outcome === "accepted") {
+        setShowInstallBanner(false);
+        try { localStorage.setItem("athar-maaroof-installed", "1"); } catch { /* storage can be unavailable */ }
+        notify("تم إرسال طلب تثبيت أثر معروف.", "success");
+      } else {
+        notify("يمكنك تثبيت التطبيق لاحقاً من قائمة المتصفح.");
+      }
     } catch {
-      notify("تعذر فتح نافذة التثبيت. استخدم قائمة المتصفح ثم أضف إلى الشاشة الرئيسية.");
+      setShowInstallHelp(true);
+      notify("تعذر فتح نافذة التثبيت. استخدم خيار الإضافة إلى الشاشة الرئيسية.");
     }
   }
 
@@ -304,6 +417,19 @@ export default function HomePage() {
           )}
         </header>
 
+        {showInstallBanner && (
+          <aside className="install-banner" aria-label="تثبيت أثر معروف">
+            <span className="install-banner-icon"><BrandMark /></span>
+            <div className="install-banner-copy">
+              <strong>ثبّت أثر معروف على جهازك</strong>
+              <small>{isIOSDevice ? "في Safari اضغط مشاركة ثم «إضافة إلى الشاشة الرئيسية»." : "افتح التطبيق من الشاشة الرئيسية بسرعة، من دون البحث عنه كل مرة."}</small>
+            </div>
+            <button className="install-banner-cta" onClick={() => void installApplication()}>
+              <Download size={15} /> تثبيت
+            </button>
+            <button className="install-banner-close" onClick={dismissInstallBanner} aria-label="إخفاء اقتراح التثبيت"><X size={16} /></button>
+          </aside>
+        )}
         <div className="install-hint-wrap">
           {showInstallHelp && (
             <div className="install-hint" role="status">
@@ -326,8 +452,8 @@ export default function HomePage() {
               borderGlow={0.72}
               proximity={80}
               smoothing={0.34}
-              ambient
-              grain={0.08}
+              ambient={typeof window !== "undefined" && !window.matchMedia("(pointer: coarse)").matches}
+              grain={0.035}
             >
               <div className="hero-grid">
                 <div className="hero-copy">
@@ -337,21 +463,52 @@ export default function HomePage() {
                   <p className="hero-description">سجّل بلاغ فقدان أو عثور، وابحث بين البلاغات المنشورة. معلوماتك الشخصية تبقى محمية.</p>
 
                   <form className="assistant-input" onSubmit={handleAssistantSubmit}>
-                    <Search size={20} />
+                    <span className="assistant-input-mark"><Sparkles size={20} /></span>
                     <input
                       value={assistantText}
                       onChange={(event) => setAssistantText(event.target.value)}
-                      placeholder="اكتب وصف المفقود أو مكان العثور..."
-                      aria-label="ابحث في البلاغات"
+                      placeholder="اسأل أثر معروف: فقدت بطاقة وطنية في بغداد..."
+                      aria-label="اسأل مساعد أثر معروف عن المفقودات"
+                      maxLength={120}
                     />
-                    <button type="submit" aria-label="ابحث"><ArrowUp size={20} /></button>
+                    <button type="submit" aria-label="اسأل المساعد" disabled={assistantSearching || assistantText.trim().length < 2}>
+                      {assistantSearching ? <span className="assistant-spinner" /> : <ArrowUp size={20} />}
+                    </button>
                   </form>
+                  <div className="assistant-input-caption"><span><Sparkles size={12} /> مساعد البحث في البلاغات المنشورة</span><small>لا ترسل أرقام الهوية أو صور المستندات</small></div>
+                  {assistantReply && (
+                    <section className="assistant-response" aria-live="polite">
+                      <div className="assistant-response-heading">
+                        <span className="assistant-response-icon"><Sparkles size={15} /></span>
+                        <b>{assistantMode === "ai" ? "مساعد أثر معروف" : "نتيجة البحث الذكي"}</b>
+                        <small>{assistantMode === "ai" ? "مساعد متصل" : "مطابقة مباشرة مع البلاغات"}</small>
+                      </div>
+                      <p>{assistantReply}</p>
+                      {assistantMatches.length > 0 && (
+                        <div className="assistant-match-list">
+                          {assistantMatches.slice(0, 3).map((match) => (
+                            <article className="assistant-match" key={match.id}>
+                              <span className={match.kind === "found" ? "assistant-match-icon found" : "assistant-match-icon lost"}>
+                                {match.kind === "found" ? <CheckCircle2 size={15} /> : <FileText size={15} />}
+                              </span>
+                              <span><b>{match.title}</b><small>{match.city}{match.area ? " · " + match.area : ""} · {match.public_code}</small></span>
+                            </article>
+                          ))}
+                        </div>
+                      )}
+                      {assistantMatches.length > 0 && (
+                        <button className="assistant-results-link" onClick={() => { setReports(assistantMatches); setQuery(""); scrollTo("reports", "reports"); }}>
+                          عرض البلاغات المطابقة <ChevronLeft size={15} />
+                        </button>
+                      )}
+                    </section>
+                  )}
                   <div className="quick-actions">
                     <span>جرّب البحث عن:</span>
                     {quickActions.map((item) => {
                       const Icon = item.icon;
                       return (
-                        <button key={item.label} onClick={() => { setQuery(item.label); scrollTo("reports", "reports"); }}>
+                        <button key={item.label} onClick={() => { setAssistantText(item.label); void runAssistantSearch(item.label); }}>
                           <Icon size={13} />{item.label}
                         </button>
                       );
@@ -359,7 +516,18 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="hero-visual" aria-hidden="true">
+                <div
+                  className="hero-visual"
+                  style={{
+                    "--motion-back-x": (deviceMotion.point.x * -8).toFixed(2) + "px",
+                    "--motion-back-y": (deviceMotion.point.y * -8).toFixed(2) + "px",
+                    "--motion-front-x": (deviceMotion.point.x * 10).toFixed(2) + "px",
+                    "--motion-front-y": (deviceMotion.point.y * 9).toFixed(2) + "px",
+                    "--motion-chip-x": (deviceMotion.point.x * 5).toFixed(2) + "px",
+                    "--motion-chip-y": (deviceMotion.point.y * 5).toFixed(2) + "px"
+                  } as CSSProperties}
+                >
+                  <div className="hero-visual-art" aria-hidden="true">
                   <div className="visual-glow" />
                   <div className="visual-ring ring-a" />
                   <div className="visual-ring ring-b" />
@@ -376,6 +544,17 @@ export default function HomePage() {
                   </div>
                   <div className="floating-chip chip-top"><ShieldCheck size={15} /> خصوصيتك أولاً</div>
                   <div className="floating-chip chip-bottom"><MapPin size={14} /> نطاق مكاني تقريبي</div>
+                  </div>
+                  {deviceMotion.status !== "unsupported" && (
+                    <button
+                      className={deviceMotion.status === "enabled" ? "motion-toggle enabled" : "motion-toggle"}
+                      onClick={() => deviceMotion.status === "enabled" ? deviceMotion.disable() : void enableDeviceMotion()}
+                      aria-pressed={deviceMotion.status === "enabled"}
+                    >
+                      <Smartphone size={13} />
+                      {deviceMotion.status === "enabled" ? "إيقاف حركة الجهاز" : "تفعيل حركة الجهاز"}
+                    </button>
+                  )}
                 </div>
               </div>
               <div className="hero-foot">
@@ -536,20 +715,6 @@ export default function HomePage() {
         )}
       </div>
     </ClickSpark>
-  );
-}
-
-function BrandMark() {
-  return (
-    <span className="brand-mark" aria-hidden="true">
-      <svg viewBox="0 0 56 56" fill="none">
-        <rect x="10" y="7" width="29" height="40" rx="8" stroke="currentColor" strokeWidth="2.8" />
-        <path d="M31 8v10h8" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M17 25h14M17 32h10" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" />
-        <circle cx="39" cy="39" r="11" fill="#2ADDC0" stroke="#09272A" strokeWidth="2.5" />
-        <path d="m34 39 3.2 3.2 6.3-7" stroke="#063638" strokeWidth="2.7" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    </span>
   );
 }
 
