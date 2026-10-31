@@ -18,6 +18,19 @@ create table if not exists public.athar_reports (
 create index if not exists athar_reports_public_lookup_idx
   on public.athar_reports (status, city, kind, created_at desc);
 
+create table if not exists public.athar_admins (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now()
+);
+
+alter table public.athar_admins enable row level security;
+revoke all on public.athar_admins from anon, authenticated;
+grant select on public.athar_admins to authenticated;
+
+create policy "Admins can verify their own role"
+  on public.athar_admins for select to authenticated
+  using ((select auth.uid()) = user_id);
+
 alter table public.athar_reports enable row level security;
 
 revoke all on public.athar_reports from anon, authenticated;
@@ -69,3 +82,23 @@ comment on table public.athar_reports is
   'Private owner-bound lost-and-found reports. Never store national ID numbers, payment card data, OTPs, or exact GPS coordinates.';
 comment on view public.athar_public_reports is
   'Public-safe report fields only; excludes owner_id and contact information.';
+
+create policy "Admins can read all reports"
+  on public.athar_reports for select to authenticated
+  using (exists (
+    select 1 from public.athar_admins a
+    where a.user_id = (select auth.uid())
+  ));
+
+grant update (status) on public.athar_reports to authenticated;
+
+create policy "Admins can moderate report status"
+  on public.athar_reports for update to authenticated
+  using (exists (
+    select 1 from public.athar_admins a
+    where a.user_id = (select auth.uid())
+  ))
+  with check (exists (
+    select 1 from public.athar_admins a
+    where a.user_id = (select auth.uid())
+  ));
