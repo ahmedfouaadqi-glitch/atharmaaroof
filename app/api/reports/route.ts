@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       report: data,
       guest: anonymousSession,
-      guestCode: anonymousSession ? "ATH-" + user.id.replace(/-/g, "").slice(-6).toUpperCase() : null
+      guestCode: anonymousSession ? "ATH-" + user.id.replace(/-/g, "").slice(-8).toUpperCase() : null
     }, { status: 201 });
   } catch {
     return NextResponse.json({ error: "الخدمة غير مهيأة بعد. تحقق من إعدادات الخادم." }, { status: 503 });
