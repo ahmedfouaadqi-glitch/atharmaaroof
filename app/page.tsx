@@ -273,12 +273,8 @@ export default function HomePage() {
           <div className="header-actions">
             <button
               className={sound.enabled ? "icon-action sound-on" : "icon-action"}
-              onClick={() => {
-                const next = !sound.enabled;
-                sound.setEnabled(next);
-                if (next) sound.play("toggle", true);
-                else ;
-              }}
+              onClick={sound.toggle}
+              data-sound="manual"
               aria-label={sound.enabled ? "كتم المؤثرات الصوتية" : "تفعيل المؤثرات الصوتية"}
               aria-pressed={sound.enabled}
               title={sound.enabled ? "الصوت مفعّل" : "الصوت مكتوم"}
