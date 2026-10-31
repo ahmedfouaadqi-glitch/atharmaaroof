@@ -16,7 +16,8 @@ export function useDeviceMotion() {
   const lastUpdateRef = useRef(0);
 
   useEffect(() => {
-    if (!("DeviceOrientationEvent" in window)) {
+    const touchDevice = window.matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
+    if (!touchDevice || !("DeviceOrientationEvent" in window)) {
       setStatus("unsupported");
       return;
     }
