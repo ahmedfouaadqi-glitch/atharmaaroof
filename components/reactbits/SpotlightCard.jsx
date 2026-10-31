@@ -6,10 +6,10 @@ import './SpotlightCard.css';
 
 const THEMES = {
   dark: {
-    surface: '#111111',
-    border: 'rgba(255, 255, 255, 0.08)',
-    shadow: '0 24px 48px -24px rgba(0, 0, 0, 0.6)',
-    light: '#ffffff',
+    surface: 'rgba(8, 35, 37, 0.96)',
+    border: 'rgba(100, 213, 197, 0.18)',
+    shadow: '0 25px 100px rgba(0, 0, 0, 0.22)',
+    light: '#36dfc2',
     fill: 1,
     edge: 1
   },
