@@ -1,15 +1,27 @@
 export function BrandMark({ className = "" }: { className?: string }) {
   return (
     <span className={("brand-mark " + className).trim()} aria-hidden="true">
-      <svg viewBox="0 0 64 64" fill="none">
-        <path d="M9 50.5C18 48 20.5 40 28 35.5C33 32.5 37 28.8 41 24" stroke="#41E4C4" strokeWidth="4.2" strokeLinecap="round" />
-        <ellipse cx="13.8" cy="43.8" rx="3.1" ry="5.3" transform="rotate(37 13.8 43.8)" fill="#67EBD0" />
-        <ellipse cx="21.4" cy="38.3" rx="2.5" ry="4.2" transform="rotate(38 21.4 38.3)" fill="#42DCC0" />
-        <ellipse cx="28.3" cy="32.1" rx="2.1" ry="3.5" transform="rotate(38 28.3 32.1)" fill="#28C6AA" />
-        <path d="M43 7.5C34.9 7.5 28.5 13.9 28.5 22c0 10.2 14.5 24.2 14.5 24.2S57.5 32.2 57.5 22C57.5 13.9 51.1 7.5 43 7.5Z" fill="#28BFA4" stroke="#D3FFF5" strokeOpacity=".75" strokeWidth="1.5" />
-        <circle cx="43" cy="22" r="7.1" fill="#073A39" />
-        <circle cx="43" cy="22" r="3.2" fill="#B5FFF0" />
-        <path d="M14 55.5c8.6 1.2 17-2.2 22.1-8.6" stroke="#5FDCC4" strokeOpacity=".56" strokeWidth="1.6" strokeLinecap="round" />
+      <svg viewBox="0 0 120 120" fill="none">
+        <defs>
+          <linearGradient id="athar-symbol-sweep" x1="10" y1="106" x2="106" y2="8" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#13B89F" />
+            <stop offset=".56" stopColor="#35E4C4" />
+            <stop offset="1" stopColor="#A9FFF0" />
+          </linearGradient>
+          <linearGradient id="athar-symbol-stroke" x1="72" y1="8" x2="98" y2="108" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#F8FFFF" />
+            <stop offset="1" stopColor="#25C7B0" />
+          </linearGradient>
+        </defs>
+        <path d="M18 99C8 76 13 47 31 28C45 13 65 8 82 10" stroke="url(#athar-symbol-sweep)" strokeWidth="10" strokeLinecap="round" />
+        <path d="M21 91C27 63 47 43 72 36" stroke="#27D7BA" strokeWidth="5" strokeLinecap="round" />
+        <path d="M62 104L73 24L103 24L87 103" stroke="url(#athar-symbol-stroke)" strokeWidth="9" strokeLinejoin="round" />
+        <path d="M72 13H104" stroke="#F5FFFF" strokeWidth="8" strokeLinecap="round" />
+        <circle cx="83" cy="28" r="10" fill="#2FDCC0" stroke="#9CFFEB" strokeWidth="2" />
+        <path d="M36 79C36 65 46 54 59 54C72 54 81 64 81 77" stroke="#13BDA5" strokeWidth="4" strokeLinecap="round" />
+        <path d="M43 83C43 72 50 64 59 64C68 64 74 71 74 81" stroke="#16CDB0" strokeWidth="3.3" strokeLinecap="round" />
+        <path d="M51 86C51 79 54 74 59 74C64 74 67 79 67 86" stroke="#35E5C6" strokeWidth="3" strokeLinecap="round" />
+        <path d="M59 87V92" stroke="#B6FFF0" strokeWidth="3" strokeLinecap="round" />
       </svg>
     </span>
   );
