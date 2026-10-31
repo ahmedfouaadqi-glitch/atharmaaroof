@@ -1862,3 +1862,33 @@ html[data-theme="light"] .info-footer a { color: #557b8d; }
   .info-footer { align-items: flex-start; flex-wrap: wrap; }
   .info-footer nav { width: 100%; margin-inline-start: 0; }
 }
+
+.iraq-map-issue {
+  position: absolute;
+  z-index: 500;
+  top: 15px;
+  left: 15px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid rgba(103, 192, 202, .24);
+  border-radius: 99px;
+  color: #d3f7f4;
+  background: rgba(5, 26, 39, .82);
+  font-size: 8px;
+  text-decoration: none;
+}
+.iraq-map-issue:hover { border-color: rgba(65,223,211,.6); color: #fff; }
+.leaflet-popup-content-wrapper { border-radius: 12px !important; }
+.leaflet-popup-content { margin: 11px 13px !important; }
+html[data-theme="light"] .iraq-map-issue {
+  color: #27596b;
+  background: rgba(255,255,255,.9);
+  border-color: rgba(47,130,151,.2);
+}
+html[data-theme="light"] .leaflet-popup-content-wrapper,
+html[data-theme="light"] .leaflet-popup-tip { background: #fff; }
+@media (max-width: 520px) {
+  .iraq-map-issue { top: auto; left: 8px; bottom: 8px; min-height: 26px; font-size: 7px; }
+}
