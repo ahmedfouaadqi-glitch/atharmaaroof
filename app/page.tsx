@@ -12,7 +12,6 @@ import {
   KeyRound, MapPin, MapPinned, Menu, Plus, Search, ShieldCheck,
   Smartphone, Sparkles, Volume2, VolumeX, Wallet, X, Navigation, LocateFixed, UserRoundCheck
 } from "lucide-react";
-import Magnet from "@/components/reactbits/Magnet";
 import SpotlightCard from "@/components/reactbits/SpotlightCard";
 
 type Report = {
@@ -670,12 +669,8 @@ export default function HomePage() {
               <p>اختار نوع البلاغ حتى نوجّهك للنموذج المناسب.</p>
             </div>
             <div className="action-buttons">
-              <Magnet padding={76} magnetStrength={3.2} maxOffset={8} tilt={2}>
-                <button className="primary-action" onClick={() => openReportForm("lost")}><Search size={18} /> فقدت مستمسكاً <ChevronLeft size={17} /></button>
-              </Magnet>
-              <Magnet padding={76} magnetStrength={3.2} maxOffset={8} tilt={2}>
-                <button className="secondary-action" onClick={() => openReportForm("found")}><Plus size={18} /> عثرت على مستمسك <ChevronLeft size={17} /></button>
-              </Magnet>
+              <button className="primary-action" onClick={() => openReportForm("lost")}><Search size={18} /> فقدت مستمسكاً <ChevronLeft size={17} /></button>
+              <button className="secondary-action" onClick={() => openReportForm("found")}><Plus size={18} /> عثرت على مستمسك <ChevronLeft size={17} /></button>
             </div>
           </section>
 
@@ -761,9 +756,7 @@ export default function HomePage() {
           <section className="install-card reveal">
             <div className="install-icon"><Smartphone size={22} /></div>
             <div><b>خلّي أثر معروف قريب منك</b><p>ثبّت التطبيق على الشاشة الرئيسية للوصول إليه مثل التطبيقات المعتادة.</p></div>
-            <Magnet padding={60} magnetStrength={3} maxOffset={7}>
-              <button onClick={() => void installApplication()}><Download size={16} /> تثبيت التطبيق</button>
-            </Magnet>
+            <button onClick={() => void installApplication()}><Download size={16} /> تثبيت التطبيق</button>
           </section>
 
           <footer className="site-footer">
