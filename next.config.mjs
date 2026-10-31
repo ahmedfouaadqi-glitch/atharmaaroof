@@ -8,8 +8,9 @@ const nextConfig = {
         headers: [
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "DENY" },
+          // Keep a valid Referer available for OpenStreetMap's public tile service.
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          { key: "Permissions-Policy", value: "camera=(), microphone=(self), geolocation=()" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(self), geolocation=(self)" },
           { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" }
         ]
       }
