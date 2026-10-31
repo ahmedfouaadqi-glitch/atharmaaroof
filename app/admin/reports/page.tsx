@@ -2,7 +2,13 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Check, Clock3, Eye, EyeOff, RefreshCw, ShieldCheck } from "lucide-react";
+import {
+  ArrowRight, Check, Clock3, Eye, EyeOff, RefreshCw, ShieldCheck,
+  Sparkles, FileText, MapPin, CalendarClock, X
+} from "lucide-react";
+import ClickSpark from "@/components/reactbits/ClickSpark";
+import Magnet from "@/components/reactbits/Magnet";
+import SpotlightCard from "@/components/reactbits/SpotlightCard";
 
 type Report = {
   id: string;
@@ -22,7 +28,7 @@ const statuses: { value: Report["status"]; label: string }[] = [
   { value: "published", label: "منشور" },
   { value: "matched", label: "تطابق محتمل" },
   { value: "returned", label: "تمت الإعادة" },
-  { value: "hidden", label: "مخفي" },
+  { value: "hidden", label: "مخفي" }
 ];
 
 export default function AdminReportsPage() {
@@ -62,16 +68,16 @@ export default function AdminReportsPage() {
       const response = await fetch("/api/admin/reports", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: report.id, status: nextStatus }),
+        body: JSON.stringify({ id: report.id, status: nextStatus })
       });
       const payload = await response.json();
       if (response.status === 401) {
         window.location.assign("/login");
         return;
       }
-      if (response.status === 403) throw new Error("هذا الحساب ليس ضمن مشرفي أثَر.");
+      if (response.status === 403) throw new Error("هذا الحساب ليس ضمن مشرفي أثر معروف.");
       if (!response.ok) throw new Error(payload.error || "تعذر تحديث البلاغ.");
-      setNotice("تم تحديث حالة " + report.public_code + ".");
+      setNotice("تم تحديث حالة البلاغ " + report.public_code + ".");
       await load();
     } catch (err) {
       setError(err instanceof Error ? err.message : "تعذر تحديث البلاغ.");
@@ -81,39 +87,87 @@ export default function AdminReportsPage() {
   }
 
   return (
-    <main dir="rtl" style={{ minHeight: "100vh", background: "#f5f7f4", color: "#20342a", padding: "28px 18px", fontFamily: "Arial, sans-serif" }}>
-      <div style={{ maxWidth: 1050, margin: "0 auto" }}>
-        <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "#21684d", textDecoration: "none", fontWeight: 700 }}><ArrowRight size={17}/> العودة إلى أثَر</Link>
-        <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16, flexWrap: "wrap", margin: "28px 0 22px" }}>
-          <div><div style={{ display: "flex", alignItems: "center", gap: 9, color: "#267052", fontSize: 13, fontWeight: 700 }}><ShieldCheck size={18}/> مساحة الإدارة</div><h1 style={{ fontSize: 30, margin: "8px 0" }}>مراجعة البلاغات</h1><p style={{ color: "#697970", margin: 0 }}>تظهر هنا البلاغات التي تسمح صلاحيات حسابك بمراجعتها.</p></div>
-          <button onClick={() => void load()} disabled={loading} style={buttonStyle("#fff", "#28694f", "#dce7de")}><RefreshCw size={16}/> تحديث</button>
+    <ClickSpark className="app-interaction-layer" style={{ minHeight: "100vh" }} sparkColor={["#38e2c5", "#d8fff5"]} sparkSize={8} sparkRadius={30} sparkCount={7} shape="star">
+      <div className="app-shell admin-shell" dir="rtl">
+        <header className="topbar admin-topbar">
+          <Link href="/" className="brand-lockup">
+            <AdminBrandMark />
+            <span className="brand-copy"><strong>أثر <b>معروف</b></strong><small>لوحة مراجعة البلاغات</small></span>
+          </Link>
+          <div className="admin-top-actions">
+            <span className="admin-secure"><ShieldCheck size={15} /> وصول المشرفين فقط</span>
+            <Link href="/" className="admin-home-link"><ArrowRight size={15} /> العودة للرئيسية</Link>
+          </div>
         </header>
-        <nav style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 18 }}>
-          {statuses.map(s => <button key={s.value} onClick={() => setStatus(s.value)} style={buttonStyle(status === s.value ? "#1f6b50" : "#fff", status === s.value ? "#fff" : "#3d5146", status === s.value ? "#1f6b50" : "#dce5dd")}>{s.label}</button>)}
-        </nav>
-        {error && <div role="alert" style={{ background: "#fff0ee", color: "#a43d30", padding: 14, borderRadius: 12, marginBottom: 14 }}>{error}</div>}
-        {notice && <div role="status" style={{ background: "#e9f6ed", color: "#236844", padding: 14, borderRadius: 12, marginBottom: 14 }}>{notice}</div>}
-        {loading ? <div style={panelStyle}>جارٍ تحميل البلاغات…</div> : reports.length === 0 ? <div style={{ ...panelStyle, textAlign: "center", padding: 46 }}><Clock3 size={26}/><h2 style={{ fontSize: 18 }}>لا توجد بلاغات بهذه الحالة</h2><p style={{ color: "#718078" }}>جرّب حالة أخرى أو حدّث القائمة.</p></div> : <div style={{ display: "grid", gap: 12 }}>
-          {reports.map(report => <article key={report.id} style={panelStyle}>
-            <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-              <div><div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}><strong>{report.title}</strong><span style={{ fontSize: 12, background: "#eef4ef", padding: "4px 8px", borderRadius: 99 }}>{report.kind === "lost" ? "مفقود" : "معثور عليه"}</span></div><p style={{ color: "#63756a", fontSize: 13, margin: "8px 0" }}>{report.public_code} · {report.category} · {report.city}{report.area ? " · " + report.area : ""}</p>{report.details && <p style={{ lineHeight: 1.8, margin: "8px 0", overflowWrap: "anywhere" }}>{report.details}</p>}<small style={{ color: "#829087" }}>{new Date(report.created_at).toLocaleString("ar-IQ")}</small></div>
-              <div style={{ display: "flex", alignItems: "flex-start", gap: 8, flexWrap: "wrap" }}>
-                {status !== "published" && <button disabled={!!busyId} onClick={() => void moderate(report, "published")} style={buttonStyle("#e7f6eb", "#226b45", "#cde7d3")}><Eye size={15}/> نشر</button>}
-                {status !== "hidden" && <button disabled={!!busyId} onClick={() => void moderate(report, "hidden")} style={buttonStyle("#fff1ed", "#9a4236", "#f2d7d1")}><EyeOff size={15}/> إخفاء</button>}
-                {status !== "matched" && <button disabled={!!busyId} onClick={() => void moderate(report, "matched")} style={buttonStyle("#f0edff", "#5b4b9a", "#ded8fb")}>تطابق محتمل</button>}
-                {status !== "returned" && <button disabled={!!busyId} onClick={() => void moderate(report, "returned")} style={buttonStyle("#e8f5f4", "#286b65", "#cce5e3")}><Check size={15}/> تمت الإعادة</button>}
-                {status !== "pending" && <button disabled={!!busyId} onClick={() => void moderate(report, "pending")} style={buttonStyle("#f4f4f1", "#59645c", "#e2e4df")}>إرجاع للمراجعة</button>}
-              </div>
+
+        <main className="page-content admin-content">
+          <section className="admin-heading">
+            <div>
+              <span className="section-kicker"><Sparkles size={14} /> أثر معروف · الإدارة</span>
+              <h1>مراجعة البلاغات</h1>
+              <p>راجع البلاغات قبل نشرها، وحدّث حالتها عبر صلاحيات الخادم.</p>
             </div>
-          </article>)}
-        </div>}
-        <p style={{ marginTop: 24, fontSize: 12, color: "#77847b", lineHeight: 1.8 }}>الوصول محمي بمصادقة الخادم ودور المشرف في قاعدة البيانات. لا تنشر أي بيانات حساسة حتى لو ظهرت في وصف البلاغ؛ راجعها قبل النشر.</p>
+            <button className="admin-refresh" onClick={() => void load()} disabled={loading}>
+              <RefreshCw size={16} className={loading ? "refresh-spinning" : ""} /> تحديث القائمة
+            </button>
+          </section>
+
+          <section className="admin-status-strip" aria-label="حالة البلاغ">
+            {statuses.map((item) => (
+              <button key={item.value} className={status === item.value ? "admin-status-tab active" : "admin-status-tab"} onClick={() => setStatus(item.value)} aria-pressed={status === item.value}>
+                {item.label}
+              </button>
+            ))}
+          </section>
+
+          {error && <div className="admin-alert error" role="alert"><X size={17} />{error}</div>}
+          {notice && <div className="admin-alert success" role="status"><Check size={17} />{notice}</div>}
+
+          <div className="admin-list-header">
+            <div><b>{statuses.find((item) => item.value === status)?.label}</b><small>{loading ? "جارٍ تحميل القائمة" : reports.length.toLocaleString("ar-IQ") + " بلاغ"}</small></div>
+            <span><ShieldCheck size={15} /> البيانات خاصة بمساحة الإدارة</span>
+          </div>
+
+          {loading ? (
+            <div className="admin-empty"><span className="loader-ring" /><b>جارٍ تحميل البلاغات</b></div>
+          ) : reports.length === 0 ? (
+            <div className="admin-empty"><FileText size={26} /><b>لا توجد بلاغات بهذه الحالة</b><small>لا توجد بيانات تجريبية هنا؛ القائمة تعرض ما أعاده الخادم فقط.</small></div>
+          ) : (
+            <div className="admin-report-list">
+              {reports.map((report) => (
+                <SpotlightCard key={report.id} className="admin-report-card" theme="dark" spotlightColor="rgba(50, 219, 190, .48)" intensity={.13} spotlightSize={220}>
+                  <div className="admin-report-top">
+                    <div className="admin-report-symbol"><FileText size={20} /></div>
+                    <div className="admin-report-title">
+                      <div><b>{report.title}</b><span className={report.kind === "found" ? "type-badge found" : "type-badge lost"}>{report.kind === "found" ? "معثور عليه" : "مفقود"}</span></div>
+                      <small>{report.public_code} · {report.category}</small>
+                    </div>
+                    <span className="admin-report-state">{statuses.find((item) => item.value === report.status)?.label ?? report.status}</span>
+                  </div>
+                  <div className="admin-report-meta">
+                    <span><MapPin size={13} /> {report.city}{report.area ? " · " + report.area : ""}</span>
+                    <span><CalendarClock size={13} /> {new Date(report.created_at).toLocaleString("ar-IQ")}</span>
+                  </div>
+                  {report.details && <p className="admin-report-details">{report.details}</p>}
+                  <div className="admin-report-actions">
+                    {status !== "published" && <Magnet padding={45} magnetStrength={3} maxOffset={5}><button disabled={!!busyId} onClick={() => void moderate(report, "published")} className="admin-action publish"><Eye size={14} /> نشر</button></Magnet>}
+                    {status !== "hidden" && <Magnet padding={45} magnetStrength={3} maxOffset={5}><button disabled={!!busyId} onClick={() => void moderate(report, "hidden")} className="admin-action hide"><EyeOff size={14} /> إخفاء</button></Magnet>}
+                    {status !== "matched" && <button disabled={!!busyId} onClick={() => void moderate(report, "matched")} className="admin-action match">تطابق محتمل</button>}
+                    {status !== "returned" && <button disabled={!!busyId} onClick={() => void moderate(report, "returned")} className="admin-action returned"><Check size={14} /> تمت الإعادة</button>}
+                    {status !== "pending" && <button disabled={!!busyId} onClick={() => void moderate(report, "pending")} className="admin-action reset"><Clock3 size={14} /> للمراجعة</button>}
+                  </div>
+                </SpotlightCard>
+              ))}
+            </div>
+          )}
+
+          <div className="admin-security-note"><ShieldCheck size={17} /><p>بيانات الإدارة محمية بمصادقة الخادم ودور المشرف. راجع أي وصف قبل نشره، ولا تنشر أرقام المستمسكات أو بيانات الاتصال أو أي معلومة حساسة.</p></div>
+        </main>
       </div>
-    </main>
+    </ClickSpark>
   );
 }
 
-function buttonStyle(background: string, color: string, border: string): React.CSSProperties {
-  return { display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 7, border: "1px solid " + border, background, color, borderRadius: 10, padding: "10px 13px", fontSize: 13, fontWeight: 700, cursor: "pointer" };
+function AdminBrandMark() {
+  return <span className="brand-mark" aria-hidden="true"><svg viewBox="0 0 56 56" fill="none"><rect x="10" y="7" width="29" height="40" rx="8" stroke="currentColor" strokeWidth="2.8"/><path d="M31 8v10h8M17 25h14M17 32h10" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/><circle cx="39" cy="39" r="11" fill="#2ADDC0" stroke="#09272A" strokeWidth="2.5"/><path d="m34 39 3.2 3.2 6.3-7" stroke="#063638" strokeWidth="2.7" strokeLinecap="round" strokeLinejoin="round"/></svg></span>;
 }
-const panelStyle: React.CSSProperties = { background: "#fff", border: "1px solid #e1e8e1", borderRadius: 16, padding: 20, boxShadow: "0 6px 24px #183e2b08" };
