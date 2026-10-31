@@ -10,6 +10,7 @@ import ClickSpark from "@/components/reactbits/ClickSpark";
 import Magnet from "@/components/reactbits/Magnet";
 import SpotlightCard from "@/components/reactbits/SpotlightCard";
 import { useInteractiveSound } from "@/components/useInteractiveSound";
+import { BrandMark } from "@/components/brand";
 
 type Report = {
   id: string;
@@ -48,7 +49,7 @@ export default function AdminReportsPage() {
       const response = await fetch("/api/admin/reports?status=" + status, { cache: "no-store" });
       const payload = await response.json();
       if (response.status === 401) {
-        window.location.assign("/login");
+        window.location.assign("/admin/login");
         return;
       }
       if (!response.ok) throw new Error(payload.error || "تعذر تحميل البلاغات.");
@@ -93,7 +94,7 @@ export default function AdminReportsPage() {
       <div className="app-shell admin-shell" dir="rtl" onClickCapture={sound.onInteraction} onPointerOverCapture={sound.onHover}>
         <header className="topbar admin-topbar">
           <Link href="/" className="brand-lockup">
-            <AdminBrandMark />
+            <BrandMark />
             <span className="brand-copy"><strong>أثر <b>معروف</b></strong><small>لوحة مراجعة البلاغات</small></span>
           </Link>
           <div className="admin-top-actions">
@@ -179,6 +180,3 @@ export default function AdminReportsPage() {
   );
 }
 
-function AdminBrandMark() {
-  return <span className="brand-mark" aria-hidden="true"><svg viewBox="0 0 56 56" fill="none"><rect x="10" y="7" width="29" height="40" rx="8" stroke="currentColor" strokeWidth="2.8"/><path d="M31 8v10h8M17 25h14M17 32h10" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/><circle cx="39" cy="39" r="11" fill="#2ADDC0" stroke="#09272A" strokeWidth="2.5"/><path d="m34 39 3.2 3.2 6.3-7" stroke="#063638" strokeWidth="2.7" strokeLinecap="round" strokeLinejoin="round"/></svg></span>;
-}
