@@ -103,7 +103,7 @@ Expected: RLS is enabled on all three tables; the RPC is not executable by `anon
 
 ## Anonymous guest identity
 
-Enable **Authentication → Providers → Anonymous Sign-Ins** in the intended Supabase project. The app creates an anonymous Auth user when a visitor first opens the report form; the report's `owner_id` is the Supabase Auth UUID and is protected by the same ownership RLS. Anonymous users are not identified by IP or MAC address. Supabase documents that an anonymous Auth user loses account access when the user clears browser data or changes browser/device. For cross-device recovery, the session must later be linked to a verified email/phone or another permanent identity. Anonymous sign-ins can be abused; enable CAPTCHA/Turnstile and review Supabase Auth rate limits before a public launch.
+Enable **Authentication → Providers → Anonymous Sign-Ins** and **manual identity linking** in the intended Supabase project. The app creates an anonymous Auth user when a visitor first opens the report form; the report's `owner_id` is the Supabase Auth UUID and is protected by owner RLS. Anonymous users are not identified by IP or MAC address. Supabase documents that an anonymous Auth user loses account access if browser data is cleared or another browser/device is used. The report form offers email recovery: the visitor adds an email to the current anonymous user, confirms that email, and can later recover the same account using the email magic-link button on `/login`; this preserves the original Auth UUID and report ownership. Anonymous sign-ins can be abused; enable CAPTCHA/Turnstile and review Supabase Auth rate limits before a public launch.
 
 ## Nearby search
 
