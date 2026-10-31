@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEvent, type PointerEvent } from "react";
 
-export type InterfaceTone = "tap" | "success" | "open" | "toggle";
+export type InterfaceTone = "tap" | "success" | "open" | "toggle" | "hover";
 
 export function useInteractiveSound() {
   const [enabled, setEnabled] = useState(false);
@@ -21,19 +21,20 @@ export function useInteractiveSound() {
         tap: [520, 680],
         success: [620, 880],
         open: [440, 620],
-        toggle: [360, 540]
+        toggle: [360, 540],
+        hover: [760, 820]
       };
       const [start, end] = tones[type];
-      oscillator.type = type === "success" ? "sine" : "triangle";
+      oscillator.type = type === "success" || type === "hover" ? "sine" : "triangle";
       oscillator.frequency.setValueAtTime(start, now);
       oscillator.frequency.exponentialRampToValueAtTime(end, now + 0.09);
       gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(type === "tap" ? 0.025 : 0.04, now + 0.012);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + (type === "success" ? 0.24 : 0.15));
+      gain.gain.exponentialRampToValueAtTime(type === "hover" ? 0.009 : type === "tap" ? 0.025 : 0.04, now + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + (type === "success" ? 0.24 : type === "hover" ? 0.07 : 0.15));
       oscillator.connect(gain);
       gain.connect(context.destination);
       oscillator.start(now);
-      oscillator.stop(now + (type === "success" ? 0.25 : 0.16));
+      oscillator.stop(now + (type === "success" ? 0.25 : type === "hover" ? 0.08 : 0.16));
     } catch {
       // Audio feedback is optional. Browser restrictions must never block a user action.
     }
@@ -50,6 +51,18 @@ export function useInteractiveSound() {
     play(tone);
   }, [enabled, play]);
 
+  const onHover = useCallback((event: PointerEvent<HTMLElement>) => {
+    if (!enabled || event.pointerType === "touch") return;
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const control = target.closest("button, a, input, select, textarea, [role='button']");
+    if (!control || control.hasAttribute("disabled") || control.getAttribute("aria-disabled") === "true") return;
+    const previous = event.relatedTarget;
+    if (previous instanceof Node && control.contains(previous)) return;
+    if (control.getAttribute("data-sound") === "manual") return;
+    play("hover");
+  }, [enabled, play]);
+
   const toggle = useCallback(() => {
     const next = !enabled;
     setEnabled(next);
@@ -60,5 +73,5 @@ export function useInteractiveSound() {
     void audioRef.current?.close();
   }, []);
 
-  return { enabled, setEnabled, play, onInteraction, toggle };
+  return { enabled, setEnabled, play, onInteraction, onHover, toggle };
 }
