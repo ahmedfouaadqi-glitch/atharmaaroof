@@ -117,7 +117,7 @@ export default function HomePage() {
       setReportsLoading(true);
       setReportsError("");
       try {
-        const params = new URLSearchParams({ limit: "40" });
+        const params = new URLSearchParams({ limit: "24" });
         if (city !== "الكل") params.set("city", city);
         if (filter !== "all") params.set("kind", filter);
         const response = await fetch("/api/reports?" + params.toString(), { cache: "no-store" });
