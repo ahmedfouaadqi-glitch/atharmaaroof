@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle2, Fingerprint, LockKeyhole, ShieldCheck, Volume2, VolumeX } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 import { useInteractiveSound } from "@/components/useInteractiveSound";
+import { BrandMark } from "@/components/brand";
 
 export default function LoginPage() {
   const sound = useInteractiveSound();
@@ -62,7 +63,7 @@ export default function LoginPage() {
             >{sound.enabled ? <Volume2 size={17} /> : <VolumeX size={17} />}</button>
           </div>
           <div className="auth-brand">
-            <AuthBrandMark />
+            <BrandMark />
             <div><strong>أثر <b>معروف</b></strong><small>حسابك ومساحة بلاغاتك</small></div>
           </div>
           <div className="auth-intro">
@@ -90,6 +91,3 @@ export default function LoginPage() {
   );
 }
 
-function AuthBrandMark() {
-  return <span className="brand-mark"><svg viewBox="0 0 56 56" fill="none"><rect x="10" y="7" width="29" height="40" rx="8" stroke="currentColor" strokeWidth="2.8"/><path d="M31 8v10h8M17 25h14M17 32h10" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/><circle cx="39" cy="39" r="11" fill="#2ADDC0" stroke="#09272A" strokeWidth="2.5"/><path d="m34 39 3.2 3.2 6.3-7" stroke="#063638" strokeWidth="2.7" strokeLinecap="round" strokeLinejoin="round"/></svg></span>;
-}
