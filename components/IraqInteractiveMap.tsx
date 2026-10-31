@@ -56,7 +56,7 @@ export default function IraqInteractiveMap() {
         />
 
         {cities.map((city) => (
-          <span key={city.id}>
+          <Fragment key={city.id}>
             <CircleMarker
               center={city.position}
               radius={22}
@@ -87,7 +87,7 @@ export default function IraqInteractiveMap() {
                 </div>
               </Popup>
             </CircleMarker>
-          </span>
+          </Fragment>
         ))}
         <MapControls />
       </MapContainer>
