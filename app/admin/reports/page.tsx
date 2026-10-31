@@ -50,7 +50,7 @@ export default function AdminReportsPage() {
       const response = await fetch("/api/admin/reports?status=" + status, { cache: "no-store" });
       const payload = await response.json();
       if (response.status === 401) {
-        window.location.assign("/admin/login");
+        window.location.assign("/control-center");
         return;
       }
       if (!response.ok) throw new Error(payload.error || "تعذر تحميل البلاغات.");
@@ -73,7 +73,7 @@ export default function AdminReportsPage() {
         body: JSON.stringify({ action: "logout" })
       });
     } finally {
-      window.location.replace("/admin/login");
+      window.location.replace("/control-center");
     }
   }
 
@@ -89,7 +89,7 @@ export default function AdminReportsPage() {
       });
       const payload = await response.json();
       if (response.status === 401) {
-        window.location.assign("/admin/login");
+        window.location.assign("/control-center");
         return;
       }
       if (response.status === 403) throw new Error("هذا الحساب ليس ضمن مشرفي أثر معروف.");
