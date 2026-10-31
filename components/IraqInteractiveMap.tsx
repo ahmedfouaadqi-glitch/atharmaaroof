@@ -12,11 +12,11 @@ const IRAQ_BOUNDS: LatLngBoundsExpression = [
 const MAX_BOUNDS: LatLngBoundsExpression = [[28.65, 38.25], [37.8, 49.15]];
 
 const cities = [
-  { id: "baghdad", name: "بغداد", position: [33.3152, 44.3661] as [number, number], tone: "gold" },
-  { id: "karbala", name: "كربلاء", position: [32.6160, 44.0249] as [number, number], tone: "teal" },
-  { id: "najaf", name: "النجف", position: [32.0003, 44.3354] as [number, number], tone: "teal" },
-  { id: "samarra", name: "سامراء", position: [34.1978, 43.8748] as [number, number], tone: "teal" },
-  { id: "basra", name: "البصرة", position: [30.5085, 47.7804] as [number, number], tone: "teal" }
+  { id: "baghdad", name: "بغداد", position: [33.3152, 44.3661] as [number, number], tone: "gold", direction: "top" as const, offset: [0, -9] as [number, number] },
+  { id: "karbala", name: "كربلاء", position: [32.6160, 44.0249] as [number, number], tone: "teal", direction: "left" as const, offset: [-12, 0] as [number, number] },
+  { id: "najaf", name: "النجف", position: [32.0003, 44.3354] as [number, number], tone: "teal", direction: "right" as const, offset: [12, 0] as [number, number] },
+  { id: "samarra", name: "سامراء", position: [34.1978, 43.8748] as [number, number], tone: "teal", direction: "top" as const, offset: [0, -9] as [number, number] },
+  { id: "basra", name: "البصرة", position: [30.5085, 47.7804] as [number, number], tone: "teal", direction: "top" as const, offset: [0, -9] as [number, number] }
 ] as const;
 
 function MapControls() {
@@ -39,11 +39,11 @@ export default function IraqInteractiveMap() {
         className="iraq-leaflet-map"
         bounds={IRAQ_BOUNDS}
         boundsOptions={{ padding: [26, 26] }}
-        minZoom={5}
+        minZoom={4}
         maxZoom={12}
         maxBounds={MAX_BOUNDS}
         maxBoundsViscosity={0.72}
-        scrollWheelZoom={true}
+        scrollWheelZoom={false}
         zoomControl={false}
         attributionControl={true}
         preferCanvas={true}
@@ -78,7 +78,7 @@ export default function IraqInteractiveMap() {
                 fillOpacity: 1
               }}
             >
-              <Tooltip permanent direction="top" offset={[0, -9]} opacity={1} className="athar-map-city-tooltip">
+              <Tooltip permanent direction={city.direction} offset={city.offset} opacity={1} className="athar-map-city-tooltip">
                 <span>{city.name}</span>
               </Tooltip>
               <Popup>
@@ -92,6 +92,7 @@ export default function IraqInteractiveMap() {
         ))}
         <MapControls />
       </MapContainer>
+      <a className="iraq-map-issue" href="https://www.openstreetmap.org/fixthemap" target="_blank" rel="noopener noreferrer">الإبلاغ عن خطأ بالخريطة</a>
       <div className="iraq-map-top-label" aria-hidden="true">
         <span>خريطة العراق</span>
         <small>مواقع المدن الخمس المحددة</small>
