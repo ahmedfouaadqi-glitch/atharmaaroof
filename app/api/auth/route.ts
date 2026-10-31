@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
   }
 
   const action = body.action;
-  if (action !== "signup" && action !== "login" && action !== "admin_login" && action !== "logout") {
+  if (action !== "signup" && action !== "login" && action !== "admin_login" && action !== "magic_link" && action !== "logout") {
     return NextResponse.json({ error: "عملية غير مدعومة." }, { status: 400 });
   }
 
@@ -28,6 +28,21 @@ export async function POST(request: NextRequest) {
 
     const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
     const password = typeof body.password === "string" ? body.password : "";
+
+    if (action === "magic_link") {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return NextResponse.json({ error: "أدخل بريداً إلكترونياً صحيحاً." }, { status: 400 });
+      }
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: false,
+          emailRedirectTo: new URL("/auth/callback", request.url).toString()
+        }
+      });
+      if (error) return NextResponse.json({ error: "تعذر إرسال رابط الدخول. تأكد من أن البريد مرتبط بحساب مؤكد." }, { status: 400 });
+      return NextResponse.json({ ok: true, message: "تم إرسال رابط دخول إلى بريدك. افتحه من الجهاز الذي تريد استعادة هويتك عليه." });
+    }
 
     if (action === "admin_login") {
       const approvedEmails = (process.env.ATHAR_ADMIN_EMAILS ?? "")
