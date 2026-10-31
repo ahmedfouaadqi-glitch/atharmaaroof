@@ -1,22 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 176" fill="none" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 230" fill="none" role="img" aria-labelledby="title desc">
 <title id="title">أثر معروف — ATHAR MAAROOF</title>
-<desc id="desc">شعار أثر معروف: مسار أثر وبصمة مع الاسم العربي والإنجليزي.</desc>
+<desc id="desc">الهوية البصرية لأثر معروف: رمز الأثر والبصمة مع الاسم العربي والإنجليزي.</desc>
 <defs>
-  <linearGradient id="sweep" x1="15" y1="148" x2="151" y2="8" gradientUnits="userSpaceOnUse"><stop stop-color="#13B89F"/><stop offset=".56" stop-color="#35E4C4"/><stop offset="1" stop-color="#A9FFF0"/></linearGradient>
-  <linearGradient id="stroke" x1="91" y1="9" x2="138" y2="151" gradientUnits="userSpaceOnUse"><stop stop-color="#F8FFFF"/><stop offset="1" stop-color="#25C7B0"/></linearGradient>
+  <linearGradient id="brand-sweep" x1="20" y1="20" x2="172" y2="185" gradientUnits="userSpaceOnUse"><stop stop-color="#45E9DC"/><stop offset=".52" stop-color="#18C9CB"/><stop offset="1" stop-color="#28BCEB"/></linearGradient>
+  <linearGradient id="brand-right" x1="153" y1="12" x2="199" y2="170" gradientUnits="userSpaceOnUse"><stop stop-color="#54D7FA"/><stop offset="1" stop-color="#079DC9"/></linearGradient>
+  <linearGradient id="brand-white" x1="129" y1="18" x2="183" y2="145" gradientUnits="userSpaceOnUse"><stop stop-color="#FFFFFF"/><stop offset=".56" stop-color="#DFFBFA"/><stop offset="1" stop-color="#3ED6D0"/></linearGradient>
+  <radialGradient id="brand-drop" cx="0" cy="0" r="1" gradientTransform="matrix(0 38 -30 0 106 35)" gradientUnits="userSpaceOnUse"><stop stop-color="#A8FFF4"/><stop offset=".5" stop-color="#39E5D9"/><stop offset="1" stop-color="#08B9C4"/></radialGradient>
+  <filter id="brand-shadow" x="0" y="0" width="220" height="210" filterUnits="userSpaceOnUse"><feGaussianBlur in="SourceAlpha" stdDeviation="5"/><feOffset dy="5"/><feComponentTransfer><feFuncA type="linear" slope=".24"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 </defs>
-<path d="M18 145C4 112 11 73 38 45C60 22 90 13 115 15" stroke="url(#sweep)" stroke-width="13" stroke-linecap="round"/>
-<path d="M22 134C32 93 61 65 97 55" stroke="#27D7BA" stroke-width="7" stroke-linecap="round"/>
-<path d="M82 151L98 35L142 35L119 151" stroke="url(#stroke)" stroke-width="13" stroke-linejoin="round"/>
-<path d="M98 19H144" stroke="#F5FFFF" stroke-width="11" stroke-linecap="round"/>
-<circle cx="114" cy="36" r="14" fill="#2FDCC0" stroke="#9CFFEB" stroke-width="3"/>
-<path d="M46 118C46 98 61 83 80 83C99 83 113 97 113 116" stroke="#13BDA5" stroke-width="6" stroke-linecap="round"/>
-<path d="M56 123C56 107 66 96 80 96C94 96 104 108 104 121" stroke="#16CDB0" stroke-width="5" stroke-linecap="round"/>
-<path d="M68 128C68 117 73 109 80 109C87 109 92 117 92 128" stroke="#35E5C6" stroke-width="4.5" stroke-linecap="round"/>
-<path d="M80 129V138" stroke="#B6FFF0" stroke-width="4.5" stroke-linecap="round"/>
-<g font-family="Arial,Tahoma,sans-serif" text-anchor="end" direction="rtl">
-  <text x="602" y="91" fill="#F2FBF8" font-size="64" font-weight="700">أثر معروف</text>
-  <text x="602" y="125" fill="#9CBDB4" font-size="22" letter-spacing="5" direction="ltr">ATHAR MAAROOF</text>
-  <text x="602" y="158" fill="#35DCC0" font-size="20">لأن كل شيء له أثر... ونوصله لأصحابه</text>
+<g filter="url(#brand-shadow)">
+  <path d="M76 18C45 25 22 51 15 85C8 119 17 151 35 177L57 158C45 139 40 118 43 95C46 72 58 52 81 42L76 18Z" fill="url(#brand-sweep)"/>
+  <path d="M34 174C58 151 80 157 104 155C143 153 159 126 163 88L167 39L191 39L187 97C184 143 162 176 125 190C92 203 58 193 31 193L9 193L34 174Z" fill="url(#brand-sweep)"/>
+  <path d="M145 178C173 157 190 123 192 80L194 48L215 27C216 87 206 141 178 176L145 178Z" fill="url(#brand-right)"/>
+  <path d="M135 15H193L181 29H127L135 15Z" fill="url(#brand-white)"/>
+  <path d="M131 36H184V51L158 77V118H135V47H131V36Z" fill="url(#brand-white)"/>
+  <path d="M138 44H178L151 69V47H138V44Z" fill="#071F2B" fill-opacity=".82"/>
+  <path d="M143 45L158 60L171 45M143 58L156 71L169 57M148 72L160 84" stroke="#42D8E5" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M188 28C191 18 199 13 207 13V51C201 58 195 63 190 73V117" stroke="#43CAE9" stroke-width="4" stroke-linecap="round"/>
+  <path d="M190 91C201 80 208 72 211 61M190 124C202 115 210 105 213 92" stroke="#64D8F0" stroke-width="3" stroke-linecap="round"/>
+  <path d="M105 13C91 26 87 36 91 48C95 61 106 68 118 63C130 57 134 45 127 33C122 24 114 17 105 13Z" fill="url(#brand-drop)"/>
+  <path d="M62 111C67 91 84 81 102 81C120 81 136 92 142 109" stroke="#22D6CC" stroke-width="5" stroke-linecap="round"/>
+  <path d="M55 124C59 102 79 91 101 91C123 91 140 103 147 124" stroke="#25D8CE" stroke-width="5" stroke-linecap="round"/>
+  <path d="M58 139C74 132 73 111 85 105C96 98 110 101 116 112C123 124 118 139 112 151" stroke="#28DCCE" stroke-width="5" stroke-linecap="round"/>
+  <path d="M73 151C88 144 86 124 96 117C104 111 114 116 115 126C117 138 108 151 99 159" stroke="#2ADFD0" stroke-width="5" stroke-linecap="round"/>
+  <path d="M88 162C105 155 114 143 113 131C112 122 105 120 100 126C95 132 98 145 90 151" stroke="#30E1D2" stroke-width="5" stroke-linecap="round"/>
+  <path d="M101 166C118 156 128 141 126 124" stroke="#25D2C9" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M133 117C139 123 139 130 138 137" stroke="#32DDCF" stroke-width="4" stroke-linecap="round"/>
+  <path d="M110 164L109 171" stroke="#7DFFF0" stroke-width="4.5" stroke-linecap="round"/>
+</g>
+<g transform="translate(0 6) scale(1.02)"/>
+<g font-family="Tahoma,Arial,sans-serif" direction="rtl" text-anchor="end">
+  <text x="744" y="112" fill="#F8FFFF" font-size="76" font-weight="800">أثر معروف</text>
+  <text x="744" y="156" fill="#C8E7E8" font-family="Arial,sans-serif" font-size="29" letter-spacing="7" direction="ltr">ATHAR MAAROOF</text>
+  <text x="744" y="195" fill="#32DCCD" font-size="20">لأن كل شيء له أثر... ونوصله لأصحابه</text>
 </g>
 </svg>
