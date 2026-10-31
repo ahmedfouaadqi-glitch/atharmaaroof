@@ -103,7 +103,13 @@ Expected: RLS is enabled on all three tables; the RPC is not executable by `anon
 
 ## Anonymous guest identity
 
-Enable **Authentication → Providers → Anonymous Sign-Ins** and **manual identity linking** in the intended Supabase project. The app creates an anonymous Auth user when a visitor first opens the report form; the report's `owner_id` is the Supabase Auth UUID and is protected by owner RLS. Anonymous users are not identified by IP or MAC address. Supabase documents that an anonymous Auth user loses account access if browser data is cleared or another browser/device is used. The report form offers email recovery: the visitor adds an email to the current anonymous user, confirms that email, and can later recover the same account using the email magic-link button on `/login`; this preserves the original Auth UUID and report ownership. Anonymous sign-ins can be abused; enable CAPTCHA/Turnstile and review Supabase Auth rate limits before a public launch.
+Enable **Authentication → Providers → Anonymous Sign-Ins** and **manual identity linking** in the intended Supabase project.
+
+For cross-device email recovery, configure the Supabase Auth Site URL as the production site and add the production and preview callback URLs to the allowed redirect URLs. Update the Auth email templates to use token hashes so a confirmation can be completed on a different browser/device:
+- Confirm signup / email change: `{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=email` (use the actual email-change template type configured by Supabase if it is separate).
+- Magic link: `{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=magiclink`.
+
+The callback route accepts both PKCE `code` and `token_hash` verification. Test the exact email template flows in the intended project before relying on recovery. The app creates an anonymous Auth user when a visitor first opens the report form; the report's `owner_id` is the Supabase Auth UUID and is protected by owner RLS. Anonymous users are not identified by IP or MAC address. Supabase documents that an anonymous Auth user loses account access if browser data is cleared or another browser/device is used. The report form offers email recovery: the visitor adds an email to the current anonymous user, confirms that email, and can later recover the same account using the email magic-link button on `/login`; this preserves the original Auth UUID and report ownership. Anonymous sign-ins can be abused; enable CAPTCHA/Turnstile and review Supabase Auth rate limits before a public launch.
 
 ## Nearby search
 
