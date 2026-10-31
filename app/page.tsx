@@ -374,8 +374,7 @@ export default function HomePage() {
     try { localStorage.setItem("athar-maaroof-install-dismissed", "1"); } catch { /* storage can be unavailable */ }
   }
 
-  async function linkGuestIdentity(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function linkGuestIdentity() {
     setGuestLinkBusy(true);
     setGuestLinkMessage("");
     try {
@@ -850,13 +849,12 @@ export default function HomePage() {
                       {guestLinkOpen ? "إغلاق حفظ الهوية" : "حفظ هويتي لاستعادتها من جهاز آخر"}
                     </button>
                     {guestLinkOpen && (
-                      <form className="guest-recovery-form" onSubmit={linkGuestIdentity}>
+                      <div className="guest-recovery-form">
                         <p>أضف بريدك وأكّد الرسالة التي تصلك. بعد التأكيد تستطيع استعادة هذه الهوية عبر البريد دون فقدان البلاغات المرتبطة بها.</p>
                         <input type="email" required value={guestEmail} onChange={(event) => setGuestEmail(event.target.value)} placeholder="بريدك الإلكتروني" autoComplete="email" />
-                        <button type="submit" disabled={guestLinkBusy || !guestEmail.trim()}>{guestLinkBusy ? "جارٍ الإرسال..." : "إرسال رابط التأكيد"}</button>
+                        <button type="button" onClick={() => void linkGuestIdentity()} disabled={guestLinkBusy || !guestEmail.trim()}>{guestLinkBusy ? "جارٍ الإرسال..." : "إرسال رابط التأكيد"}</button>
                         {guestLinkMessage && <small role="status">{guestLinkMessage}</small>}
-                      </form>
-                    )}
+                      </div>                    )}
                   </div>
                 )}
                 <div className="privacy-warning"><ShieldCheck size={18} /><span>لا تكتب الرقم الوطني أو رقم البطاقة أو PIN أو CVV أو OTP.</span></div>
