@@ -438,7 +438,11 @@ export default function HomePage() {
   };
 
   return (
-    <div className="app-shell" dir="rtl" onClickCapture={sound.onInteraction} onPointerOverCapture={sound.onHover}>
+    <div className="app-shell" dir="rtl" onClickCapture={sound.onInteraction} onPointerOverCapture={sound.onHover} onContextMenuCapture={(event) => {
+        const target = event.target;
+        if (target instanceof HTMLElement && target.closest("input, textarea, select, [contenteditable=true]")) return;
+        event.preventDefault();
+      }}>
         <div className="ambient ambient-one" aria-hidden="true" />
         <div className="ambient ambient-two" aria-hidden="true" />
 
