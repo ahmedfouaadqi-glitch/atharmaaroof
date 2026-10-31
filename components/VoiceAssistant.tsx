@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { ArrowUp, AudioLines, Mic, MicOff, Phone, PhoneOff, Sparkles, Volume2, VolumeX, X } from "lucide-react";
+import { ArrowUp, AudioLines, Mic, MicOff, PhoneOff, Sparkles, Volume2, VolumeX, X } from "lucide-react";
 
 type SpeechResult = { transcript: string };
 type SpeechResultItem = { isFinal: boolean; length: number; [index: number]: SpeechResult };
@@ -182,8 +182,8 @@ export default function VoiceAssistant() {
   return (
     <>
       <button type="button" className="voice-call-trigger" onClick={() => setOpen(true)} data-sound="open">
-        <span className="voice-call-icon"><Phone size={16} /></span>
-        <span><b>محادثة صوتية</b><small>تحدث مع مساعد أثر معروف</small></span>
+        <span className="voice-call-icon"><Mic size={17} /></span>
+        <span><b>تحدث مع المساعد</b><small>صوت ونص بالعربية</small></span>
         <AudioLines size={17} />
       </button>
 
