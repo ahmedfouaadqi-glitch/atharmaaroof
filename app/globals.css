@@ -630,7 +630,7 @@ a { color: inherit; }
   .assistant-response-heading small { font-size: 7px; }
   .assistant-match { gap: 7px; padding: 7px; }
   .assistant-match b { font-size: 8px; }
-  .motion-toggle { bottom: -9px; min-height: 31px; font-size: 8px; }
+  .motion-toggle { bottom: -9px; min-height: 31px; font-size: 8px; transform: translateX(50%) scale(1.25); }
 }
 @media (max-width: 380px) {
   .install-banner-copy small { max-width: 160px; }
