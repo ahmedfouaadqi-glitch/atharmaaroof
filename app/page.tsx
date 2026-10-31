@@ -382,22 +382,23 @@ export default function HomePage() {
           title: category + (kind === "lost" ? " مفقودة" : " معثور عليها"),
           city: formCity,
           area,
-          details
+          details,
+          ...(reportLocation ? {
+            locationLatitude: reportLocation.latitude,
+            locationLongitude: reportLocation.longitude
+          } : {})
         })
       });
       const payload = await response.json();
-      if (response.status === 401) {
-        notify("سجّل الدخول أولاً حتى نربط البلاغ بحسابك.");
-        window.location.assign("/login");
-        return;
-      }
       if (!response.ok) throw new Error(payload.error || "تعذر حفظ البلاغ.");
       setFormOpen(false);
       setArea("");
       setDetails("");
       setCategory(categories[0]);
+      setReportLocation(null);
+      if (payload.guestCode) setGuestCode(payload.guestCode);
       setReloadKey((value) => value + 1);
-      notify("تم استلام البلاغ، وهو بانتظار مراجعة المشرف قبل نشره.", "success");
+      notify(payload.guest ? "تم استلام البلاغ وربطه بهوية زائر خاصة بهذا المتصفح." : "تم استلام البلاغ، وهو بانتظار مراجعة المشرف قبل نشره.", "success");
     } catch (error) {
       notify(error instanceof Error ? error.message : "تعذر حفظ البلاغ. حاول لاحقاً.");
     } finally {
@@ -544,7 +545,7 @@ export default function HomePage() {
                   <div className="assistant-status"><span className="online-pulse" /> مساعد البلاغات <Sparkles size={15} /><small>متاح لمساعدتك</small></div>
                   <p className="greeting">أهلاً بيك في <b>أثر معروف</b></p>
                   <h1>مفقودك مو نهاية الحكاية،<br /><em>خلّينا نساعدك يرجع.</em></h1>
-                  <p className="hero-description">سجّل بلاغ فقدان أو عثور، وابحث بين البلاغات المنشورة. معلوماتك الشخصية تبقى محمية.</p>
+                  <p className="hero-description">سجّل بلاغ فقدان أو عثور، وابحث بين البلاغات المنشورة. يمكنك العثور على الأقرب بموافقتك على مشاركة الموقع.</p>
 
                   <form className="assistant-input" onSubmit={handleAssistantSubmit}>
                     <span className="assistant-input-mark"><Sparkles size={20} /></span>
@@ -587,6 +588,14 @@ export default function HomePage() {
                       )}
                     </section>
                   )}
+                  <div className="hero-tools-row">
+                    <VoiceAssistant />
+                    <button className="nearby-search-button" type="button" onClick={() => void searchNearbyReports()} disabled={nearbySearching}>
+                      {nearbySearching ? <span className="assistant-spinner" /> : <Navigation size={16} />}
+                      {nearbySearching ? "يحدد موقعك..." : "البلاغات القريبة مني"}
+                    </button>
+                  </div>
+                  {nearbyError && <p className="nearby-inline-error" role="alert">{nearbyError}</p>}
                   <div className="quick-actions">
                     <span>جرّب البحث عن:</span>
                     {quickActions.map((item) => {
@@ -608,7 +617,9 @@ export default function HomePage() {
                     "--motion-front-x": (deviceMotion.point.x * 10).toFixed(2) + "px",
                     "--motion-front-y": (deviceMotion.point.y * 9).toFixed(2) + "px",
                     "--motion-chip-x": (deviceMotion.point.x * 5).toFixed(2) + "px",
-                    "--motion-chip-y": (deviceMotion.point.y * 5).toFixed(2) + "px"
+                    "--motion-chip-y": (deviceMotion.point.y * 5).toFixed(2) + "px",
+                    "--device-tilt-x": (deviceMotion.point.y * -3.5).toFixed(2) + "deg",
+                    "--device-tilt-y": (deviceMotion.point.x * 4.2).toFixed(2) + "deg"
                   } as CSSProperties}
                 >
                   <div className="hero-visual-art" aria-hidden="true">
@@ -626,7 +637,7 @@ export default function HomePage() {
                     <i /><i className="line-short" />
                     <div className="verified-seal"><Check size={16} /></div>
                   </div>
-                  <div className="floating-chip chip-top"><ShieldCheck size={15} /> خصوصيتك أولاً</div>
+                  <div className="floating-chip chip-top privacy-float"><ShieldCheck size={15} /> خصوصيتك أولاً</div>
                   <div className="floating-chip chip-bottom"><MapPin size={14} /> نطاق مكاني تقريبي</div>
                   </div>
                   {deviceMotion.status !== "unsupported" && (
