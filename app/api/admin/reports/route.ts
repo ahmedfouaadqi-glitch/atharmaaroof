@@ -73,19 +73,18 @@ export async function PATCH(request: NextRequest) {
   }
 
   const { data, error } = await access.supabase
-    .from("athar_reports")
-    .update({ status, updated_at: new Date().toISOString() })
-    .eq("id", id)
-    .select("id,public_code,status,updated_at")
-    .maybeSingle();
+    .rpc("athar_admin_set_report_status", {
+      p_report_id: id,
+      p_new_status: status,
+    });
 
   if (error) {
     console.error("ATHAR admin moderation failed", error.code);
     return NextResponse.json({ error: "تعذر تحديث حالة البلاغ." }, { status: 503 });
   }
-  if (!data) {
+  if (!data || (Array.isArray(data) && data.length === 0)) {
     return NextResponse.json({ error: "البلاغ غير موجود أو لا يمكن الوصول إليه." }, { status: 404 });
   }
 
-  return NextResponse.json({ report: data });
+  return NextResponse.json({ report: Array.isArray(data) ? data[0] : data });
 }
