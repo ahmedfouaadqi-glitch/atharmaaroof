@@ -1,5 +1,5 @@
 const CACHE_NAME = "athar-maarouf-static-v1";
-const STATIC_ASSETS = ["/icon.svg", "/manifest.webmanifest"];
+const STATIC_ASSETS = ["/icon.svg", "/brand.svg", "/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
