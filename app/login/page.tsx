@@ -45,7 +45,7 @@ export default function LoginPage() {
 
   return (
     <ClickSpark className="auth-interaction-layer" style={{ minHeight: "100vh" }} sparkColor="#39e2c3" shape="star" sparkCount={7}>
-      <main className="auth-page" dir="rtl" onClickCapture={sound.onInteraction}>
+      <main className="auth-page" dir="rtl" onClickCapture={sound.onInteraction} onPointerOverCapture={sound.onHover}>
         <div className="auth-orbit auth-orbit-a" />
         <div className="auth-orbit auth-orbit-b" />
         <section className="auth-card">
