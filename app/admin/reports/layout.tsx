@@ -17,6 +17,12 @@ export default async function ProtectedAdminReportsLayout({ children }: { childr
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) redirect("/control-center");
 
+  const approvedEmails = (process.env.ATHAR_ADMIN_EMAILS ?? "")
+    .split(",")
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean);
+  if (!user.email || !approvedEmails.includes(user.email.toLowerCase())) redirect("/control-center?reason=unauthorized");
+
   const { data: admin, error: roleError } = await supabase
     .from("athar_admins")
     .select("user_id")
