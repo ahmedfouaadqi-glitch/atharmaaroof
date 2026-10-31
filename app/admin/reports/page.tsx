@@ -6,7 +6,6 @@ import {
   ArrowRight, Check, Clock3, Eye, EyeOff, RefreshCw, ShieldCheck, LogOut,
   Sparkles, FileText, MapPin, CalendarClock, X, Volume2, VolumeX
 } from "lucide-react";
-import ClickSpark from "@/components/reactbits/ClickSpark";
 import Magnet from "@/components/reactbits/Magnet";
 import SpotlightCard from "@/components/reactbits/SpotlightCard";
 import { useInteractiveSound } from "@/components/useInteractiveSound";
@@ -104,8 +103,7 @@ export default function AdminReportsPage() {
   }
 
   return (
-    <ClickSpark className="app-interaction-layer" style={{ minHeight: "100vh" }} sparkColor={["#38e2c5", "#d8fff5"]} sparkSize={8} sparkRadius={30} sparkCount={7} shape="star">
-      <div className="app-shell admin-shell" dir="rtl" onClickCapture={sound.onInteraction} onPointerOverCapture={sound.onHover}>
+    <div className="app-shell admin-shell" dir="rtl" onClickCapture={sound.onInteraction} onPointerOverCapture={sound.onHover}>
         <header className="topbar admin-topbar">
           <Link href="/" className="brand-lockup">
             <BrandMark />
@@ -192,7 +190,7 @@ export default function AdminReportsPage() {
           <div className="admin-security-note"><ShieldCheck size={17} /><p>بيانات الإدارة محمية بمصادقة الخادم ودور المشرف. راجع أي وصف قبل نشره، ولا تنشر أرقام المستمسكات أو بيانات الاتصال أو أي معلومة حساسة.</p></div>
         </main>
       </div>
-    </ClickSpark>
+
   );
 }
 
