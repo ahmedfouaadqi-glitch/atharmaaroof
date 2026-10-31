@@ -3,7 +3,6 @@
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Fingerprint, LockKeyhole, ShieldCheck, Volume2, VolumeX } from "lucide-react";
-import ClickSpark from "@/components/reactbits/ClickSpark";
 import { useInteractiveSound } from "@/components/useInteractiveSound";
 import { BrandMark } from "@/components/brand";
 
@@ -13,6 +12,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [magicBusy, setMagicBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -44,9 +44,28 @@ export default function LoginPage() {
     }
   }
 
+  async function sendMagicLink() {
+    setMagicBusy(true);
+    setError("");
+    setMessage("");
+    try {
+      const response = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "magic_link", email })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "تعذر إرسال رابط الدخول.");
+      setMessage(result.message || "تحقق من بريدك لإكمال الدخول.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "تعذر إرسال رابط الدخول.");
+    } finally {
+      setMagicBusy(false);
+    }
+  }
+
   return (
-    <ClickSpark className="auth-interaction-layer" style={{ minHeight: "100vh" }} sparkColor="#39e2c3" shape="star" sparkCount={7}>
-      <main className="auth-page" dir="rtl" onClickCapture={sound.onInteraction} onPointerOverCapture={sound.onHover}>
+    <main className="auth-page" dir="rtl" onClickCapture={sound.onInteraction} onPointerOverCapture={sound.onHover}>
         <div className="auth-orbit auth-orbit-a" />
         <div className="auth-orbit auth-orbit-b" />
         <section className="auth-card">
@@ -82,12 +101,17 @@ export default function LoginPage() {
             {error && <p className="auth-alert error" role="alert">{error}</p>}
             {message && <p className="auth-alert success" role="status"><CheckCircle2 size={17} />{message}</p>}
             <button className="auth-submit" type="submit" disabled={busy}>{busy ? "جارٍ التنفيذ…" : mode === "signup" ? "إنشاء الحساب" : "دخول آمن"} <ArrowRight size={17} /></button>
+            {mode === "login" && (
+              <button className="auth-magic-link" type="button" onClick={() => void sendMagicLink()} disabled={magicBusy || !email.trim()}>
+                {magicBusy ? "جارٍ إرسال الرابط..." : "إرسال رابط دخول إلى بريدي"}
+              </button>
+            )}
           </form>
           <div className="auth-safety"><ShieldCheck size={19} /><span>لا تضع رقم الهوية أو بيانات البطاقة المصرفية أو رموز التحقق في بيانات الحساب أو البلاغات العامة.</span></div>
           <div className="auth-footer"><LockKeyhole size={13} /> حماية الحساب تعتمد على إعدادات المصادقة في الخادم.</div>
         </section>
       </main>
-    </ClickSpark>
+
   );
 }
 

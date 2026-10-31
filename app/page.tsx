@@ -1,19 +1,18 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { BrandMark } from "@/components/brand";
 import { useDeviceMotion } from "@/components/useDeviceMotion";
+import VoiceAssistant from "@/components/VoiceAssistant";
 import { useInteractiveSound } from "@/components/useInteractiveSound";
 import Link from "next/link";
 import {
-  ArrowUp, Bell, Check, CheckCircle2, ChevronLeft, CircleHelp, Clock3,
+  ArrowUp, Bell, Check, CheckCircle2, ChevronLeft, Clock3,
   CreditCard, Download, FileText, Fingerprint, HeartHandshake, House,
   KeyRound, MapPin, MapPinned, Menu, Plus, Search, ShieldCheck,
-  Smartphone, Sparkles, Volume2, VolumeX, Wallet, X
+  Smartphone, Sparkles, Volume2, VolumeX, Wallet, X, Navigation, LocateFixed, UserRoundCheck
 } from "lucide-react";
-import ClickSpark from "@/components/reactbits/ClickSpark";
-import Magnet from "@/components/reactbits/Magnet";
-import SpotlightCard from "@/components/reactbits/SpotlightCard";
+import AtharReferenceHome from "@/components/AtharReferenceHome";
 
 type Report = {
   id: string;
@@ -25,6 +24,7 @@ type Report = {
   kind: "lost" | "found";
   status: "pending" | "published" | "matched" | "returned" | "hidden" | string;
   created_at: string;
+  approx_distance_km?: number;
 };
 
 type InstallPromptEvent = Event & {
@@ -44,6 +44,29 @@ const quickActions = [
   { label: "محفظة", icon: Wallet },
   { label: "مفاتيح", icon: KeyRound }
 ];
+
+type BrowserLocation = { latitude: number; longitude: number };
+
+function readBrowserLocation(): Promise<BrowserLocation> {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error("المتصفح لا يدعم تحديد الموقع."));
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => resolve({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      }),
+      (error) => {
+        if (error.code === error.PERMISSION_DENIED) reject(new Error("لم تسمح بمشاركة موقعك. يمكنك البحث بالمدينة بدلاً من ذلك."));
+        else if (error.code === error.TIMEOUT) reject(new Error("انتهت مهلة تحديد الموقع. حاول مرة أخرى."));
+        else reject(new Error("تعذر تحديد الموقع. تحقق من إعدادات الجهاز."));
+      },
+      { enableHighAccuracy: false, timeout: 12000, maximumAge: 60000 }
+    );
+  });
+}
 
 export default function HomePage() {
   const [reports, setReports] = useState<Report[]>([]);
@@ -65,8 +88,23 @@ export default function HomePage() {
   const [details, setDetails] = useState("");
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState("");
+  const [guestCode, setGuestCode] = useState("");
+  const [guestStatus, setGuestStatus] = useState<"idle" | "pending" | "ready" | "error">("idle");
+  const [guestMessage, setGuestMessage] = useState("");
+  const [guestLinkOpen, setGuestLinkOpen] = useState(false);
+  const [guestEmail, setGuestEmail] = useState("");
+  const [guestLinkBusy, setGuestLinkBusy] = useState(false);
+  const [guestLinkMessage, setGuestLinkMessage] = useState("");
+  const [reportLocation, setReportLocation] = useState<BrowserLocation | null>(null);
+  const [reportLocationBusy, setReportLocationBusy] = useState(false);
+  const [nearbyReports, setNearbyReports] = useState<Report[]>([]);
+  const [nearbySearching, setNearbySearching] = useState(false);
+  const [nearbyError, setNearbyError] = useState("");
+  const [nearbyMessage, setNearbyMessage] = useState("");
+  const [nearbyRadiusKm] = useState(5);
   const sound = useInteractiveSound();
-  const deviceMotion = useDeviceMotion();
+  const heroVisualRef = useRef<HTMLDivElement>(null);
+  const deviceMotion = useDeviceMotion(heroVisualRef);
   const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(null);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [isIOSDevice, setIsIOSDevice] = useState(false);
@@ -108,7 +146,24 @@ export default function HomePage() {
     if (nextCategory) setCategory(nextCategory);
     setFormOpen(true);
     setShowInstallHelp(false);
-    
+    setReportLocation(null);
+    setGuestMessage("");
+    setGuestLinkOpen(false);
+    setGuestLinkMessage("");
+    setGuestEmail("");
+    setGuestStatus("pending");
+    void fetch("/api/guest/session", { method: "POST", cache: "no-store" })
+      .then(async (response) => {
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error || "تعذر إنشاء هوية الزائر.");
+        setGuestCode(payload.guestCode ?? "");
+        setGuestStatus("ready");
+        setGuestMessage(payload.recoverability ?? "");
+      })
+      .catch((error) => {
+        setGuestStatus("error");
+        setGuestMessage(error instanceof Error ? error.message : "تعذر إنشاء هوية الزائر.");
+      });
   }
 
   useEffect(() => {
@@ -120,7 +175,7 @@ export default function HomePage() {
         const params = new URLSearchParams({ limit: "24" });
         if (city !== "الكل") params.set("city", city);
         if (filter !== "all") params.set("kind", filter);
-        const response = await fetch("/api/reports?" + params.toString(), { cache: "no-store" });
+        const response = await fetch("/api/reports?" + params.toString(), { cache: "default" });
         const payload = await response.json();
         if (!response.ok) throw new Error(payload.error || "تعذر تحميل البلاغات.");
         if (!cancelled) {
@@ -264,6 +319,46 @@ export default function HomePage() {
     void runAssistantSearch(assistantText);
   }
 
+  async function searchNearbyReports() {
+    setNearbySearching(true);
+    setNearbyError("");
+    setNearbyMessage("");
+    try {
+      const location = await readBrowserLocation();
+      const response = await fetch("/api/reports/nearby", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ latitude: location.latitude, longitude: location.longitude, radiusKm: nearbyRadiusKm }),
+        cache: "no-store"
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "تعذر البحث عن البلاغات القريبة.");
+      const matches = (payload.reports ?? []) as Report[];
+      setNearbyReports(matches);
+      setNearbyMessage(matches.length === 0 ? "لم نعثر على بلاغات منشورة مرفق بها موقع تقريبي ضمن هذا النطاق. يمكنك توسيع النطاق أو البحث بالمدينة." : "");
+      document.getElementById("reports")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      notify("اكتمل البحث القريب. لم نحفظ إحداثيات جهازك.", "success");
+    } catch (error) {
+      setNearbyError(error instanceof Error ? error.message : "تعذر تحديد موقعك.");
+      setNearbyReports([]);
+    } finally {
+      setNearbySearching(false);
+    }
+  }
+
+  async function attachApproximateReportLocation() {
+    setReportLocationBusy(true);
+    try {
+      const location = await readBrowserLocation();
+      setReportLocation(location);
+      notify("تم التقاط موقع تقريبي لإرفاقه بالبلاغ بعد اختزاله على الخادم.", "success");
+    } catch (error) {
+      notify(error instanceof Error ? error.message : "تعذر تحديد الموقع.");
+    } finally {
+      setReportLocationBusy(false);
+    }
+  }
+
   async function enableDeviceMotion() {
     const enabled = await deviceMotion.enable();
     notify(
@@ -277,6 +372,26 @@ export default function HomePage() {
   function dismissInstallBanner() {
     setShowInstallBanner(false);
     try { localStorage.setItem("athar-maaroof-install-dismissed", "1"); } catch { /* storage can be unavailable */ }
+  }
+
+  async function linkGuestIdentity() {
+    setGuestLinkBusy(true);
+    setGuestLinkMessage("");
+    try {
+      const response = await fetch("/api/guest/link", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: guestEmail })
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "تعذر ربط الهوية.");
+      setGuestLinkMessage(payload.message ?? "تحقق من بريدك لإكمال ربط هوية الزائر.");
+      notify("أرسلنا رابط تأكيد البريد.", "success");
+    } catch (error) {
+      setGuestLinkMessage(error instanceof Error ? error.message : "تعذر ربط هوية الزائر.");
+    } finally {
+      setGuestLinkBusy(false);
+    }
   }
 
   async function submitReport(event: FormEvent<HTMLFormElement>) {
@@ -298,22 +413,23 @@ export default function HomePage() {
           title: category + (kind === "lost" ? " مفقودة" : " معثور عليها"),
           city: formCity,
           area,
-          details
+          details,
+          ...(reportLocation ? {
+            locationLatitude: reportLocation.latitude,
+            locationLongitude: reportLocation.longitude
+          } : {})
         })
       });
       const payload = await response.json();
-      if (response.status === 401) {
-        notify("سجّل الدخول أولاً حتى نربط البلاغ بحسابك.");
-        window.location.assign("/login");
-        return;
-      }
       if (!response.ok) throw new Error(payload.error || "تعذر حفظ البلاغ.");
       setFormOpen(false);
       setArea("");
       setDetails("");
       setCategory(categories[0]);
+      setReportLocation(null);
+      if (payload.guestCode) setGuestCode(payload.guestCode);
       setReloadKey((value) => value + 1);
-      notify("تم استلام البلاغ، وهو بانتظار مراجعة المشرف قبل نشره.", "success");
+      notify(payload.guest ? "تم استلام البلاغ وربطه بهوية زائر خاصة بهذا المتصفح." : "تم استلام البلاغ، وهو بانتظار مراجعة المشرف قبل نشره.", "success");
     } catch (error) {
       notify(error instanceof Error ? error.message : "تعذر حفظ البلاغ. حاول لاحقاً.");
     } finally {
@@ -352,19 +468,11 @@ export default function HomePage() {
   };
 
   return (
-    <ClickSpark
-      className="app-interaction-layer"
-      style={{ minHeight: "100vh" }}
-      sparkColor={["#38e2c5", "#d8fff5", "#f3ae58"]}
-      sparkSize={8}
-      sparkRadius={34}
-      sparkCount={8}
-      duration={460}
-      shape="star"
-      gravity={0.35}
-      glow={0.45}
-    >
-      <div className="app-shell" dir="rtl" onClickCapture={sound.onInteraction} onPointerOverCapture={sound.onHover}>
+    <div className="app-shell" dir="rtl" onClickCapture={sound.onInteraction} onPointerOverCapture={sound.onHover} onContextMenuCapture={(event) => {
+        const target = event.target;
+        if (target instanceof HTMLElement && target.closest("input, textarea, select, [contenteditable=true]")) return;
+        event.preventDefault();
+      }}>
         <div className="ambient ambient-one" aria-hidden="true" />
         <div className="ambient ambient-two" aria-hidden="true" />
 
@@ -373,7 +481,7 @@ export default function HomePage() {
             <BrandMark />
             <span className="brand-copy">
               <strong>أثر <b>معروف</b></strong>
-              <small>مفقوداتك تلقى طريقها</small>
+              <small>كل ما ضاع، له أثر</small>
             </span>
           </Link>
 
@@ -441,167 +549,29 @@ export default function HomePage() {
         </div>
 
         <main className="page-content">
-          <section className="hero-section reveal">
-            <SpotlightCard
-              className="hero-card"
-              theme="dark"
-              spotlightColor="rgba(48, 222, 195, 0.92)"
-              intensity={0.32}
-              spotlightSize={310}
-              softness={0.72}
-              borderGlow={0.72}
-              proximity={80}
-              smoothing={0.34}
-              ambient={typeof window !== "undefined" && !window.matchMedia("(pointer: coarse)").matches}
-              grain={0.035}
-            >
-              <div className="hero-grid">
-                <div className="hero-copy">
-                  <div className="assistant-status"><span className="online-pulse" /> مساعد البلاغات <Sparkles size={15} /><small>متاح لمساعدتك</small></div>
-                  <p className="greeting">أهلاً بيك في <b>أثر معروف</b></p>
-                  <h1>مفقودك مو نهاية الحكاية،<br /><em>خلّينا نساعدك يرجع.</em></h1>
-                  <p className="hero-description">سجّل بلاغ فقدان أو عثور، وابحث بين البلاغات المنشورة. معلوماتك الشخصية تبقى محمية.</p>
-
-                  <form className="assistant-input" onSubmit={handleAssistantSubmit}>
-                    <span className="assistant-input-mark"><Sparkles size={20} /></span>
-                    <input
-                      value={assistantText}
-                      onChange={(event) => setAssistantText(event.target.value)}
-                      placeholder="اسأل أثر معروف: فقدت بطاقة وطنية في بغداد..."
-                      aria-label="اسأل مساعد أثر معروف عن المفقودات"
-                      maxLength={120}
-                    />
-                    <button type="submit" aria-label="اسأل المساعد" disabled={assistantSearching || assistantText.trim().length < 2}>
-                      {assistantSearching ? <span className="assistant-spinner" /> : <ArrowUp size={20} />}
-                    </button>
-                  </form>
-                  <div className="assistant-input-caption"><span><Sparkles size={12} /> مساعد البحث في البلاغات المنشورة</span><small>لا ترسل أرقام الهوية أو صور المستندات</small></div>
-                  {assistantReply && (
-                    <section className="assistant-response" aria-live="polite">
-                      <div className="assistant-response-heading">
-                        <span className="assistant-response-icon"><Sparkles size={15} /></span>
-                        <b>{assistantMode === "ai" ? "مساعد أثر معروف" : "نتيجة البحث الذكي"}</b>
-                        <small>{assistantMode === "ai" ? "مساعد متصل" : "مطابقة مباشرة مع البلاغات"}</small>
-                      </div>
-                      <p>{assistantReply}</p>
-                      {assistantMatches.length > 0 && (
-                        <div className="assistant-match-list">
-                          {assistantMatches.slice(0, 3).map((match) => (
-                            <article className="assistant-match" key={match.id}>
-                              <span className={match.kind === "found" ? "assistant-match-icon found" : "assistant-match-icon lost"}>
-                                {match.kind === "found" ? <CheckCircle2 size={15} /> : <FileText size={15} />}
-                              </span>
-                              <span><b>{match.title}</b><small>{match.city}{match.area ? " · " + match.area : ""} · {match.public_code}</small></span>
-                            </article>
-                          ))}
-                        </div>
-                      )}
-                      {assistantMatches.length > 0 && (
-                        <button className="assistant-results-link" onClick={() => { setReports(assistantMatches); setQuery(""); scrollTo("reports", "reports"); }}>
-                          عرض البلاغات المطابقة <ChevronLeft size={15} />
-                        </button>
-                      )}
-                    </section>
-                  )}
-                  <div className="quick-actions">
-                    <span>جرّب البحث عن:</span>
-                    {quickActions.map((item) => {
-                      const Icon = item.icon;
-                      return (
-                        <button key={item.label} onClick={() => { setAssistantText(item.label); void runAssistantSearch(item.label); }}>
-                          <Icon size={13} />{item.label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div
-                  className="hero-visual"
-                  style={{
-                    "--motion-back-x": (deviceMotion.point.x * -8).toFixed(2) + "px",
-                    "--motion-back-y": (deviceMotion.point.y * -8).toFixed(2) + "px",
-                    "--motion-front-x": (deviceMotion.point.x * 10).toFixed(2) + "px",
-                    "--motion-front-y": (deviceMotion.point.y * 9).toFixed(2) + "px",
-                    "--motion-chip-x": (deviceMotion.point.x * 5).toFixed(2) + "px",
-                    "--motion-chip-y": (deviceMotion.point.y * 5).toFixed(2) + "px"
-                  } as CSSProperties}
-                >
-                  <div className="hero-visual-art" aria-hidden="true">
-                  <div className="visual-glow" />
-                  <div className="visual-ring ring-a" />
-                  <div className="visual-ring ring-b" />
-                  <div className="document-card document-back">
-                    <div className="document-top"><span /> <span /> <span /></div>
-                    <div className="document-avatar"><Fingerprint size={29} /></div>
-                    <div className="document-lines"><i /><i /><i /></div>
-                    <small>مستند شخصي</small>
-                  </div>
-                  <div className="document-card document-front">
-                    <div className="document-icon"><FileText size={23} /></div>
-                    <i /><i className="line-short" />
-                    <div className="verified-seal"><Check size={16} /></div>
-                  </div>
-                  <div className="floating-chip chip-top"><ShieldCheck size={15} /> خصوصيتك أولاً</div>
-                  <div className="floating-chip chip-bottom"><MapPin size={14} /> نطاق مكاني تقريبي</div>
-                  </div>
-                  {deviceMotion.status !== "unsupported" && (
-                    <button
-                      className={deviceMotion.status === "enabled" ? "motion-toggle enabled" : "motion-toggle"}
-                      onClick={() => deviceMotion.status === "enabled" ? deviceMotion.disable() : void enableDeviceMotion()}
-                      aria-pressed={deviceMotion.status === "enabled"}
-                    >
-                      <Smartphone size={13} />
-                      {deviceMotion.status === "enabled" ? "إيقاف حركة الجهاز" : "تفعيل حركة الجهاز"}
-                    </button>
-                  )}
-                </div>
-              </div>
-              <div className="hero-foot">
-                <span><ShieldCheck size={15} /> لا نطلب صورة المستمسك</span>
-                <span><LockKeyholeMini /> بياناتك ليست معروضة للعامة</span>
-                <span><MapPin size={14} /> تغطية مدن عراقية</span>
-              </div>
-            </SpotlightCard>
-          </section>
-
-          <section className="insight-row reveal" aria-label="ملخص البلاغات">
-            <SpotlightCard className="insight-card" theme="dark" style={{ "--spotlight-card-surface": "rgba(9,39,41,.9)", "--spotlight-card-border": "rgba(151,218,207,.12)", "--spotlight-card-shadow": "0 14px 35px rgba(0,0,0,.12)" } as CSSProperties} spotlightColor="rgba(40, 217, 186, .6)" intensity={0.15} spotlightSize={190}>
-              <span className="insight-icon"><FileText size={19} /></span>
-              <span className="insight-label">بلاغات معروضة</span>
-              <strong>{reportsLoading ? "…" : reportsError ? "—" : reports.length.toLocaleString("ar-IQ")}</strong>
-              <small>ضمن البيانات المحمّلة حالياً</small>
-            </SpotlightCard>
-            <SpotlightCard className="insight-card" theme="dark" style={{ "--spotlight-card-surface": "rgba(9,39,41,.9)", "--spotlight-card-border": "rgba(151,218,207,.12)", "--spotlight-card-shadow": "0 14px 35px rgba(0,0,0,.12)" } as CSSProperties} spotlightColor="rgba(242, 174, 87, .52)" intensity={0.14} spotlightSize={180}>
-              <span className="insight-icon amber"><Search size={19} /></span>
-              <span className="insight-label">بلاغات فقدان</span>
-              <strong>{reportsLoading ? "…" : reportsError ? "—" : lostCount.toLocaleString("ar-IQ")}</strong>
-              <small>من قائمة النتائج الحالية</small>
-            </SpotlightCard>
-            <SpotlightCard className="insight-card" theme="dark" style={{ "--spotlight-card-surface": "rgba(9,39,41,.9)", "--spotlight-card-border": "rgba(151,218,207,.12)", "--spotlight-card-shadow": "0 14px 35px rgba(0,0,0,.12)" } as CSSProperties} spotlightColor="rgba(94, 171, 255, .52)" intensity={0.14} spotlightSize={180}>
-              <span className="insight-icon blue"><HeartHandshake size={19} /></span>
-              <span className="insight-label">بلاغات العثور</span>
-              <strong>{reportsLoading ? "…" : reportsError ? "—" : foundCount.toLocaleString("ar-IQ")}</strong>
-              <small>من قائمة النتائج الحالية</small>
-            </SpotlightCard>
-          </section>
-          <p className="metric-note">الأرقام أعلاه تُحسب من البلاغات التي أعادها الخادم في هذه الصفحة، وليست إحصاءً وطنياً شاملاً.</p>
-
-          <section className="action-panel reveal">
-            <div className="action-copy">
-              <span className="section-kicker"><Sparkles size={14} /> ابدأ بخطوة واضحة</span>
-              <h2>شنو اللي صار وياك؟</h2>
-              <p>اختار نوع البلاغ حتى نوجّهك للنموذج المناسب.</p>
-            </div>
-            <div className="action-buttons">
-              <Magnet padding={76} magnetStrength={3.2} maxOffset={8} tilt={2}>
-                <button className="primary-action" onClick={() => openReportForm("lost")}><Search size={18} /> فقدت مستمسكاً <ChevronLeft size={17} /></button>
-              </Magnet>
-              <Magnet padding={76} magnetStrength={3.2} maxOffset={8} tilt={2}>
-                <button className="secondary-action" onClick={() => openReportForm("found")}><Plus size={18} /> عثرت على مستمسك <ChevronLeft size={17} /></button>
-              </Magnet>
-            </div>
-          </section>
+          <AtharReferenceHome
+            stageRef={heroVisualRef}
+            assistantText={assistantText}
+            setAssistantText={setAssistantText}
+            onAssistantSubmit={handleAssistantSubmit}
+            onQuickSearch={(value) => { setAssistantText(value); void runAssistantSearch(value); }}
+            assistantSearching={assistantSearching}
+            assistantReply={assistantReply}
+            assistantMode={assistantMode}
+            assistantMatches={assistantMatches}
+            onShowMatches={() => {
+              setReports(assistantMatches);
+              setQuery("");
+              scrollTo("reports", "reports");
+            }}
+            nearbySearching={nearbySearching}
+            nearbyError={nearbyError}
+            onNearbySearch={() => void searchNearbyReports()}
+            motionStatus={deviceMotion.status}
+            onEnableMotion={() => void enableDeviceMotion()}
+            onDisableMotion={deviceMotion.disable}
+            onOpenReportForm={openReportForm}
+          />
 
           <section className="reports-section reveal" id="reports">
             <div className="section-heading">
@@ -613,6 +583,24 @@ export default function HomePage() {
               <button className="text-button" onClick={() => { setCity("الكل"); setFilter("all"); setQuery("");  }}>إعادة ضبط <X size={15} /></button>
             </div>
 
+            {nearbyReports.length > 0 && (
+              <section className="nearby-results" aria-live="polite">
+                <div className="nearby-results-heading">
+                  <span><Navigation size={16} /> بلاغات قريبة منك</span>
+                  <small>داخل نطاق {nearbyRadiusKm} كم · المسافة تقريبية</small>
+                  <button type="button" onClick={() => { setNearbyReports([]); setNearbyMessage(""); }} aria-label="إخفاء البلاغات القريبة"><X size={15} /></button>
+                </div>
+                {nearbyReports.map((report) => (
+                  <article className="nearby-result-item" key={report.id}>
+                    <span className="nearby-result-icon"><MapPin size={17} /></span>
+                    <div><b>{report.title}</b><small>{report.city}{report.area ? " · " + report.area : ""} · {report.public_code}</small></div>
+                    <strong>{report.approx_distance_km !== undefined ? (report.approx_distance_km < 1 ? "أقل من 1 كم" : "نحو " + report.approx_distance_km + " كم") : ""}</strong>
+                  </article>
+                ))}
+              </section>
+            )}
+            {nearbyError && <p className="nearby-inline-error" role="alert">{nearbyError}</p>}
+            {nearbyMessage && <p className="nearby-empty-message">{nearbyMessage}</p>}
             <div className="reports-toolbar">
               <label className="report-search">
                 <Search size={18} />
@@ -668,15 +656,18 @@ export default function HomePage() {
           <section className="install-card reveal">
             <div className="install-icon"><Smartphone size={22} /></div>
             <div><b>خلّي أثر معروف قريب منك</b><p>ثبّت التطبيق على الشاشة الرئيسية للوصول إليه مثل التطبيقات المعتادة.</p></div>
-            <Magnet padding={60} magnetStrength={3} maxOffset={7}>
-              <button onClick={() => void installApplication()}><Download size={16} /> تثبيت التطبيق</button>
-            </Magnet>
+            <button onClick={() => void installApplication()}><Download size={16} /> تثبيت التطبيق</button>
           </section>
 
           <footer className="site-footer">
             <div className="footer-brand"><BrandMark /><span><b>أثر معروف</b><small>منصة عراقية للمفقودات والمعثورات</small></span></div>
             <span>© {new Date().getFullYear()} أثر معروف. جميع الحقوق محفوظة.</span>
-            <a href="https://reactbits.dev/" target="_blank" rel="noreferrer">تفاعلات مستلهمة من React Bits</a>
+            <nav className="footer-links">
+              <Link href="/about">عن المبادرة</Link>
+              <Link href="/privacy">سياسة الخصوصية</Link>
+              <Link href="/terms">شروط الاستخدام</Link>
+              <Link href="/faq">الأسئلة الشائعة</Link>
+            </nav>
           </footer>
         </main>
 
@@ -706,15 +697,42 @@ export default function HomePage() {
                 <label>المدينة<select value={formCity} onChange={(event) => setFormCity(event.target.value)}>{cities.slice(1).map((item) => <option key={item}>{item}</option>)}</select></label>
                 <label>المنطقة التقريبية <small>اختياري</small><input value={area} onChange={(event) => setArea(event.target.value)} maxLength={100} placeholder="مثلاً: الكرادة" /></label>
                 <label>تفاصيل عامة غير حساسة <small>اختياري</small><textarea value={details} onChange={(event) => setDetails(event.target.value)} maxLength={500} placeholder="اكتب وصفاً عاماً لا يكشف أرقاماً أو معلومات خاصة." /></label>
+                <div className="report-location-choice">
+                  <div><LocateFixed size={17} /><span><b>موقع تقريبي للبلاغ</b><small>اختياري. لا يُرفق إلا بموافقتك، ويُختزل إلى نطاق تقريبي.</small></span></div>
+                  <button type="button" onClick={() => void attachApproximateReportLocation()} disabled={reportLocationBusy}>
+                    {reportLocationBusy ? "جارٍ تحديد الموقع..." : reportLocation ? "تم إرفاق الموقع" : "مشاركة موقع تقريبي"}
+                  </button>
+                  {reportLocation && <small className="location-selected"><ShieldCheck size={12} /> تم التقاط الإحداثيات. سيخزن الخادم تقريباً على مستوى كيلومتر، وليس موقعك الدقيق.</small>}
+                </div>
+                <div className="guest-session-note">
+                  <UserRoundCheck size={16} />
+                  <span>
+                    <b>{guestStatus === "pending" ? "جارٍ إعداد هوية زائر..." : guestStatus === "ready" ? (guestCode ? "تم إنشاء هوية زائر تلقائياً" : "تم استخدام حسابك المسجل") : guestStatus === "error" ? "تعذر إعداد هوية الزائر" : "لا تحتاج إلى تسجيل دخول لإرسال البلاغ"}</b>
+                    <small>{guestCode ? "معرّفك: " + guestCode + " · " : ""}{guestMessage || "تظل الجلسة مرتبطة بهذا المتصفح. اربطها بوسيلة دخول دائمة لاستعادتها بعد حذف البيانات."}</small>
+                  </span>
+                </div>
+                {guestCode && (
+                  <div className="guest-recovery">
+                    <button type="button" className="guest-recovery-toggle" onClick={() => setGuestLinkOpen((value) => !value)}>
+                      {guestLinkOpen ? "إغلاق حفظ الهوية" : "حفظ هويتي لاستعادتها من جهاز آخر"}
+                    </button>
+                    {guestLinkOpen && (
+                      <div className="guest-recovery-form">
+                        <p>أضف بريدك وأكّد الرسالة التي تصلك. بعد التأكيد تستطيع استعادة هذه الهوية عبر البريد دون فقدان البلاغات المرتبطة بها.</p>
+                        <input type="email" required value={guestEmail} onChange={(event) => setGuestEmail(event.target.value)} placeholder="بريدك الإلكتروني" autoComplete="email" />
+                        <button type="button" onClick={() => void linkGuestIdentity()} disabled={guestLinkBusy || !guestEmail.trim()}>{guestLinkBusy ? "جارٍ الإرسال..." : "إرسال رابط التأكيد"}</button>
+                        {guestLinkMessage && <small role="status">{guestLinkMessage}</small>}
+                      </div>                    )}
+                  </div>
+                )}
                 <div className="privacy-warning"><ShieldCheck size={18} /><span>لا تكتب الرقم الوطني أو رقم البطاقة أو PIN أو CVV أو OTP.</span></div>
                 <button className="form-submit" type="submit" disabled={busy}>{busy ? "جارٍ إرسال البلاغ..." : "إرسال البلاغ"} <ArrowUp size={17} /></button>
-                <small className="form-footnote">يتطلب تسجيل الدخول. البلاغ لا يظهر للعامة قبل مراجعته ونشره.</small>
+                <small className="form-footnote">لا يتطلب تسجيل دخول تقليدي. البلاغ لا يظهر للعامة قبل مراجعته ونشره.</small>
               </form>
             </section>
           </div>
         )}
-      </div>
-    </ClickSpark>
+    </div>
   );
 }
 
