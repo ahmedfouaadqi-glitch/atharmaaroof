@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 const STATUSES = new Set(["pending", "published", "matched", "returned", "hidden"]);
 
 async function getAdminClient() {
-  let supabase;
+  let supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>;
   try {
     supabase = await createSupabaseServerClient();
   } catch {
