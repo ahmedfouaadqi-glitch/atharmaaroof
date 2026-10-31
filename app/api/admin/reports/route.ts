@@ -7,7 +7,12 @@ export const dynamic = "force-dynamic";
 const STATUSES = new Set(["pending", "published", "matched", "returned", "hidden"]);
 
 async function getAdminClient() {
-  const supabase = await createSupabaseServerClient();
+  let supabase;
+  try {
+    supabase = await createSupabaseServerClient();
+  } catch {
+    return { response: NextResponse.json({ error: "خدمة الإدارة غير مهيأة بعد." }, { status: 503 }) };
+  }
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) {
     return { response: NextResponse.json({ error: "يلزم تسجيل الدخول." }, { status: 401 }) };
