@@ -437,19 +437,7 @@ export default function HomePage() {
   };
 
   return (
-    <ClickSpark
-      className="app-interaction-layer"
-      style={{ minHeight: "100vh" }}
-      sparkColor={["#38e2c5", "#d8fff5", "#f3ae58"]}
-      sparkSize={8}
-      sparkRadius={34}
-      sparkCount={8}
-      duration={460}
-      shape="star"
-      gravity={0.35}
-      glow={0.45}
-    >
-      <div className="app-shell" dir="rtl" onClickCapture={sound.onInteraction} onPointerOverCapture={sound.onHover}>
+    <div className="app-shell" dir="rtl" onClickCapture={sound.onInteraction} onPointerOverCapture={sound.onHover}>
         <div className="ambient ambient-one" aria-hidden="true" />
         <div className="ambient ambient-two" aria-hidden="true" />
 
@@ -844,8 +832,7 @@ export default function HomePage() {
             </section>
           </div>
         )}
-      </div>
-    </ClickSpark>
+    </div>
   );
 }
 
