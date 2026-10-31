@@ -96,6 +96,7 @@ export default function HomePage() {
   const [nearbyReports, setNearbyReports] = useState<Report[]>([]);
   const [nearbySearching, setNearbySearching] = useState(false);
   const [nearbyError, setNearbyError] = useState("");
+  const [nearbyMessage, setNearbyMessage] = useState("");
   const [nearbyRadiusKm] = useState(5);
   const sound = useInteractiveSound();
   const heroVisualRef = useRef<HTMLDivElement>(null);
@@ -314,6 +315,7 @@ export default function HomePage() {
   async function searchNearbyReports() {
     setNearbySearching(true);
     setNearbyError("");
+    setNearbyMessage("");
     try {
       const location = await readBrowserLocation();
       const response = await fetch("/api/reports/nearby", {
@@ -324,7 +326,9 @@ export default function HomePage() {
       });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "تعذر البحث عن البلاغات القريبة.");
-      setNearbyReports((payload.reports ?? []) as Report[]);
+      const matches = (payload.reports ?? []) as Report[];
+      setNearbyReports(matches);
+      setNearbyMessage(matches.length === 0 ? "لم نعثر على بلاغات منشورة مرفق بها موقع تقريبي ضمن هذا النطاق. يمكنك توسيع النطاق أو البحث بالمدينة." : "");
       document.getElementById("reports")?.scrollIntoView({ behavior: "smooth", block: "start" });
       notify("اكتمل البحث القريب. لم نحفظ إحداثيات جهازك.", "success");
     } catch (error) {
