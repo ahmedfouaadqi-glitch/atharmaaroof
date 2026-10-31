@@ -1,13 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight, Check, Clock3, Eye, EyeOff, RefreshCw, ShieldCheck, LogOut,
   Sparkles, FileText, MapPin, CalendarClock, X, Volume2, VolumeX
 } from "lucide-react";
-import Magnet from "@/components/reactbits/Magnet";
-import SpotlightCard from "@/components/reactbits/SpotlightCard";
 import { useInteractiveSound } from "@/components/useInteractiveSound";
 import { BrandMark } from "@/components/brand";
 
@@ -161,7 +159,7 @@ export default function AdminReportsPage() {
           ) : (
             <div className="admin-report-list">
               {reports.map((report) => (
-                <SpotlightCard key={report.id} className="admin-report-card" theme="dark" style={{ "--spotlight-card-surface": "rgba(9,39,41,.94)", "--spotlight-card-border": "rgba(151,218,207,.12)", "--spotlight-card-shadow": "0 14px 35px rgba(0,0,0,.12)" } as CSSProperties} spotlightColor="rgba(50, 219, 190, .48)" intensity={.13} spotlightSize={220}>
+                <article key={report.id} className="admin-report-card">
                   <div className="admin-report-top">
                     <div className="admin-report-symbol"><FileText size={20} /></div>
                     <div className="admin-report-title">
@@ -176,13 +174,13 @@ export default function AdminReportsPage() {
                   </div>
                   {report.details && <p className="admin-report-details">{report.details}</p>}
                   <div className="admin-report-actions">
-                    {status !== "published" && <Magnet padding={45} magnetStrength={3} maxOffset={5}><button disabled={!!busyId} onClick={() => void moderate(report, "published")} className="admin-action publish"><Eye size={14} /> نشر</button></Magnet>}
-                    {status !== "hidden" && <Magnet padding={45} magnetStrength={3} maxOffset={5}><button disabled={!!busyId} onClick={() => void moderate(report, "hidden")} className="admin-action hide"><EyeOff size={14} /> إخفاء</button></Magnet>}
+                    {status !== "published" && <button disabled={!!busyId} onClick={() => void moderate(report, "published")} className="admin-action publish"><Eye size={14} /> نشر</button>}
+                    {status !== "hidden" && <button disabled={!!busyId} onClick={() => void moderate(report, "hidden")} className="admin-action hide"><EyeOff size={14} /> إخفاء</button>}
                     {status !== "matched" && <button disabled={!!busyId} onClick={() => void moderate(report, "matched")} className="admin-action match">تطابق محتمل</button>}
                     {status !== "returned" && <button disabled={!!busyId} onClick={() => void moderate(report, "returned")} className="admin-action returned"><Check size={14} /> تمت الإعادة</button>}
                     {status !== "pending" && <button disabled={!!busyId} onClick={() => void moderate(report, "pending")} className="admin-action reset"><Clock3 size={14} /> للمراجعة</button>}
                   </div>
-                </SpotlightCard>
+                </article>
               ))}
             </div>
           )}
