@@ -10,7 +10,7 @@ create table if not exists public.athar_reports (
   city text not null check (city in ('بغداد', 'كربلاء', 'النجف', 'البصرة', 'سامراء')),
   area text null check (area is null or char_length(area) <= 100),
   details text null check (details is null or char_length(details) <= 500),
-  status text not null default 'published' check (status in ('published', 'matched', 'returned', 'hidden')),
+  status text not null default 'pending' check (status in ('pending', 'published', 'matched', 'returned', 'hidden')),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
