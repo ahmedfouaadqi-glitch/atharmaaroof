@@ -63,6 +63,24 @@ export async function POST(request: NextRequest) {
   const city = typeof body.city === "string" ? body.city : "";
   const area = cleanText(body.area, 100);
   const details = cleanText(body.details, 500);
+  const hasLatitude = body.locationLatitude !== undefined && body.locationLatitude !== null;
+  const hasLongitude = body.locationLongitude !== undefined && body.locationLongitude !== null;
+  let locationLat: number | null = null;
+  let locationLng: number | null = null;
+
+  if (hasLatitude !== hasLongitude) {
+    return NextResponse.json({ error: "أرسل الإحداثيين معاً أو اترك الموقع فارغاً." }, { status: 400 });
+  }
+  if (hasLatitude && hasLongitude) {
+    const latitude = Number(body.locationLatitude);
+    const longitude = Number(body.locationLongitude);
+    if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90 || !Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
+      return NextResponse.json({ error: "إحداثيات الموقع غير صحيحة." }, { status: 400 });
+    }
+    // Store only a coarse location (about 1 km), not the browser's precise coordinates.
+    locationLat = Number(latitude.toFixed(2));
+    locationLng = Number(longitude.toFixed(2));
+  }
 
   if (!KINDS.has(kind) || !category || category.length < 2 || !title || title.length < 3 || !CITIES.has(city)) {
     return NextResponse.json({ error: "أكمل نوع البلاغ والفئة والعنوان والمدينة بصورة صحيحة." }, { status: 400 });
@@ -75,9 +93,23 @@ export async function POST(request: NextRequest) {
 
   try {
     const supabase = await createSupabaseServerClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    let { data: { user }, error: authError } = await supabase.auth.getUser();
+    let anonymousSession = false;
+
     if (authError || !user) {
-      return NextResponse.json({ error: "سجّل الدخول أولاً حتى نربط البلاغ بحسابك." }, { status: 401 });
+      const guest = await supabase.auth.signInAnonymously();
+      user = guest.data.user;
+      authError = guest.error;
+      anonymousSession = true;
+    } else {
+      anonymousSession = Boolean((user as typeof user & { is_anonymous?: boolean }).is_anonymous);
+    }
+
+    if (authError || !user) {
+      console.error("ATHAR anonymous report identity unavailable", authError?.code);
+      return NextResponse.json({
+        error: "تعذر إنشاء هوية الزائر. فعّل Anonymous Sign-Ins في إعدادات Supabase Auth."
+      }, { status: 503 });
     }
 
     const { data, error } = await supabase
@@ -90,6 +122,8 @@ export async function POST(request: NextRequest) {
         city,
         area,
         details,
+        location_lat: locationLat,
+        location_lng: locationLng,
       })
       .select("id,public_code,kind,category,title,city,area,status,created_at")
       .single();
@@ -99,7 +133,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "تعذر حفظ البلاغ. تحقق من إعداد قاعدة البيانات." }, { status: 503 });
     }
 
-    return NextResponse.json({ report: data }, { status: 201 });
+    return NextResponse.json({
+      report: data,
+      guest: anonymousSession,
+      guestCode: anonymousSession ? "ATH-" + user.id.replace(/-/g, "").slice(-6).toUpperCase() : null
+    }, { status: 201 });
   } catch {
     return NextResponse.json({ error: "الخدمة غير مهيأة بعد. تحقق من إعدادات الخادم." }, { status: 503 });
   }
