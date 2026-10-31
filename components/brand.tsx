@@ -33,10 +33,10 @@ export function BrandMark({ className = "" }: { className?: string }) {
           </filter>
         </defs>
 
-        <g filter="url(#${prefix}-shadow)">
+        <g filter={`url(#${prefix}-shadow)`}>
           <path
             d="M76 18C45 25 22 51 15 85C8 119 17 151 35 177L57 158C45 139 40 118 43 95C46 72 58 52 81 42L76 18Z"
-            fill="url(#${prefix}-sweep)"
+            fill={`url(#${prefix}-sweep)`}
           />
           <path
             d="M34 174C58 151 80 157 104 155C143 153 159 126 163 88L167 39L191 39L187 97C184 143 162 176 125 190C92 203 58 193 31 193L9 193L34 174Z"
@@ -44,17 +44,17 @@ export function BrandMark({ className = "" }: { className?: string }) {
           />
           <path
             d="M145 178C173 157 190 123 192 80L194 48L215 27C216 87 206 141 178 176L145 178Z"
-            fill="url(#${prefix}-right)"
+            fill={`url(#${prefix}-right)`}
           />
 
-          <path d="M135 15H193L181 29H127L135 15Z" fill="url(#${prefix}-white)" />
+          <path d="M135 15H193L181 29H127L135 15Z" fill={`url(#${prefix}-white)`} />
           <path d="M131 36H184V51L158 77V118H135V47H131V36Z" fill="url(#athar-mark-white)" />
           <path d="M138 44H178L151 69V47H138V44Z" fill="#071F2B" fillOpacity=".82" />
           <path d="M143 45L158 60L171 45M143 58L156 71L169 57M148 72L160 84" stroke="#42D8E5" strokeWidth="2.2" strokeLinecap="round" />
           <path d="M188 28C191 18 199 13 207 13V51C201 58 195 63 190 73V117" stroke="#43CAE9" strokeWidth="4" strokeLinecap="round" />
           <path d="M190 91C201 80 208 72 211 61M190 124C202 115 210 105 213 92" stroke="#64D8F0" strokeWidth="3" strokeLinecap="round" />
 
-          <path d="M105 13C91 26 87 36 91 48C95 61 106 68 118 63C130 57 134 45 127 33C122 24 114 17 105 13Z" fill="url(#${prefix}-drop)" />
+          <path d="M105 13C91 26 87 36 91 48C95 61 106 68 118 63C130 57 134 45 127 33C122 24 114 17 105 13Z" fill={`url(#${prefix}-drop)`} />
           <path d="M62 111C67 91 84 81 102 81C120 81 136 92 142 109" stroke="#22D6CC" strokeWidth="5" strokeLinecap="round" />
           <path d="M55 124C59 102 79 91 101 91C123 91 140 103 147 124" stroke="#25D8CE" strokeWidth="5" strokeLinecap="round" />
           <path d="M58 139C74 132 73 111 85 105C96 98 110 101 116 112C123 124 118 139 112 151" stroke="#28DCCE" strokeWidth="5" strokeLinecap="round" />
