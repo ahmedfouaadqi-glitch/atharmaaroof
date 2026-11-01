@@ -28,13 +28,13 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#1a1c1a",
-  colorScheme: "light dark"
+  themeColor: "#f4f0e8",
+  colorScheme: "light"
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="ar" dir="rtl" data-theme="dark">
+    <html lang="ar" dir="rtl" data-theme="light">
       <body>
         <ThemeProvider>{children}</ThemeProvider>
       </body>
