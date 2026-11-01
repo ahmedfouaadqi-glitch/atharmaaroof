@@ -1,6 +1,6 @@
 "use client";
 
-import type { FormEvent, RefObject } from "react";
+import type { FormEvent } from "react";
 import Link from "next/link";
 import { useState } from "react";
 import {
@@ -31,7 +31,6 @@ type Match = {
 };
 
 type Props = {
-  stageRef: RefObject<HTMLDivElement | null>;
   assistantText: string;
   setAssistantText: (value: string) => void;
   onAssistantSubmit: (event: FormEvent<HTMLFormElement>) => void;
@@ -44,9 +43,6 @@ type Props = {
   nearbySearching: boolean;
   nearbyError: string;
   onNearbySearch: () => void;
-  motionStatus: "ready" | "enabled" | "unsupported" | string;
-  onEnableMotion: () => void;
-  onDisableMotion: () => void;
   onOpenReportForm: (kind: "lost" | "found") => void;
 };
 
@@ -90,7 +86,6 @@ export default function AtharReferenceHome(props: Props) {
   return (
     <section
       className="athar-rebuild"
-      ref={props.stageRef}
       aria-label="أثر معروف — الصفحة الرئيسية"
       dir="rtl"
     >
