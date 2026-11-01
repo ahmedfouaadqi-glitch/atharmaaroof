@@ -14,6 +14,7 @@ const CITIES = [
 
 const CATEGORIES = [
   { name: "بطاقة وطنية", aliases: ["بطاقة وطنية", "البطاقة الوطنية", "الهوية الوطنية", "هوية وطنية", "هوية"] },
+  { name: "جواز سفر", aliases: ["جواز سفر", "جواز", "باسبور"] },
   { name: "بطاقة سكن", aliases: ["بطاقة سكن", "بطاقة السكن", "سكن"] },
   { name: "بطاقة تموينية", aliases: ["بطاقة تموينية", "التموينية", "تموينية"] },
   { name: "إجازة سياقة", aliases: ["اجازة سياقة", "إجازة سياقة", "سنوية سياقة", "رخصة قيادة", "رخصة"] },
@@ -51,19 +52,42 @@ function parseIntent(input: string) {
   const text = normalize(input);
   const city = CITIES.find((item) => item.aliases.some((alias) => text.includes(normalize(alias))))?.name ?? null;
   const category = CATEGORIES.find((item) => item.aliases.some((alias) => text.includes(normalize(alias))))?.name ?? null;
-  const kind = ["فقدت", "ضاع", "ضاعت", "مفقود", "مفقودة", "انفقد"].some((word) => text.includes(word))
+  const kind = ["فقدت", "ضاع", "ضاعت", "مفقود", "مفقوده", "انفقد"].some((word) => text.includes(normalize(word)))
     ? "lost"
-    : ["لقيت", "وجدت", "عثرت", "معثور", "لكيت"].some((word) => text.includes(word))
+    : ["لقيت", "لكيت", "وجدت", "عثرت", "معثور"].some((word) => text.includes(normalize(word)))
       ? "found"
       : null;
+  const areaNames = ["الكرادة", "المنصور", "الاعظمية", "زيونة", "الجادرية", "الشعب", "الدورة", "الرصافة"];
+  const area = areaNames.find((name) => text.includes(normalize(name))) ?? null;
+
+  const explicitCreate = [
+    "اريد ابلغ", "ابي ابلغ", "ابغى ابلغ", "انشاء بلاغ", "انشئ بلاغ",
+    "سجل بلاغ", "ابلغ عن", "اضيف بلاغ", "ضيف بلاغ", "قدم بلاغ"
+  ].some((phrase) => text.includes(normalize(phrase)));
+  const explicitSearch = [
+    "ابحث", "دور على", "فتش عن", "في البلاغات", "بالبلاغات",
+    "بلاغ منشور", "هل وجد", "هل موجود", "وين موجود"
+  ].some((phrase) => text.includes(normalize(phrase)));
+  const asksForGuidance = [
+    "شنو اسوي", "شلون", "كيف", "ما العمل", "شنو الخطوه",
+    "ساعدني اعرف", "شنو الاجراء"
+  ].some((phrase) => text.includes(normalize(phrase)));
+
+  const action = explicitSearch
+    ? "search"
+    : explicitCreate || (kind !== null && !asksForGuidance)
+      ? "create_report"
+      : asksForGuidance
+        ? "guide"
+        : "search";
 
   let remainder = text;
   for (const item of CITIES) for (const alias of item.aliases) remainder = remainder.replaceAll(normalize(alias), " ");
   for (const item of CATEGORIES) for (const alias of item.aliases) remainder = remainder.replaceAll(normalize(alias), " ");
+  for (const areaName of areaNames) remainder = remainder.replaceAll(normalize(areaName), " ");
   const terms = remainder.split(" ").filter((term) => term.length > 1 && !STOP_WORDS.has(term)).slice(0, 4);
-  return { city, category, kind, terms };
+  return { action, city, category, kind, area, terms };
 }
-
 async function generateAnswer(input: string, intent: ReturnType<typeof parseIntent>, reports: Array<Record<string, unknown>>) {
   const endpoint = process.env.ATHAR_AI_CHAT_COMPLETIONS_URL;
   const apiKey = process.env.ATHAR_AI_API_KEY;
@@ -138,8 +162,29 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const supabase = await createSupabaseServerClient();
     const intent = parseIntent(input);
+    if (intent.action === "create_report" || intent.action === "guide") {
+      const draft = intent.kind || intent.category || intent.city || intent.area
+        ? { kind: intent.kind, category: intent.category, city: intent.city, area: intent.area }
+        : null;
+      const missing = [
+        !intent.kind ? "نوع البلاغ (مفقود أو معثور عليه)" : null,
+        !intent.category ? "نوع المستند" : null,
+        !intent.city ? "المدينة" : null
+      ].filter(Boolean);
+      const reply = intent.action === "create_report"
+        ? "فهمت طلبك. أعددت مسودة أولية للبلاغ" +
+          (missing.length ? "، لكن بقي تحديد: " + missing.join("، ") + "." : ".") +
+          " افتح المسودة وراجع البيانات قبل الإرسال. لا تكتب رقم المستند أو ترفع صورته."
+        : "للتعامل الآمن: لا تنشر رقم المستند أو صورته، وراجع الجهة الرسمية المصدرة عند الحاجة. يمكنك إنشاء بلاغ عام بعد مراجعة البيانات، ولا تُعد المطابقة دليلاً على الملكية." +
+          (draft ? " جهزت لك مسودة أولية اختيارية." : "");
+      return NextResponse.json({
+        assistant: { mode: "guided_search", action: intent.action, reply, source: "assistant_intent_router", draft },
+        reports: []
+      }, { headers: { "Cache-Control": "no-store, max-age=0" } });
+    }
+
+    const supabase = await createSupabaseServerClient();
     const selectedTerms = [...new Set([
       ...(intent.category ? [intent.category] : []),
       ...intent.terms,
@@ -175,7 +220,7 @@ export async function POST(request: NextRequest) {
 
     const assistant = await generateAnswer(input, intent, reports);
     return NextResponse.json({
-      assistant: { ...assistant, source: "athar_public_reports", intent },
+      assistant: { ...assistant, action: "search", draft: null, source: "athar_public_reports", intent },
       reports
     }, {
       headers: { "Cache-Control": "no-store, max-age=0" }
