@@ -10,7 +10,7 @@
 
 ## Setup
 1. Create or select a Supabase project dedicated to ATHAR. Do not reuse a project for an unrelated application.
-2. Apply `supabase/migrations/20261031000100_athar_reports.sql` using the Supabase migration workflow/SQL editor.
+2. Apply all migrations in timestamp order: `20261031000100_athar_reports.sql`, `20261101000100_athar_security_hardening.sql`, then `20261101000200_athar_nearby_reports.sql`. The first migration defines the owner-scoped report schema and the administrator moderation RPC.
 3. Copy `.env.example` to `.env.local` and set the project URL plus either `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (preferred) or `NEXT_PUBLIC_SUPABASE_ANON_KEY`. The server client accepts both names.
 4. On Netlify, install/enable the official Supabase integration for the team, then open **Project configuration → General → Supabase**, connect the ATHAR site to the exact ATHAR Supabase project, and select **Next.js**. Verify `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` under **Project configuration → Environment variables**. Do not connect an unrelated project.
 5. Ensure both Builds and Functions/runtime scopes are enabled for the variables; re-deploy after changing them. Never copy a service-role/secret key into any `NEXT_PUBLIC_*` variable.
