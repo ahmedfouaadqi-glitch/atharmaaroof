@@ -2382,21 +2382,21 @@ html[data-theme="light"] .athar-info-card {
    One semantic token set drives the landing page, reports, forms and information pages. */
 
 :root {
-  color-scheme: dark;
-  --color-canvas: #1a1c1a;
-  --color-canvas-raised: #222622;
-  --color-surface: #292e29;
-  --color-surface-hover: #333a33;
-  --color-ink: #f1eee7;
-  --color-muted: #c0bbae;
-  --color-subtle: #918f83;
-  --color-border: #424940;
-  --color-primary: #d58b6c;
-  --color-primary-ink: #241a16;
-  --color-secondary: #a3c1b9;
-  --color-danger: #f09b8d;
-  --color-focus: #f0b08f;
-  --color-shadow: rgba(0, 0, 0, .22);
+  color-scheme: light;
+  --color-canvas: #f4f0e8;
+  --color-canvas-raised: #fbf9f4;
+  --color-surface: #fffdf8;
+  --color-surface-hover: #eee9de;
+  --color-ink: #292b26;
+  --color-muted: #656960;
+  --color-subtle: #85877d;
+  --color-border: #ddd6c9;
+  --color-primary: #a65338;
+  --color-primary-ink: #fffaf5;
+  --color-secondary: #496f70;
+  --color-danger: #a83d34;
+  --color-focus: #8c432e;
+  --color-shadow: rgba(48, 43, 33, .08);
   --ar-radius-xl: 22px;
   --ar-radius-lg: 16px;
   --ar-radius-md: 11px;
@@ -3848,4 +3848,119 @@ hr { border-color: var(--color-border); }
     animation: none !important;
     transition: none !important;
   }
+}
+
+
+/* React Bits interactions — semantic colors are inherited from the active theme. */
+.ar-search-panel-spotlight {
+  width: 100%;
+  min-width: 0;
+  padding: 24px !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--ar-radius-lg) !important;
+  background: var(--color-surface) !important;
+  box-shadow: 0 14px 34px var(--color-shadow) !important;
+  isolation: isolate;
+}
+.ar-search-panel-spotlight > *:not(.spotlight-card__light):not(.spotlight-card__grain):not(.spotlight-card__border):not(.spotlight-card__edge) {
+  position: relative;
+  z-index: 2;
+}
+.ar-search-panel-spotlight .spotlight-card__light,
+.ar-search-panel-spotlight .spotlight-card__edge {
+  mix-blend-mode: normal;
+}
+.ar-search-panel-spotlight .spotlight-card__light { opacity: .16 !important; }
+.ar-search-panel-spotlight .spotlight-card__border { background: var(--color-border) !important; }
+.ar-action-grid-magnetic > .ar-action-magnet {
+  width: 100%;
+  min-width: 0;
+}
+.ar-action-magnet > div {
+  width: 100%;
+  height: 100%;
+}
+.ar-action-magnet .ar-action-card {
+  width: 100%;
+  height: 100%;
+  transition: border-color .22s ease, background-color .22s ease, box-shadow .22s ease;
+}
+.ar-action-magnet .ar-action-card:hover,
+.ar-action-magnet .ar-action-card:focus-visible {
+  border-color: color-mix(in srgb, var(--color-primary) 46%, var(--color-border)) !important;
+  box-shadow: 0 14px 30px var(--color-shadow);
+}
+.ar-assistant-response {
+  animation: athar-response-in .3s cubic-bezier(.2,.75,.25,1) both;
+  transform-origin: top center;
+}
+@keyframes athar-response-in {
+  from { opacity: 0; transform: translateY(7px) scale(.992); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.ar-start-report,
+.voice-start-report {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 43px;
+  margin-top: 12px;
+  padding: 10px 15px;
+  border: 1px solid var(--color-primary);
+  border-radius: 9px;
+  color: var(--color-primary-ink);
+  background: var(--color-primary);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
+}
+.ar-start-report:hover,
+.voice-start-report:hover {
+  filter: brightness(1.04);
+  transform: translateY(-1px);
+  box-shadow: 0 9px 22px var(--color-shadow);
+}
+.ar-start-report:active,
+.voice-start-report:active { transform: translateY(0) scale(.985); }
+.voice-start-report { width: 100%; margin-top: 10px; }
+.ar-search-form > button[type="submit"],
+.ar-action-card,
+.ar-information-link,
+.ar-location-action > button,
+.bottom-nav button,
+.bottom-nav a {
+  transition: color .2s ease, background-color .2s ease, border-color .2s ease, transform .2s ease;
+}
+.ar-search-form > button[type="submit"]:active,
+.ar-location-action > button:active,
+.bottom-nav button:active,
+.bottom-nav a:active { transform: scale(.97); }
+.ar-information-link:hover .ar-information-icon {
+  color: var(--color-primary-ink);
+  background: var(--color-primary);
+  transform: translateY(-1px);
+}
+.ar-information-icon { transition: color .2s ease, background-color .2s ease, transform .2s ease; }
+@media (max-width: 760px) {
+  .ar-search-panel-spotlight {
+    padding: 18px !important;
+    box-shadow: none !important;
+  }
+  .ar-search-panel-spotlight .spotlight-card__light,
+  .ar-search-panel-spotlight .spotlight-card__edge,
+  .ar-search-panel-spotlight .spotlight-card__grain { display: none !important; }
+  .ar-action-magnet > div { transform: none !important; }
+  .ar-action-magnet .ar-action-card { transform: none !important; }
+  .ar-start-report,
+  .voice-start-report { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ar-assistant-response { animation: none !important; }
+  .ar-action-magnet .ar-action-card,
+  .ar-information-icon,
+  .ar-start-report,
+  .voice-start-report { transition: none !important; }
 }
