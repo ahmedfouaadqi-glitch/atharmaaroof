@@ -3,6 +3,9 @@
 import type { FormEvent } from "react";
 import Link from "next/link";
 import { useState } from "react";
+import { useAtharTheme } from "@/components/ThemeProvider";
+import SpotlightCard from "@/components/reactbits/SpotlightCard";
+import Magnet from "@/components/reactbits/Magnet";
 import {
   ArrowLeft,
   ArrowUpLeft,
@@ -30,6 +33,13 @@ type Match = {
   kind: "lost" | "found";
 };
 
+type ReportDraft = {
+  kind: "lost" | "found" | null;
+  category: string | null;
+  city: string | null;
+  area: string | null;
+};
+
 type Props = {
   assistantText: string;
   setAssistantText: (value: string) => void;
@@ -38,6 +48,9 @@ type Props = {
   assistantSearching: boolean;
   assistantReply: string;
   assistantMode: "ai" | "guided_search" | null;
+  assistantAction: "search" | "create_report" | "guide" | null;
+  assistantDraft: ReportDraft | null;
+  onStartReport: (draft: ReportDraft) => void;
   assistantMatches: Match[];
   onShowMatches: () => void;
   nearbySearching: boolean;
@@ -82,6 +95,7 @@ const informationLinks = [
 
 export default function AtharReferenceHome(props: Props) {
   const [selectedShortcut, setSelectedShortcut] = useState("");
+  const { theme } = useAtharTheme();
 
   return (
     <section
@@ -116,17 +130,30 @@ export default function AtharReferenceHome(props: Props) {
           </div>
         </div>
 
-        <aside className="ar-search-panel" aria-label="البحث في البلاغات">
+        <SpotlightCard
+          role="complementary"
+          aria-label="مساعد البحث والبلاغات"
+          className="ar-search-panel ar-search-panel-spotlight"
+          theme={theme}
+          spotlightColor={theme === "light" ? "#A65338" : "#D58B6C"}
+          intensity={0.2}
+          spotlightSize={260}
+          softness={0.82}
+          borderGlow={0.42}
+          proximity={90}
+          ambient={false}
+          grain={0}
+        >
           <div className="ar-panel-heading">
             <div>
               <span className="ar-panel-kicker">البحث / 01</span>
-              <h2>ابحث في البلاغات المنشورة</h2>
+              <h2>اسأل أثر أو ابحث في البلاغات</h2>
             </div>
             <span className="ar-panel-icon"><Search size={19} /></span>
           </div>
 
           <p className="ar-search-instruction">
-            اكتب نوع المستند أو المدينة أو المنطقة. لا تدخل أرقاماً أو بيانات شخصية.
+            اكتب ما تبحث عنه، أو أخبر المساعد أنك فقدت مستنداً أو عثرت عليه. لا تدخل أرقاماً أو بيانات شخصية.
           </p>
 
           <form className="ar-search-form" onSubmit={props.onAssistantSubmit}>
@@ -151,7 +178,7 @@ export default function AtharReferenceHome(props: Props) {
 
           <div className="ar-search-support">
             <span><ShieldCheck size={14} /> تظهر البلاغات المنشورة فقط</span>
-            <div className="ar-voice-button"><VoiceAssistant /></div>
+            <div className="ar-voice-button"><VoiceAssistant onStartReport={props.onStartReport} /></div>
           </div>
 
           <div className="ar-search-shortcuts" aria-label="بحث سريع حسب نوع المستند">
@@ -175,7 +202,7 @@ export default function AtharReferenceHome(props: Props) {
             <section className="ar-assistant-response" aria-live="polite">
               <div className="ar-response-title">
                 <CheckCircle2 size={16} />
-                <b>{props.assistantMode === "ai" ? "رد المساعد" : "نتيجة البحث"}</b>
+                <b>{props.assistantAction === "create_report" ? "مساعد إعداد البلاغ" : props.assistantAction === "guide" ? "إرشاد من أثر" : props.assistantMode === "ai" ? "رد المساعد الذكي" : "نتيجة البحث"}</b>
                 <small>{props.assistantMatches.length} نتيجة</small>
               </div>
               <p>{props.assistantReply}</p>
@@ -197,9 +224,18 @@ export default function AtharReferenceHome(props: Props) {
                   عرض النتائج في سجل البلاغات <ArrowUpLeft size={15} />
                 </button>
               )}
+              {props.assistantDraft && (props.assistantAction === "create_report" || props.assistantAction === "guide") && (
+                <button
+                  type="button"
+                  className="ar-start-report"
+                  onClick={() => props.onStartReport(props.assistantDraft!)}
+                >
+                  مراجعة المسودة واستكمال البلاغ <ArrowUpLeft size={15} />
+                </button>
+              )}
             </section>
           )}
-        </aside>
+        </SpotlightCard>
       </section>
 
       <section className="ar-action-section" aria-labelledby="ar-action-title">
@@ -213,7 +249,8 @@ export default function AtharReferenceHome(props: Props) {
           </a>
         </div>
 
-        <div className="ar-action-grid">
+        <div className="ar-action-grid ar-action-grid-magnetic">
+          <Magnet wrapperClassName="ar-action-magnet" padding={52} magnetStrength={1.4} maxOffset={5} tilt={0} scale={1.008}>
           <button
             type="button"
             className="ar-action-card ar-action-lost"
@@ -227,7 +264,9 @@ export default function AtharReferenceHome(props: Props) {
             </span>
             <ArrowUpLeft className="ar-action-arrow" size={19} />
           </button>
+          </Magnet>
 
+          <Magnet wrapperClassName="ar-action-magnet" padding={52} magnetStrength={1.4} maxOffset={5} tilt={0} scale={1.008}>
           <button
             type="button"
             className="ar-action-card ar-action-found"
@@ -241,6 +280,7 @@ export default function AtharReferenceHome(props: Props) {
             </span>
             <ArrowUpLeft className="ar-action-arrow" size={19} />
           </button>
+          </Magnet>
         </div>
       </section>
 
