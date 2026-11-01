@@ -1,36 +1,6 @@
 import { useId } from "react";
-
 export function BrandMark({ className = "" }: { className?: string }) {
-  const prefix = "athar-" + useId().replace(/:/g, "");
-  return (
-    <span className={("brand-mark " + className).trim()} aria-hidden="true">
-      <svg viewBox="0 0 100 100" fill="none" focusable="false" role="presentation">
-        <defs>
-          <linearGradient id={`${prefix}-main`} x1="12" y1="12" x2="84" y2="88" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#64F5E5" />
-            <stop offset=".52" stopColor="#18CFC7" />
-            <stop offset="1" stopColor="#39AEEA" />
-          </linearGradient>
-          <linearGradient id={`${prefix}-shine`} x1="56" y1="14" x2="83" y2="76" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#F4FFFF" />
-            <stop offset="1" stopColor="#64DDF2" />
-          </linearGradient>
-        </defs>
-        <path d="M50 6C26 6 8 24 8 47C8 69 25 87 47 91" stroke={`url(#${prefix}-main)`} strokeWidth="5" strokeLinecap="round"/>
-        <path d="M20 73C30 64 40 63 51 66C66 70 79 60 82 44L87 19L96 10L92 47C89 71 73 87 51 89" stroke={`url(#${prefix}-main)`} strokeWidth="6" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M51 19C40 19 31 28 31 39C31 52 51 70 51 70C51 70 71 52 71 39C71 28 62 19 51 19Z" fill={`url(#${prefix}-main)`} fillOpacity=".2" stroke={`url(#${prefix}-shine)`} strokeWidth="3"/>
-        <circle cx="51" cy="39" r="7" fill={`url(#${prefix}-shine)`}/>
-        <path d="M18 57C25 48 34 46 43 49M24 66C31 59 38 58 45 60" stroke={`url(#${prefix}-main)`} strokeWidth="3" strokeLinecap="round"/>
-        <path d="M63 13H84L77 21H61M65 29H80L70 39V53" stroke={`url(#${prefix}-shine)`} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-      </svg>
-    </span>
-  );
+ const prefix = "athar-linear-" + useId().replace(/:/g, "");
+ return <span className={("brand-mark " + className).trim()} aria-hidden="true"><svg viewBox="0 0 100 100" fill="none" focusable="false" role="presentation"><defs><linearGradient id={prefix+"-stroke"} x1="12" y1="8" x2="88" y2="92" gradientUnits="userSpaceOnUse"><stop stopColor="#73F4E3"/><stop offset=".52" stopColor="#27D7D0"/><stop offset="1" stopColor="#79BFFF"/></linearGradient></defs><path d="M18 67C10 50 16 28 34 17C47 9 62 11 71 18" stroke={"url(#"+prefix+"-stroke)"} strokeWidth="6" strokeLinecap="round"/><path d="M24 75C36 63 46 60 59 64C74 69 84 57 86 41L89 22L96 13L93 47C90 72 74 88 54 88C42 88 31 83 24 75Z" stroke={"url(#"+prefix+"-stroke)"} strokeWidth="5" strokeLinejoin="round"/><path d="M31 48C31 36 39 28 50 28C61 28 69 36 69 48C69 59 50 73 50 73C50 73 31 59 31 48Z" stroke={"url(#"+prefix+"-stroke)"} strokeWidth="3.5" strokeLinejoin="round"/><path d="M40 48C40 42 44 38 50 38C56 38 60 42 60 48C60 54 50 62 50 62C50 62 40 54 40 48Z" stroke={"url(#"+prefix+"-stroke)"} strokeWidth="2.5" strokeLinejoin="round"/><circle cx="50" cy="47" r="3.5" fill="#A6FFF2"/><path d="M65 13H84L77 21H62M67 28H80L72 37V50" stroke="#E8FCFF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/></svg></span>;
 }
-
-export function BrandWordmark({ className = "" }: { className?: string }) {
-  return (
-    <span className={className} dir="rtl" aria-label="أثر معروف">
-      <strong>أثر <b>معروف</b></strong>
-    </span>
-  );
-}
+export function BrandWordmark({ className = "" }: { className?: string }) { return <span className={className} dir="rtl" aria-label="أثر معروف"><strong>أثر <b>معروف</b></strong></span>; }
