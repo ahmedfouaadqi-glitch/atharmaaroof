@@ -14,6 +14,13 @@ import {
 import AtharReferenceHome from "@/components/AtharReferenceHome";
 import ThemeToggle from "@/components/ThemeToggle";
 
+type AssistantDraft = {
+  kind: "lost" | "found" | null;
+  category: string | null;
+  city: string | null;
+  area: string | null;
+};
+
 type Report = {
   id: string;
   public_code: string;
@@ -34,7 +41,7 @@ type InstallPromptEvent = Event & {
 
 const cities = ["الكل", "بغداد", "كربلاء", "النجف", "البصرة", "سامراء"];
 const categories = [
-  "بطاقة وطنية", "بطاقة سكن", "بطاقة تموينية", "إجازة سياقة",
+  "بطاقة وطنية", "جواز سفر", "بطاقة سكن", "بطاقة تموينية", "إجازة سياقة",
   "سنوية سيارة", "بطاقة مصرفية", "محفظة", "مفاتيح", "أخرى"
 ];
 
@@ -79,6 +86,8 @@ export default function HomePage() {
   const [assistantReply, setAssistantReply] = useState("");
   const [assistantMatches, setAssistantMatches] = useState<Report[]>([]);
   const [assistantMode, setAssistantMode] = useState<"ai" | "guided_search" | null>(null);
+  const [assistantAction, setAssistantAction] = useState<"search" | "create_report" | "guide" | null>(null);
+  const [assistantDraft, setAssistantDraft] = useState<AssistantDraft | null>(null);
   const [assistantSearching, setAssistantSearching] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
   const [kind, setKind] = useState<"lost" | "found">("lost");
@@ -138,9 +147,12 @@ export default function HomePage() {
     
   }
 
-  function openReportForm(nextKind: "lost" | "found", nextCategory?: string) {
-    setKind(nextKind);
-    if (nextCategory) setCategory(nextCategory);
+  function openReportForm(nextKind: "lost" | "found", nextCategory?: string, draft?: AssistantDraft) {
+    setKind(draft?.kind ?? nextKind);
+    setCategory(draft ? (draft.category ?? "أخرى") : (nextCategory ?? categories[0]));
+    setFormCity(draft ? (draft.city ?? "") : "بغداد");
+    setArea(draft?.area ?? "");
+    setDetails("");
     setFormOpen(true);
     setShowInstallHelp(false);
     setReportLocation(null);
@@ -282,6 +294,8 @@ export default function HomePage() {
     setAssistantReply("");
     setAssistantMatches([]);
     setAssistantMode(null);
+    setAssistantAction(null);
+    setAssistantDraft(null);
     try {
       const response = await fetch("/api/assistant/search", {
         method: "POST",
@@ -293,11 +307,15 @@ export default function HomePage() {
       if (!response.ok) throw new Error(payload.error || "تعذر تنفيذ البحث.");
       setAssistantReply(payload.assistant?.reply ?? "اكتمل البحث في البلاغات المنشورة.");
       setAssistantMode(payload.assistant?.mode ?? "guided_search");
+      setAssistantAction(payload.assistant?.action ?? "search");
+      setAssistantDraft((payload.assistant?.draft ?? null) as AssistantDraft | null);
       setAssistantMatches((payload.reports ?? []) as Report[]);
       setAssistantText(value);
     } catch (error) {
       setAssistantReply(error instanceof Error ? error.message : "تعذر الاتصال بالمساعد.");
       setAssistantMode("guided_search");
+      setAssistantAction("guide");
+      setAssistantDraft(null);
       setAssistantMatches([]);
     } finally {
       setAssistantSearching(false);
@@ -539,6 +557,9 @@ export default function HomePage() {
             assistantSearching={assistantSearching}
             assistantReply={assistantReply}
             assistantMode={assistantMode}
+            assistantAction={assistantAction}
+            assistantDraft={assistantDraft}
+            onStartReport={(draft) => openReportForm(draft.kind ?? "lost", draft.category ?? undefined, draft)}
             assistantMatches={assistantMatches}
             onShowMatches={() => {
               setReports(assistantMatches);
@@ -671,8 +692,8 @@ export default function HomePage() {
                 <button className={kind === "found" ? "active" : ""} onClick={() => setKind("found")}>عثرت على شيء</button>
               </div>
               <form onSubmit={(event) => void submitReport(event)} className="report-form">
-                <label>نوع المستمسك أو الغرض<select value={category} onChange={(event) => setCategory(event.target.value)}>{categories.map((item) => <option key={item}>{item}</option>)}</select></label>
-                <label>المدينة<select value={formCity} onChange={(event) => setFormCity(event.target.value)}>{cities.slice(1).map((item) => <option key={item}>{item}</option>)}</select></label>
+                <label>نوع المستمسك أو الغرض<select required value={category} onChange={(event) => setCategory(event.target.value)}>{categories.map((item) => <option key={item}>{item}</option>)}</select></label>
+                <label>المدينة<select required value={formCity} onChange={(event) => setFormCity(event.target.value)}><option value="" disabled>اختر المدينة</option>{cities.slice(1).map((item) => <option key={item}>{item}</option>)}</select></label>
                 <label>المنطقة التقريبية <small>اختياري</small><input value={area} onChange={(event) => setArea(event.target.value)} maxLength={100} placeholder="مثلاً: الكرادة" /></label>
                 <label>تفاصيل عامة غير حساسة <small>اختياري</small><textarea value={details} onChange={(event) => setDetails(event.target.value)} maxLength={500} placeholder="اكتب وصفاً عاماً لا يكشف أرقاماً أو معلومات خاصة." /></label>
                 <div className="report-location-choice">
