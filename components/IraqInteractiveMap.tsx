@@ -50,8 +50,13 @@ export default function IraqInteractiveMap() {
         preferCanvas={true}
       >
         <TileLayer
-          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>'
+          url={theme === "dark"
+            ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+            : "https://tile.openstreetmap.org/{z}/{x}/{y}.png"}
+          subdomains={theme === "dark" ? "abcd" : "abc"}
+          attribution={theme === "dark"
+            ? '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" target="_blank" rel="noreferrer">CARTO</a>'
+            : '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>'}
           minZoom={4}
           maxZoom={19}
           keepBuffer={2}
