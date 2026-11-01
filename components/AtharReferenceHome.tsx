@@ -238,16 +238,18 @@ export default function AtharReferenceHome(props: Props) {
                 </button>
               )}
               {props.assistantDraft && (props.assistantAction === "create_report" || props.assistantAction === "guide") && (
-                <button
-                  type="button"
-                  className="ar-start-report"
-                  onClick={() => props.onStartReport(props.assistantDraft!)}
-                >
-                  مراجعة المسودة واستكمال البلاغ <ArrowUpLeft size={15} />
-                </button>
-                <button type="button" className="ar-cancel-draft" onClick={props.onCancelDraft}>
-                  إلغاء المسودة
-                </button>
+                <>
+                  <button
+                    type="button"
+                    className="ar-start-report"
+                    onClick={() => props.onStartReport(props.assistantDraft!)}
+                  >
+                    مراجعة المسودة واستكمال البلاغ <ArrowUpLeft size={15} />
+                  </button>
+                  <button type="button" className="ar-cancel-draft" onClick={props.onCancelDraft}>
+                    إلغاء المسودة
+                  </button>
+                </>
               )}
             </section>
           )}
