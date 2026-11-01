@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useAtharTheme } from "@/components/ThemeProvider";
 import SpotlightCard from "@/components/reactbits/SpotlightCard";
 import Magnet from "@/components/reactbits/Magnet";
+import ClickSpark from "@/components/reactbits/ClickSpark";
 import {
   ArrowLeft,
   ArrowUpLeft,
@@ -181,6 +182,17 @@ export default function AtharReferenceHome(props: Props) {
             <div className="ar-voice-button"><VoiceAssistant onStartReport={props.onStartReport} /></div>
           </div>
 
+          <ClickSpark
+            className="ar-search-shortcuts-spark"
+            sparkColor={theme === "light" ? "#A65338" : "#D58B6C"}
+            sparkSize={7}
+            sparkRadius={24}
+            sparkCount={6}
+            duration={420}
+            shape="dot"
+            gravity={0.08}
+            disabled={theme === "dark" && typeof window === "undefined"}
+          >
           <div className="ar-search-shortcuts" aria-label="بحث سريع حسب نوع المستند">
             {searchShortcuts.map(({ label, query, Icon }) => (
               <button
@@ -197,6 +209,7 @@ export default function AtharReferenceHome(props: Props) {
               </button>
             ))}
           </div>
+          </ClickSpark>
 
           {props.assistantReply && (
             <section className="ar-assistant-response" aria-live="polite">
