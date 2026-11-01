@@ -2884,3 +2884,97 @@ html[data-theme="dark"] .athar-rebuild .ar-floating-doc span{color:#d9f4f3}
   html[data-theme="light"]{--athar-line:rgba(30,83,99,.48)}
   .athar-rebuild .ar-service-card,.athar-rebuild .ar-info-card{border-width:1.5px}
 }
+
+
+/* === ATHAR DESIGN SYSTEM v2: one semantic palette across the entire app === */
+:root{
+ --color-canvas:#10151d;--color-canvas-raised:#171f2a;--color-surface:#1d2734;--color-surface-hover:#263443;
+ --color-ink:#f1f4f7;--color-muted:#b1bdc9;--color-subtle:#8493a3;--color-border:#354454;
+ --color-primary:#a7f36b;--color-primary-ink:#1a2a13;--color-secondary:#8bc7ff;--color-danger:#ff8585;
+ --color-focus:#d5ff9e;--color-shadow:rgba(0,0,0,.22);
+ --bg:var(--color-canvas);--bg-soft:var(--color-canvas-raised);--surface:var(--color-surface);--surface-2:var(--color-surface-hover);--surface-3:#314154;
+ --line:var(--color-border);--muted:var(--color-muted);--muted-2:var(--color-subtle);--text:var(--color-ink);
+ --mint:var(--color-primary);--mint-2:#8edb50;--blue:var(--color-secondary);--amber:#f3c77b;
+ --athar-page:var(--color-canvas);--athar-panel:var(--color-surface);--athar-panel-strong:var(--color-canvas-raised);
+ --athar-ink:var(--color-ink);--athar-muted:var(--color-muted);--athar-line:var(--color-border);
+ --athar-accent:var(--color-primary);--athar-accent-2:var(--color-secondary);--athar-shadow:0 18px 48px var(--color-shadow);
+}
+html[data-theme="dark"]{
+ color-scheme:dark;
+ --color-canvas:#10151d;--color-canvas-raised:#171f2a;--color-surface:#1d2734;--color-surface-hover:#263443;
+ --color-ink:#f1f4f7;--color-muted:#b1bdc9;--color-subtle:#8493a3;--color-border:#354454;
+ --color-primary:#a7f36b;--color-primary-ink:#1a2a13;--color-secondary:#8bc7ff;--color-danger:#ff8585;
+ --color-focus:#d5ff9e;--color-shadow:rgba(0,0,0,.22);
+}
+html[data-theme="light"]{
+ color-scheme:light;
+ --color-canvas:#f4f6f8;--color-canvas-raised:#ffffff;--color-surface:#ffffff;--color-surface-hover:#eaf0f4;
+ --color-ink:#1b2733;--color-muted:#4d5f70;--color-subtle:#657889;--color-border:#cbd5de;
+ --color-primary:#3e780d;--color-primary-ink:#ffffff;--color-secondary:#145f99;--color-danger:#b42332;
+ --color-focus:#265b0a;--color-shadow:rgba(24,39,52,.09);
+}
+html,body{background:var(--color-canvas);color:var(--color-ink)}
+body{transition:background-color .2s ease,color .2s ease}
+.app-shell{background:var(--color-canvas)!important;color:var(--color-ink)}
+.app-shell::before{opacity:.035}
+.topbar{background:color-mix(in srgb,var(--color-canvas-raised) 94%,transparent)!important;border-color:var(--color-border)!important;color:var(--color-ink)}
+.brand-copy strong,.nav-link,.account-link{color:var(--color-ink)}
+.brand-copy small,.nav-link small,.muted,.text-muted{color:var(--color-muted)}
+.nav-link:hover,.nav-link.active{background:var(--color-surface-hover)!important;color:var(--color-primary)!important}
+.icon-action,.mobile-menu,.dropdown-menu,.modal-content,.dialog-content,.info-page-shell{
+ background:var(--color-surface)!important;color:var(--color-ink)!important;border-color:var(--color-border)!important
+}
+.mobile-menu a,.mobile-menu button{color:var(--color-ink)}
+button,input,textarea,select{accent-color:var(--color-primary)}
+input,textarea,select,.form-control{
+ background:var(--color-canvas-raised);color:var(--color-ink);border-color:var(--color-border)
+}
+input::placeholder,textarea::placeholder{color:var(--color-subtle)}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{
+ outline:2px solid var(--color-focus)!important;outline-offset:3px
+}
+button:disabled{opacity:.55}
+a{color:var(--color-secondary)}
+/* Override legacy hard-coded color declarations in all screens, forms, cards and dialogs. */
+.card,.panel,.surface,.info-card,.settings-card,.report-card,.result-card,.modal,.dialog,
+[class*="stat-card"],[class*="content-card"],[class*="form-card"],[class*="info-card"]{
+ border-color:var(--color-border)
+}
+.athar-rebuild{
+ --ar-text:var(--color-ink);--ar-accent:var(--color-primary);--ar-accent-2:var(--color-secondary);
+ color:var(--color-ink)
+}
+.athar-rebuild .ar-hero{
+ background:linear-gradient(145deg,var(--color-canvas-raised),var(--color-canvas))!important;
+ border-color:var(--color-border)!important;box-shadow:var(--athar-shadow)
+}
+.athar-rebuild .ar-location-band,.athar-rebuild .ar-service-card,.athar-rebuild .ar-info-card,
+.athar-rebuild .ar-assistant-response{
+ background:var(--color-surface)!important;border-color:var(--color-border)!important;color:var(--color-ink)
+}
+.athar-rebuild .ar-location-copy h2,.athar-rebuild .ar-section-heading h2,
+.athar-rebuild .ar-service-copy b,.athar-rebuild .ar-info-copy b,.athar-rebuild .ar-response-title b{color:var(--color-ink)}
+.athar-rebuild .ar-location-copy p,.athar-rebuild .ar-section-heading p,
+.athar-rebuild .ar-service-copy small,.athar-rebuild .ar-info-copy small,
+.athar-rebuild .ar-assistant-response p{color:var(--color-muted)}
+.athar-rebuild .ar-eyebrow,.athar-rebuild .ar-service-icon,.athar-rebuild .ar-info-icon,
+.athar-rebuild .ar-location-icon,.athar-rebuild .ar-service-arrow{color:var(--color-primary)}
+.athar-rebuild .ar-search-form,.athar-rebuild .ar-quick-search button,
+.athar-rebuild .ar-voice-button .voice-call-trigger{
+ background:var(--color-canvas-raised)!important;border-color:var(--color-border)!important;color:var(--color-ink)
+}
+.athar-rebuild .ar-search-form input{background:transparent!important;color:var(--color-ink)}
+.athar-rebuild .ar-search-form>button[type="submit"],.athar-rebuild .ar-location-action button,
+.athar-rebuild .ar-report-strip button{
+ background:var(--color-primary)!important;color:var(--color-primary-ink)!important;border-color:transparent!important
+}
+.athar-rebuild .ar-quick-search button.selected,.athar-rebuild .ar-quick-search button:hover{
+ background:var(--color-surface-hover)!important;border-color:var(--color-primary)!important;color:var(--color-primary)
+}
+.athar-rebuild .ar-report-strip{background:var(--color-canvas-raised)!important;border-color:var(--color-border)!important}
+.athar-rebuild .ar-motion-setting{color:var(--color-muted);border-color:var(--color-border)}
+.athar-rebuild .ar-motion-setting button,.athar-rebuild .ar-show-matches{color:var(--color-secondary)}
+.athar-rebuild .ar-floating-doc{filter:drop-shadow(0 12px 22px var(--color-shadow))}
+html[data-theme="light"] .athar-rebuild .ar-floating-doc span{color:#243447}
+html[data-theme="dark"] .athar-rebuild .ar-floating-doc span{color:#f1f4f7}
+@media(prefers-reduced-motion:reduce){body{transition:none}}
