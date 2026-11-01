@@ -3150,3 +3150,165 @@ html,body{background:var(--color-canvas)!important}
 @media(prefers-reduced-motion:reduce){
  .athar-rebuild *{animation:none!important;scroll-behavior:auto!important;transition:none!important}
 }
+
+
+/* ATHAR — cohesive, restrained editorial layout; exact selectors used by the landing component */
+.athar-rebuild{direction:rtl;color:var(--color-ink);gap:24px}
+.athar-rebuild .ar-hero{
+ display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,.8fr);
+ grid-template-rows:auto auto auto auto;column-gap:36px;row-gap:0;
+ min-height:0;padding:clamp(28px,4.5vw,64px)!important;
+ border-radius:26px!important;border:1px solid var(--color-border)!important;
+ background:var(--color-canvas-raised)!important;box-shadow:none!important;
+}
+.athar-rebuild .ar-hero-ambient{position:absolute;pointer-events:none;border-radius:50%;filter:blur(1px)}
+.athar-rebuild .ar-ambient-one{width:390px;height:390px;top:-210px;left:-100px;background:radial-gradient(circle,color-mix(in srgb,var(--color-secondary) 12%,transparent),transparent 68%)}
+.athar-rebuild .ar-ambient-two{width:480px;height:480px;bottom:-320px;right:15%;background:radial-gradient(circle,color-mix(in srgb,var(--color-primary) 10%,transparent),transparent 70%)}
+.athar-rebuild .ar-hero-topline{grid-column:1/-1;grid-row:1;position:relative;z-index:2;margin-bottom:34px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.athar-rebuild .ar-status-pill{background:var(--color-surface)!important;color:var(--color-muted)!important;border:1px solid var(--color-border)!important;border-radius:8px!important;padding:8px 11px;font-size:11px}
+.athar-rebuild .ar-status-pill i{width:7px;height:7px;display:inline-block;border-radius:50%;background:var(--color-primary);box-shadow:0 0 0 4px color-mix(in srgb,var(--color-primary) 12%,transparent)}
+.athar-rebuild .ar-hero-index{font:600 10px/1.4 ui-monospace,monospace;letter-spacing:.13em;color:var(--color-subtle)}
+.athar-rebuild .ar-hero-brand{grid-column:1;grid-row:2;position:relative;z-index:2;display:flex;align-items:center;gap:18px;margin:0 0 22px}
+.athar-rebuild .ar-logo-stage{width:70px;height:70px;flex:0 0 70px;display:grid;place-items:center;border-radius:18px;background:var(--color-surface)!important;border:1px solid var(--color-border);color:var(--color-primary)}
+.athar-rebuild .ar-logo-stage svg{width:52px;height:52px}
+.athar-rebuild .ar-wordmark h1{font-size:clamp(40px,5vw,62px)!important;line-height:1.15!important;letter-spacing:-.045em!important;margin:0!important;color:var(--color-ink)!important;font-weight:850!important}
+.athar-rebuild .ar-wordmark h1 em{font-style:normal;color:var(--color-primary)!important}
+.athar-rebuild .ar-latin-wordmark{display:block;margin-top:8px;font-size:9px;font-weight:650;letter-spacing:.24em;color:var(--color-subtle)}
+.athar-rebuild .ar-wordmark p{max-width:470px;margin:14px 0 0!important;font-size:16px!important;line-height:1.9!important;color:var(--color-muted)!important}
+.athar-rebuild .ar-hero-description{grid-column:1;grid-row:3;position:relative;z-index:2;max-width:520px;margin:0 0 24px!important;font-size:13px!important;line-height:2!important;color:var(--color-muted)!important}
+.athar-rebuild .ar-orbit-lines{grid-column:2;grid-row:2/5;position:absolute!important;inset:18% 0 auto auto!important;width:53%!important;height:70%!important;opacity:.44;pointer-events:none}
+.athar-rebuild .ar-orbit-lines path{stroke:var(--color-secondary)!important;stroke-width:1.2;stroke-opacity:.32!important;fill:none}
+.athar-rebuild .ar-orbit-lines circle{fill:var(--color-primary)!important}
+.athar-rebuild .ar-floating-doc{position:absolute!important;z-index:1;filter:drop-shadow(0 18px 26px var(--color-shadow))!important}
+.athar-rebuild .ar-floating-doc .ar-document-art{width:clamp(108px,12vw,166px);height:auto;color:var(--color-ink)}
+.athar-rebuild .ar-floating-doc span{display:block;text-align:center;color:var(--color-muted)!important;font-size:10px;letter-spacing:.02em}
+.athar-rebuild .ar-doc-left{right:12%;top:22%;transform:rotate(-9deg) scale(.88)!important}
+.athar-rebuild .ar-doc-back{right:31%;top:18%;transform:rotate(8deg) scale(.76)!important;opacity:.68!important}
+.athar-rebuild .ar-doc-right{right:0;top:42%;transform:rotate(10deg) scale(.78)!important}
+.athar-rebuild .ar-doc-far{right:34%;top:47%;transform:rotate(-4deg) scale(.6)!important;opacity:.4!important}
+.athar-rebuild .ar-search-block{grid-column:1/-1;grid-row:4;position:relative;z-index:3;max-width:850px;width:100%;margin-top:12px}
+.athar-rebuild .ar-search-row{display:flex;align-items:stretch;gap:10px}
+.athar-rebuild .ar-search-form{min-width:0;flex:1;min-height:64px;display:flex;align-items:center;gap:12px;padding:7px 8px 7px 18px!important;border:1px solid var(--color-border)!important;border-radius:14px!important;background:var(--color-surface)!important;box-shadow:none!important}
+.athar-rebuild .ar-search-leading{flex:0 0 auto;color:var(--color-subtle)!important}
+.athar-rebuild .ar-search-form input{min-width:0;background:transparent!important;color:var(--color-ink)!important;font-size:14px!important;box-shadow:none!important}
+.athar-rebuild .ar-search-form input::placeholder{color:var(--color-subtle)!important}
+.athar-rebuild .ar-search-form>button[type=submit]{width:46px;height:46px;flex:0 0 46px;display:grid;place-items:center;border:0!important;border-radius:10px!important;background:var(--color-primary)!important;color:var(--color-primary-ink)!important}
+.athar-rebuild .ar-search-form>button[type=submit]:disabled{opacity:.4}
+.athar-rebuild .ar-voice-button{display:flex;align-items:center}
+.athar-rebuild .ar-voice-button button,.athar-rebuild .ar-voice-button [role=button]{border-radius:12px!important}
+.athar-rebuild .ar-search-meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 2px 0;color:var(--color-subtle)!important;font-size:10px}
+.athar-rebuild .ar-search-meta span{display:flex;align-items:center;gap:6px}
+.athar-rebuild .ar-search-meta svg{color:var(--color-primary)}
+.athar-rebuild .ar-quick-search{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}
+.athar-rebuild .ar-quick-search button{display:inline-flex;align-items:center;gap:8px;padding:10px 12px!important;border-radius:10px!important;border:1px solid var(--color-border)!important;background:var(--color-canvas)!important;color:var(--color-muted)!important;font-size:11px!important}
+.athar-rebuild .ar-quick-search button:hover,.athar-rebuild .ar-quick-search button.selected{border-color:var(--color-primary)!important;background:var(--color-surface)!important;color:var(--color-primary)!important}
+.athar-rebuild .ar-location-band{display:grid;grid-template-columns:54px minmax(0,1fr) auto;align-items:center;gap:20px;padding:25px 28px!important;border-radius:20px!important;border:1px solid var(--color-border)!important;background:var(--color-surface)!important;box-shadow:none!important}
+.athar-rebuild .ar-location-icon{width:54px;height:54px;display:grid;place-items:center;border-radius:15px;border:1px solid var(--color-border);background:var(--color-canvas)!important;color:var(--color-secondary)!important}
+.athar-rebuild .ar-eyebrow{font-size:10px!important;font-weight:750;letter-spacing:.04em;color:var(--color-primary)!important}
+.athar-rebuild .ar-location-copy h2,.athar-rebuild .ar-section-heading h2{font-size:clamp(21px,2.4vw,28px)!important;line-height:1.45!important;letter-spacing:-.025em;margin:5px 0 7px!important;color:var(--color-ink)!important}
+.athar-rebuild .ar-location-copy p,.athar-rebuild .ar-section-heading p{max-width:650px;margin:0!important;font-size:12px!important;line-height:1.95!important;color:var(--color-muted)!important}
+.athar-rebuild .ar-location-action{display:grid;justify-items:stretch;gap:11px;min-width:180px}
+.athar-rebuild .ar-location-state{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--color-muted)}
+.athar-rebuild .ar-location-state i{width:6px;height:6px;border-radius:50%;background:var(--color-primary)}
+.athar-rebuild .ar-location-action button,.athar-rebuild .ar-report-strip button{min-height:43px;padding:0 13px!important;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent!important;border-radius:11px!important;background:var(--color-primary)!important;color:var(--color-primary-ink)!important;font-size:11px;font-weight:750}
+.athar-rebuild .ar-nearby-error{grid-column:1/-1;margin:0;color:var(--color-danger)!important;font-size:12px}
+.athar-rebuild .ar-service-section,.athar-rebuild .ar-info-section{padding:6px 0 0}
+.athar-rebuild .ar-section-heading{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:17px}
+.athar-rebuild .ar-section-heading h2{margin-bottom:0!important}
+.athar-rebuild .ar-section-heading p{max-width:400px;text-align:left}
+.athar-rebuild .ar-service-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.athar-rebuild .ar-service-card{position:relative;overflow:hidden;display:flex!important;flex-direction:column;align-items:flex-start!important;justify-content:flex-start!important;gap:0!important;min-height:184px!important;padding:20px!important;text-align:right!important;border:1px solid var(--color-border)!important;border-radius:17px!important;background:var(--color-surface)!important;color:var(--color-ink)!important;box-shadow:none!important;transition:transform .18s ease,border-color .18s ease,background-color .18s ease}
+.athar-rebuild .ar-service-card:before{content:"";position:absolute;inset:auto -20% -65% 10%;height:145px;background:radial-gradient(ellipse,color-mix(in srgb,var(--color-primary) 9%,transparent),transparent 72%);pointer-events:none}
+.athar-rebuild .ar-service-card:hover{transform:translateY(-3px)!important;border-color:var(--color-primary)!important;background:var(--color-surface-hover)!important}
+.athar-rebuild .ar-service-number{position:absolute;top:18px;left:18px;font:600 10px/1.2 ui-monospace,monospace;letter-spacing:.1em;color:var(--color-subtle)!important}
+.athar-rebuild .ar-service-icon{width:44px;height:44px;display:grid;place-items:center;margin-bottom:23px;border-radius:12px;border:1px solid var(--color-border);background:var(--color-canvas)!important;color:var(--color-primary)!important}
+.athar-rebuild .ar-service-copy{display:grid;gap:7px}
+.athar-rebuild .ar-service-copy b{font-size:14px!important;color:var(--color-ink)!important}
+.athar-rebuild .ar-service-copy small{font-size:11px!important;line-height:1.8;color:var(--color-muted)!important}
+.athar-rebuild .ar-service-arrow{position:absolute;bottom:18px;left:18px;color:var(--color-secondary)!important}
+.athar-rebuild .ar-report-strip{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:12px;padding:15px 17px!important;border:1px solid var(--color-border)!important;border-radius:14px!important;background:var(--color-canvas-raised)!important}
+.athar-rebuild .ar-report-strip-copy{display:flex;align-items:center;gap:9px;margin-inline-end:auto;color:var(--color-ink)!important;font-size:11px;font-weight:650}
+.athar-rebuild .ar-report-pulse{width:7px;height:7px;flex:0 0 7px;border-radius:50%;background:var(--color-primary);box-shadow:0 0 0 4px color-mix(in srgb,var(--color-primary) 12%,transparent)}
+.athar-rebuild .ar-report-strip button{min-height:38px;font-size:10px!important}
+.athar-rebuild .ar-report-strip button+button{background:var(--color-surface)!important;color:var(--color-ink)!important;border-color:var(--color-border)!important}
+.athar-rebuild .ar-motion-setting{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-border);font-size:10px;color:var(--color-muted)}
+.athar-rebuild .ar-motion-setting span{display:flex;align-items:center;gap:8px}
+.athar-rebuild .ar-motion-setting button{border:0;background:transparent;color:var(--color-secondary)!important;cursor:pointer}
+.athar-rebuild .ar-info-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.athar-rebuild .ar-info-card{display:flex;align-items:flex-start;gap:12px;min-height:108px;padding:17px!important;border:1px solid var(--color-border)!important;border-radius:16px!important;background:var(--color-surface)!important;color:var(--color-ink)!important;text-decoration:none!important;transition:transform .18s ease,border-color .18s ease}
+.athar-rebuild .ar-info-card:hover{transform:translateY(-2px);border-color:var(--color-secondary)!important}
+.athar-rebuild .ar-info-icon{width:39px;height:39px;flex:0 0 39px;display:grid;place-items:center;border:1px solid var(--color-border);border-radius:11px;background:var(--color-canvas)!important;color:var(--color-secondary)!important}
+.athar-rebuild .ar-info-copy{display:grid;gap:6px;flex:1}
+.athar-rebuild .ar-info-copy b{font-size:12px!important;color:var(--color-ink)!important}
+.athar-rebuild .ar-info-copy small{font-size:10px!important;line-height:1.8;color:var(--color-muted)!important}
+.athar-rebuild .ar-info-arrow{flex:0 0 auto;color:var(--color-subtle)}
+.athar-rebuild .ar-assistant-response{grid-column:1/-1;margin-top:15px;padding:18px;border:1px solid var(--color-border);border-radius:16px;background:var(--color-surface)!important;color:var(--color-ink)}
+.athar-rebuild .ar-response-title{display:flex;align-items:center;gap:9px;color:var(--color-primary)}
+.athar-rebuild .ar-response-title b{color:var(--color-ink)}
+.athar-rebuild .ar-response-title small{margin-inline-start:auto;color:var(--color-subtle)}
+.athar-rebuild .ar-assistant-response p{color:var(--color-muted)!important;line-height:1.9;font-size:12px}
+.athar-rebuild .ar-response-matches article{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--color-border)!important;border-radius:11px;background:var(--color-canvas)!important;color:var(--color-ink)}
+.athar-rebuild .ar-response-matches article b{font-size:12px;color:var(--color-ink)}
+.athar-rebuild .ar-response-matches article small{display:block;margin-top:5px;color:var(--color-muted)}
+.athar-rebuild .ar-show-matches{display:inline-flex;align-items:center;gap:7px;margin-top:10px;background:transparent;border:0;color:var(--color-secondary)!important}
+html[data-theme="light"] .athar-rebuild .ar-floating-doc .ar-document-art{color:#274455}
+html[data-theme="dark"] .athar-rebuild .ar-floating-doc .ar-document-art{color:#eaf2f8}
+html[data-theme="light"] .athar-rebuild .ar-document-art [fill^="url"]{stroke:var(--color-border)}
+html[data-theme="light"] .athar-rebuild .ar-service-card.aqua .ar-service-icon,
+html[data-theme="light"] .athar-rebuild .ar-service-card.mint .ar-service-icon,
+html[data-theme="light"] .athar-rebuild .ar-service-card.blue .ar-service-icon,
+html[data-theme="light"] .athar-rebuild .ar-service-card.violet .ar-service-icon{color:var(--color-primary)!important}
+html[data-theme="light"] .athar-rebuild .ar-info-card .ar-info-icon{color:var(--color-secondary)!important}
+html[data-theme="dark"] .athar-rebuild .ar-service-card.aqua,
+html[data-theme="dark"] .athar-rebuild .ar-service-card.mint,
+html[data-theme="dark"] .athar-rebuild .ar-service-card.blue,
+html[data-theme="dark"] .athar-rebuild .ar-service-card.violet,
+html[data-theme="dark"] .athar-rebuild .ar-info-card.mint,
+html[data-theme="dark"] .athar-rebuild .ar-info-card.blue,
+html[data-theme="dark"] .athar-rebuild .ar-info-card.violet,
+html[data-theme="dark"] .athar-rebuild .ar-info-card.amber{background:var(--color-surface)!important}
+@media(max-width:1020px){
+ .athar-rebuild .ar-hero{grid-template-columns:minmax(0,1fr);padding:30px!important}
+ .athar-rebuild .ar-hero-topline,.athar-rebuild .ar-hero-brand,.athar-rebuild .ar-hero-description,.athar-rebuild .ar-search-block{grid-column:1/-1}
+ .athar-rebuild .ar-floating-doc{opacity:.22!important}
+ .athar-rebuild .ar-orbit-lines{width:95%!important;opacity:.22}
+ .athar-rebuild .ar-service-grid,.athar-rebuild .ar-info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .athar-rebuild .ar-location-band{grid-template-columns:48px minmax(0,1fr)}
+ .athar-rebuild .ar-location-action{grid-column:2;grid-template-columns:auto minmax(160px,220px);align-items:center;min-width:0}
+}
+@media(max-width:640px){
+ .athar-rebuild{width:calc(100% - 24px);margin:14px auto 40px!important;gap:14px}
+ .athar-rebuild .ar-hero{padding:20px 16px!important;border-radius:19px!important}
+ .athar-rebuild .ar-hero-topline{margin-bottom:26px}
+ .athar-rebuild .ar-status-pill{max-width:80%;font-size:9px}
+ .athar-rebuild .ar-hero-index{font-size:8px}
+ .athar-rebuild .ar-hero-brand{gap:12px;margin-bottom:17px}
+ .athar-rebuild .ar-logo-stage{width:52px;height:52px;flex-basis:52px;border-radius:14px}
+ .athar-rebuild .ar-logo-stage svg{width:40px;height:40px}
+ .athar-rebuild .ar-wordmark h1{font-size:clamp(33px,9vw,44px)!important}
+ .athar-rebuild .ar-wordmark p{font-size:13px!important;margin-top:8px!important}
+ .athar-rebuild .ar-latin-wordmark{font-size:8px}
+ .athar-rebuild .ar-hero-description{font-size:11px!important;margin-bottom:16px!important}
+ .athar-rebuild .ar-floating-doc,.athar-rebuild .ar-orbit-lines{display:none}
+ .athar-rebuild .ar-search-row{flex-direction:column;gap:8px}
+ .athar-rebuild .ar-search-form{min-height:58px!important}
+ .athar-rebuild .ar-search-form input{font-size:12px!important}
+ .athar-rebuild .ar-voice-button{justify-content:flex-start}
+ .athar-rebuild .ar-search-meta{font-size:9px}
+ .athar-rebuild .ar-location-band{grid-template-columns:40px minmax(0,1fr);gap:12px;padding:17px!important;border-radius:16px!important}
+ .athar-rebuild .ar-location-icon{width:40px;height:40px;border-radius:11px}
+ .athar-rebuild .ar-location-copy h2{font-size:19px!important}
+ .athar-rebuild .ar-location-copy p{font-size:10px!important}
+ .athar-rebuild .ar-location-action{grid-column:1/-1;grid-template-columns:1fr;min-width:0}
+ .athar-rebuild .ar-section-heading{display:block;margin-bottom:13px}
+ .athar-rebuild .ar-section-heading p{text-align:right;margin-top:7px!important}
+ .athar-rebuild .ar-service-grid,.athar-rebuild .ar-info-grid{grid-template-columns:1fr;gap:9px}
+ .athar-rebuild .ar-service-card{min-height:132px!important;padding:16px!important;border-radius:14px!important}
+ .athar-rebuild .ar-service-icon{margin-bottom:14px}
+ .athar-rebuild .ar-report-strip{align-items:stretch;padding:12px!important}
+ .athar-rebuild .ar-report-strip-copy{width:100%;margin:0 0 4px}
+ .athar-rebuild .ar-report-strip button{flex:1;min-width:0;padding-inline:8px!important;font-size:9px!important}
+ .athar-rebuild .ar-info-card{min-height:0;padding:14px!important}
+ .athar-rebuild .ar-motion-setting{align-items:flex-start}
+}
+@media(prefers-reduced-motion:reduce){.athar-rebuild *{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
