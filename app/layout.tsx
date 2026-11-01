@@ -3,8 +3,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
 export const metadata: Metadata = {
-  title: "أثر معروف | كل ما ضاع، له أثر",
-  description: "أثر معروف خدمة للبحث عن المفقودات والمعثورات، وإضافة البلاغات ومتابعة النتائج القريبة بموافقتك.",
+  title: "أثر معروف | سجلّ المفقودات والمعثورات",
+  description: "منصة مجتمعية للبحث في بلاغات المستندات المفقودة والمعثورة وإضافة بلاغات جديدة مع احترام الخصوصية.",
   applicationName: "أثر معروف",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
@@ -17,8 +17,8 @@ export const metadata: Metadata = {
     apple: [{ url: "/icon.svg", type: "image/svg+xml" }]
   },
   openGraph: {
-    title: "أثر معروف — ATHAR MAAROOF",
-    description: "كل ما ضاع، له أثر — نساعدك على الوصول إلى البلاغات ذات الصلة",
+    title: "أثر معروف — سجل المفقودات والمعثورات",
+    description: "ابحث في البلاغات المنشورة أو أضف بلاغاً جديداً بمعلومات عامة وآمنة.",
     type: "website",
     locale: "ar_IQ"
   }
@@ -28,7 +28,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#111713",
+  themeColor: "#1a1c1a",
   colorScheme: "light dark"
 };
 
