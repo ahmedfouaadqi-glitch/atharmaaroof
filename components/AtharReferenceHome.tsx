@@ -5,9 +5,9 @@ import type { FormEvent, RefObject } from "react";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
-  BookOpen, CarFront, CheckCircle2, ChevronLeft, CircleHelp, FileText,
+  ArrowUpLeft, BookOpen, CheckCircle2, ChevronLeft, CircleHelp, FileText,
   Fingerprint, Globe, MapPin, Navigation, Scale, Search, ShieldCheck,
-  Smartphone
+  Smartphone, Sparkles, CarFront, ArrowLeft, Layers3, Users, ChartNoAxesColumnIncreasing
 } from "lucide-react";
 import { BrandMark } from "@/components/brand";
 import VoiceAssistant from "@/components/VoiceAssistant";
@@ -53,35 +53,18 @@ const shortcuts = [
   { label: "مستندات أخرى", query: "مستندات أخرى", Icon: FileText }
 ];
 
+const services = [
+  { title: "استكشاف البلاغات", description: "ابحث عن مستند مفقود أو معثور عليه", Icon: Search, tone: "cyan", action: "reports" },
+  { title: "خدمة المجتمع", description: "ساهم في إعادة المستندات لأصحابها", Icon: Users, tone: "mint", action: "found" },
+  { title: "توثيق المبادرات", description: "بلاغات منظمة ومعلومات واضحة", Icon: Layers3, tone: "blue", action: "lost" },
+  { title: "دعم القرار", description: "نتائج بحث ومؤشرات مفهومة", Icon: ChartNoAxesColumnIncreasing, tone: "violet", action: "reports" }
+] as const;
+
 const informationCards = [
-  {
-    href: "/about",
-    title: "عن المبادرة",
-    description: "رسالة المبادرة وأهدافها وخدمة المجتمع.",
-    Icon: BookOpen,
-    tone: "mint"
-  },
-  {
-    href: "/privacy",
-    title: "سياسة الخصوصية",
-    description: "كيف نحمي بياناتك ونحترم اختياراتك.",
-    Icon: ShieldCheck,
-    tone: "blue"
-  },
-  {
-    href: "/terms",
-    title: "سياسة الاستخدام",
-    description: "حقوق المستخدم ومسؤولياته وضوابط البلاغات.",
-    Icon: Scale,
-    tone: "violet"
-  },
-  {
-    href: "/faq",
-    title: "الأسئلة الشائعة",
-    description: "إجابات مختصرة عن استخدام المنصة.",
-    Icon: CircleHelp,
-    tone: "amber"
-  }
+  { href: "/about", title: "عن المبادرة", description: "رسالتنا وأهدافنا وخدمة المجتمع.", Icon: BookOpen, tone: "mint" },
+  { href: "/privacy", title: "سياسة الخصوصية", description: "كيف نتعامل مع بياناتك.", Icon: ShieldCheck, tone: "blue" },
+  { href: "/terms", title: "سياسة الاستخدام", description: "الحقوق والمسؤوليات وضوابط البلاغات.", Icon: Scale, tone: "violet" },
+  { href: "/faq", title: "الأسئلة الشائعة", description: "إجابات واضحة عن استخدام المنصة.", Icon: CircleHelp, tone: "amber" }
 ] as const;
 
 export default function AtharReferenceHome(props: Props) {
@@ -90,14 +73,8 @@ export default function AtharReferenceHome(props: Props) {
 
   useEffect(() => {
     const target = mapViewportRef.current;
-    if (!target) {
-      setMapVisible(true);
-      return;
-    }
-    if (!("IntersectionObserver" in window)) {
-      setMapVisible(true);
-      return;
-    }
+    if (!target) { setMapVisible(true); return; }
+    if (!("IntersectionObserver" in window)) { setMapVisible(true); return; }
     const observer = new IntersectionObserver((entries) => {
       if (entries.some((entry) => entry.isIntersecting)) {
         setMapVisible(true);
@@ -109,180 +86,110 @@ export default function AtharReferenceHome(props: Props) {
   }, []);
 
   return (
-    <section className="athar-v2-stage reveal" ref={props.stageRef} aria-label="أثر معروف — الصفحة الرئيسية">
-      <div className="athar-v2-atmosphere" aria-hidden="true" />
-
-      <div className="athar-v2-brand">
-        <BrandMark className="athar-v2-brand-mark" />
-        <h1>أثر <b>معروف</b></h1>
-        <span className="athar-v2-english">ATHAR MAAROOF</span>
-        <p>لأن كل شيء له أثر... ونوصله لأصحابه</p>
-      </div>
-
-      <div className="athar-v2-documents" aria-label="أنواع المستندات">
-        <article className="athar-v2-document doc-passport">
-          <small>جواز سفر</small>
-          <div className="athar-v2-doc-art"><Globe size={36} strokeWidth={1.2} /></div>
-          <div className="athar-v2-doc-lines"><i /><i /><i /></div>
-        </article>
-        <article className="athar-v2-document doc-national">
-          <small>بطاقة وطنية</small>
-          <div className="athar-v2-doc-art"><Fingerprint size={34} strokeWidth={1.25} /></div>
-          <div className="athar-v2-doc-lines"><i /><i /></div>
-        </article>
-        <article className="athar-v2-document doc-license">
-          <small>رخصة قيادة</small>
-          <div className="athar-v2-doc-art"><CarFront size={37} strokeWidth={1.25} /></div>
-          <div className="athar-v2-doc-lines"><i /><i /></div>
-        </article>
-        <article className="athar-v2-document doc-other">
-          <small>مستندات أخرى</small>
-          <div className="athar-v2-doc-art"><FileText size={35} strokeWidth={1.25} /></div>
-          <div className="athar-v2-doc-lines"><i /><i /><i /></div>
-        </article>
-      </div>
-
-      <div className="athar-v2-search-area">
-        <div className="athar-v2-search-wrap">
-          <div className="athar-v2-voice"><VoiceAssistant /></div>
-          <form className="athar-v2-search" onSubmit={props.onAssistantSubmit}>
-            <input
-              value={props.assistantText}
-              onChange={(event) => props.setAssistantText(event.target.value)}
-              placeholder="ابحث أو تحدث مع المساعد الذكي..."
-              aria-label="ابحث في المفقودات والمعثورات"
-              maxLength={120}
-            />
-            <button
-              type="submit"
-              aria-label="البحث في البلاغات"
-              disabled={props.assistantSearching || props.assistantText.trim().length < 2}
-            >
-              {props.assistantSearching ? <span className="assistant-spinner" /> : <Search size={23} />}
-            </button>
-          </form>
-        </div>
-
-        <div className="athar-v2-search-note">
-          <span><ShieldCheck size={12} /> بحث في البلاغات المنشورة</span>
-          <small>لا تُدخل أرقام الهوية أو بيانات المستندات السرية</small>
-        </div>
-
-        {props.assistantReply && (
-          <section className="athar-v2-assistant-response" aria-live="polite">
-            <div className="athar-v2-response-head">
-              <span><CheckCircle2 size={15} /></span>
-              <b>{props.assistantMode === "ai" ? "مساعد أثر معروف" : "نتيجة البحث في البلاغات"}</b>
-              <small>{props.assistantMode === "ai" ? "رد المساعد" : "مطابقة مباشرة"}</small>
-            </div>
-            <p>{props.assistantReply}</p>
-            {props.assistantMatches.length > 0 && (
-              <>
-                <div className="athar-v2-response-matches">
-                  {props.assistantMatches.slice(0, 3).map((match) => (
-                    <article key={match.id}>
-                      <span>{match.kind === "found" ? <CheckCircle2 size={14} /> : <FileText size={14} />}</span>
-                      <div>
-                        <b>{match.title}</b>
-                        <small>{match.city}{match.area ? " · " + match.area : ""} · {match.public_code}</small>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-                <button type="button" className="athar-v2-show-matches" onClick={props.onShowMatches}>
-                  عرض البلاغات المطابقة <ChevronLeft size={15} />
-                </button>
-              </>
+    <section className="athar-home reveal" ref={props.stageRef} aria-label="أثر معروف — الصفحة الرئيسية">
+      <div className="athar-home-grid">
+        <div className="athar-home-map-column">
+          <div className="athar-map-caption">
+            <span className="athar-live-dot" />
+            <span>خريطة العراق التفاعلية</span>
+            <small>خمسة مواقع مميزة</small>
+          </div>
+          <div className="athar-home-map" ref={mapViewportRef}>
+            {mapVisible ? <IraqInteractiveMap /> : (
+              <div className="iraq-map-placeholder">
+                <MapPin size={28} />
+                <strong>خريطة العراق التفاعلية</strong>
+                <span>تظهر بغداد وكربلاء والنجف وسامراء والبصرة فقط كمواقع مميزة.</span>
+              </div>
             )}
-          </section>
-        )}
-
-        <div className="athar-v2-shortcuts" aria-label="عمليات البحث السريعة">
-          {shortcuts.map(({ label, query, Icon }) => (
-            <button key={query} type="button" onClick={() => props.onQuickSearch(query)}>
-              <Icon size={13} /> {label}
-            </button>
-          ))}
+            <div className="athar-map-overlay-label"><span>العراق</span><small>IRAQ</small></div>
+          </div>
+          <div className="athar-map-legend">
+            <span><i /> بغداد</span><span><i /> كربلاء</span><span><i /> النجف</span><span><i /> سامراء</span><span><i /> البصرة</span>
+          </div>
+          <div className="athar-map-footnote"><ShieldCheck size={14} /> الموقع الدقيق لا يظهر للعامة، ومشاركة موقعك اختيارية.</div>
         </div>
-      </div>
 
-      <div className="athar-v2-map-layout">
-        <div className="athar-v2-map-section" ref={mapViewportRef}>
-          {mapVisible ? <IraqInteractiveMap /> : (
-            <div className="iraq-map-placeholder">
-              <MapPin size={26} />
-              <strong>خريطة العراق التفاعلية</strong>
-              <span>ستُحمّل الخريطة عند ظهور هذا القسم لتقليل وقت فتح الصفحة.</span>
+        <div className="athar-home-main">
+          <div className="athar-home-eyebrow"><span><Sparkles size={14} /> مبادرة أثر معروف</span><span className="athar-home-status">منصة مجتمعية عراقية</span></div>
+          <div className="athar-home-title-row">
+            <div>
+              <h1>منصة ذكية لخدمة المجتمع<br />وتطوير <em>الأثر</em> في العراق</h1>
+              <p className="athar-home-lede">مساعد ذكي يساعدك على البحث عن المفقودات والمعثورات، ويربط البلاغات بالمعلومات المتاحة لتسهيل وصول المستندات إلى أصحابها.</p>
             </div>
+            <div className="athar-home-brand-stamp" aria-hidden="true"><BrandMark className="athar-home-logo" /></div>
+          </div>
+
+          <div className="athar-assistant-label"><span className="athar-live-dot" /> ابدأ من هنا <small>المساعد الذكي</small></div>
+          <div className="athar-assistant-row">
+            <form className="athar-assistant-search" onSubmit={props.onAssistantSubmit}>
+              <Sparkles className="athar-search-spark" size={23} />
+              <input
+                value={props.assistantText}
+                onChange={(event) => props.setAssistantText(event.target.value)}
+                placeholder="اسأل المساعد عن مستند مفقود، بلاغ، أو مدينة..."
+                aria-label="اسأل المساعد الذكي عن المفقودات والمعثورات"
+                maxLength={120}
+              />
+              <button type="submit" aria-label="إرسال السؤال" disabled={props.assistantSearching || props.assistantText.trim().length < 2}>
+                {props.assistantSearching ? <span className="assistant-spinner" /> : <ArrowLeft size={20} />}
+              </button>
+            </form>
+            <div className="athar-call-button"><VoiceAssistant /></div>
+          </div>
+          <div className="athar-search-hint"><span><ShieldCheck size={13} /> البحث في البلاغات المنشورة</span><small>لا تدخل أرقام الهوية أو بيانات المستندات السرية</small></div>
+
+          {props.assistantReply && (
+            <section className="athar-assistant-response" aria-live="polite">
+              <div className="athar-response-heading"><CheckCircle2 size={17} /><b>{props.assistantMode === "ai" ? "مساعد أثر معروف" : "نتيجة البحث"}</b><small>{props.assistantMode === "ai" ? "رد المساعد" : "مطابقة مباشرة"}</small></div>
+              <p>{props.assistantReply}</p>
+              {props.assistantMatches.length > 0 && <>
+                <div className="athar-response-matches">{props.assistantMatches.slice(0, 3).map((match) => (
+                  <article key={match.id}><span>{match.kind === "found" ? <CheckCircle2 size={14} /> : <FileText size={14} />}</span><div><b>{match.title}</b><small>{match.city}{match.area ? " · " + match.area : ""} · {match.public_code}</small></div></article>
+                ))}</div>
+                <button type="button" className="athar-show-matches" onClick={props.onShowMatches}>عرض البلاغات المطابقة <ChevronLeft size={15} /></button>
+              </>}
+            </section>
           )}
-        </div>
 
-        <div className="athar-v2-map-cards">
-          <aside className="athar-v2-map-card privacy-card">
-            <div className="athar-v2-map-card-head">
-              <span className="athar-v2-map-card-icon"><ShieldCheck size={27} /></span>
-              <b>خصوصيتك أولاً</b>
-            </div>
-            <p>نحافظ على خصوصيتك، ولا نطلب موقعك الدقيق إلا بموافقتك.</p>
-            <Link href="/privacy">معرفة المزيد <ChevronLeft size={13} /></Link>
-          </aside>
+          <div className="athar-quick-searches">
+            <b>أمثلة للبحث:</b>
+            {shortcuts.map(({ label, query, Icon }) => <button key={query} type="button" onClick={() => props.onQuickSearch(query)}><Icon size={14} />{label}</button>)}
+          </div>
 
-          <aside className="athar-v2-map-card nearby-card">
-            <div className="athar-v2-map-card-head">
-              <span className="athar-v2-map-card-icon"><MapPin size={25} /></span>
-              <b>اكتشاف البلاغات القريبة</b>
-            </div>
-            <p>بموافقتك نعرض البلاغات الأقرب إلى موقعك الحالي.</p>
-            {props.nearbyError && <small className="athar-v2-location-error" role="alert">{props.nearbyError}</small>}
-            <button type="button" onClick={props.onNearbySearch} disabled={props.nearbySearching}>
-              {props.nearbySearching ? <span className="assistant-spinner" /> : <Navigation size={14} />}
-              {props.nearbySearching ? "جارٍ تحديد الموقع..." : "تفعيل الموقع"}
-            </button>
-          </aside>
+          <div className="athar-home-services">
+            {services.map(({ title, description, Icon, tone, action }) => (
+              <button type="button" className={"athar-service-card " + tone} key={title} onClick={() => action === "reports" ? document.getElementById("reports")?.scrollIntoView({ behavior: "smooth" }) : props.onOpenReportForm(action)}>
+                <span className="athar-service-icon"><Icon size={25} strokeWidth={1.8} /></span>
+                <span className="athar-service-copy"><b>{title}</b><small>{description}</small></span>
+                <ChevronLeft size={17} className="athar-service-arrow" />
+              </button>
+            ))}
+          </div>
+
+          <div className="athar-report-actions">
+            <button type="button" className="athar-report-lost" onClick={() => props.onOpenReportForm("lost")}><Search size={17} /> فقدت مستنداً</button>
+            <button type="button" className="athar-report-found" onClick={() => props.onOpenReportForm("found")}><FileText size={17} /> عثرت على مستند</button>
+            <button type="button" className="athar-report-nearby" onClick={props.onNearbySearch} disabled={props.nearbySearching}>{props.nearbySearching ? <span className="assistant-spinner" /> : <Navigation size={16} />}{props.nearbySearching ? "جارٍ تحديد الموقع" : "بلاغات قريبة"}</button>
+          </div>
+          {props.nearbyError && <p className="athar-nearby-error" role="alert">{props.nearbyError}</p>}
         </div>
       </div>
 
-      <div className="athar-v2-motion-row">
-        <span><MapPin size={13} /> المدن المضيئة: بغداد، كربلاء، النجف، سامراء، البصرة</span>
-        {props.motionStatus !== "unsupported" && (
-          <button
-            type="button"
-            className={props.motionStatus === "enabled" ? "enabled" : ""}
-            onClick={() => props.motionStatus === "enabled" ? props.onDisableMotion() : props.onEnableMotion()}
-            aria-pressed={props.motionStatus === "enabled"}
-          >
-            <Smartphone size={13} />
-            {props.motionStatus === "enabled" ? "إيقاف حركة الجهاز" : "تفعيل حركة الجهاز"}
-          </button>
-        )}
-      </div>
-
-      <div className="athar-v2-report-actions">
-        <button type="button" className="lost-action" onClick={() => props.onOpenReportForm("lost")}>
-          <Search size={16} /> فقدت مستنداً
-        </button>
-        <button type="button" className="found-action" onClick={() => props.onOpenReportForm("found")}>
-          <FileText size={16} /> عثرت على مستند
-        </button>
-      </div>
-
-      <section className="athar-v2-information" aria-label="معلومات المنصة">
-        <div className="athar-v2-information-heading">
-          <span>معلومات تهمك</span>
-          <p>كل ما تحتاج معرفته عن «أثر معروف» في بطاقات واضحة وسريعة.</p>
+      {props.motionStatus !== "unsupported" && (
+        <div className="athar-motion-setting">
+          <span><Smartphone size={14} /> حركة الجهاز اختيارية</span>
+          <button type="button" onClick={() => props.motionStatus === "enabled" ? props.onDisableMotion() : props.onEnableMotion()} aria-pressed={props.motionStatus === "enabled"}>{props.motionStatus === "enabled" ? "إيقاف الحركة" : "تفعيل حركة الجهاز"}</button>
         </div>
-        <div className="athar-v2-information-grid">
-          {informationCards.map(({ href, title, description, Icon, tone }) => (
-            <Link href={href} className={"athar-v2-information-card " + tone} key={href}>
-              <span className="athar-v2-information-icon"><Icon size={24} /></span>
-              <span className="athar-v2-information-copy">
-                <b>{title}</b>
-                <small>{description}</small>
-              </span>
-              <ChevronLeft size={17} className="athar-v2-information-arrow" />
-            </Link>
-          ))}
-        </div>
+      )}
+
+      <section className="athar-info-area" aria-label="معلومات المنصة">
+        <div className="athar-info-heading"><div><span>مساحة واضحة وآمنة</span><h2>كل ما تحتاج معرفته عن أثر معروف</h2></div><p>معلومات مختصرة، وسياسات منظمة، وتجربة مصممة لتسهيل الاستخدام.</p></div>
+        <div className="athar-info-grid">{informationCards.map(({ href, title, description, Icon, tone }) => (
+          <Link href={href} className={"athar-info-card " + tone} key={href}>
+            <span className="athar-info-icon"><Icon size={23} /></span><span className="athar-info-copy"><b>{title}</b><small>{description}</small></span><ChevronLeft size={17} className="athar-info-arrow" />
+          </Link>
+        ))}</div>
       </section>
     </section>
   );
