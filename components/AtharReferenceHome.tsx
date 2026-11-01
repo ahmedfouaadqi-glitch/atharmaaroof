@@ -52,6 +52,7 @@ type Props = {
   assistantAction: "search" | "create_report" | "guide" | null;
   assistantDraft: ReportDraft | null;
   onStartReport: (draft: ReportDraft) => void;
+  onCancelDraft: () => void;
   assistantMatches: Match[];
   onShowMatches: () => void;
   nearbySearching: boolean;
@@ -162,7 +163,7 @@ export default function AtharReferenceHome(props: Props) {
             <input
               value={props.assistantText}
               onChange={(event) => props.setAssistantText(event.target.value)}
-              placeholder="مثال: بطاقة وطنية في الكرادة"
+              placeholder={props.assistantAction === "create_report" && props.assistantDraft ? "أكمل البلاغ: اكتب المدينة أو نوع المستند..." : "مثال: بطاقة وطنية في الكرادة"}
               aria-label="البحث عن المفقودات والمعثورات"
               maxLength={120}
             />
@@ -243,6 +244,9 @@ export default function AtharReferenceHome(props: Props) {
                   onClick={() => props.onStartReport(props.assistantDraft!)}
                 >
                   مراجعة المسودة واستكمال البلاغ <ArrowUpLeft size={15} />
+                </button>
+                <button type="button" className="ar-cancel-draft" onClick={props.onCancelDraft}>
+                  إلغاء المسودة
                 </button>
               )}
             </section>
