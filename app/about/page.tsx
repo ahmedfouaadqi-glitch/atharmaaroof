@@ -6,8 +6,8 @@ import {
 import InfoPageShell from "@/components/InfoPageShell";
 
 export const metadata: Metadata = {
-  title: "عن أثر معروف | المبادرة",
-  description: "تعرف على مبادرة أثر معروف للمفقودات والمعثورات في العراق."
+  title: "عن أثر معروف",
+  description: "تعرف على خدمة أثر معروف للبحث عن المفقودات والمعثورات في العراق."
 };
 
 const principles = [
@@ -42,9 +42,9 @@ const steps = [
 export default function AboutPage() {
   return (
     <InfoPageShell
-      kicker="عن المبادرة"
+      kicker="عن أثر معروف"
       title="أثر معروف — لأن كل شيء له أثر"
-      description="مبادرة عراقية مجتمعية تساعد على تنظيم بلاغات المفقودات والمعثورات وتقريبها إلى أصحابها."
+      description="خدمة مجتمعية عراقية تساعد على تنظيم بلاغات المفقودات والمعثورات وتقريبها إلى أصحابها."
     >
       <section className="about-intro-card">
         <span className="about-intro-icon"><MapPin size={27} /></span>
@@ -57,8 +57,8 @@ export default function AboutPage() {
 
       <section className="info-section-block">
         <div className="info-section-title">
-          <span>مبادئ المبادرة</span>
-          <small>ما يوجّه طريقة تقديم الخدمة</small>
+          <span>مبادئ الخدمة</span>
+          <small>ما يوجّه طريقة عمل الخدمة</small>
         </div>
         <div className="info-card-grid">
           {principles.map(({ Icon, title, text }) => (
