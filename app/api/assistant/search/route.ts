@@ -235,28 +235,6 @@ export async function POST(request: NextRequest) {
 
   try {
     const intent = parseIntent(input);
-    if (intent.action === "create_report" || intent.action === "guide") {
-      const draft = intent.action === "create_report" || intent.kind || intent.category || intent.city || intent.area
-        ? { kind: intent.kind, category: intent.category, city: intent.city, area: intent.area }
-        : null;
-      const missing = [
-        !intent.kind ? "نوع البلاغ (مفقود أو معثور عليه)" : null,
-        !intent.category ? "نوع المستند" : null,
-        !intent.city ? "المدينة" : null
-      ].filter(Boolean);
-      const reply = intent.action === "create_report"
-        ? "فهمت طلبك. أعددت مسودة أولية للبلاغ" +
-          (missing.length ? "، لكن بقي تحديد: " + missing.join("، ") + "." : ".") +
-          " افتح المسودة وراجع البيانات قبل الإرسال. لا تكتب رقم المستند أو ترفع صورته."
-        : "للتعامل الآمن: لا تنشر رقم المستند أو صورته، وراجع الجهة الرسمية المصدرة عند الحاجة. يمكنك إنشاء بلاغ عام بعد مراجعة البيانات، ولا تُعد المطابقة دليلاً على الملكية." +
-          (draft ? " جهزت لك مسودة أولية اختيارية." : "");
-      return NextResponse.json({
-        assistant: { mode: "guided_search", action: intent.action, reply, source: "assistant_intent_router", draft },
-        reports: []
-      }, { headers: { "Cache-Control": "no-store, max-age=0" } });
-    }
-
-    const intent = parseIntent(input);
     const existingDraft = sanitizeDraft((body as Record<string, unknown>).draft);
     const continueDraft = Boolean(existingDraft && !intent.explicitSearch);
     const hasRecognizedFields = Boolean(intent.kind || intent.category || intent.city || intent.area);
