@@ -40,7 +40,7 @@ export function BrandMark({ className = "" }: { className?: string }) {
           />
           <path
             d="M34 174C58 151 80 157 104 155C143 153 159 126 163 88L167 39L191 39L187 97C184 143 162 176 125 190C92 203 58 193 31 193L9 193L34 174Z"
-            fill="url(#athar-mark-sweep)"
+            fill={`url(#${prefix}-sweep)`}
           />
           <path
             d="M145 178C173 157 190 123 192 80L194 48L215 27C216 87 206 141 178 176L145 178Z"
@@ -48,7 +48,7 @@ export function BrandMark({ className = "" }: { className?: string }) {
           />
 
           <path d="M135 15H193L181 29H127L135 15Z" fill={`url(#${prefix}-white)`} />
-          <path d="M131 36H184V51L158 77V118H135V47H131V36Z" fill="url(#athar-mark-white)" />
+          <path d="M131 36H184V51L158 77V118H135V47H131V36Z" fill={`url(#${prefix}-white)`} />
           <path d="M138 44H178L151 69V47H138V44Z" fill="#071F2B" fillOpacity=".82" />
           <path d="M143 45L158 60L171 45M143 58L156 71L169 57M148 72L160 84" stroke="#42D8E5" strokeWidth="2.2" strokeLinecap="round" />
           <path d="M188 28C191 18 199 13 207 13V51C201 58 195 63 190 73V117" stroke="#43CAE9" strokeWidth="4" strokeLinecap="round" />
