@@ -144,7 +144,8 @@ export default function HomePage() {
   function scrollTo(id: string, nav = id) {
     setActiveNav(nav);
     setMenuOpen(false);
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document.getElementById(id)?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
     
   }
 
