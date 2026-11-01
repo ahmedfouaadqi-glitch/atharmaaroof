@@ -1,17 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 180" fill="none" role="img" aria-labelledby="title desc">
-<title id="title">أثر معروف — ATHAR MAAROOF</title>
+<title id="title">أثر معروف — سجل المفقودات والمعثورات</title>
 <desc id="desc">هوية خطية ترمز إلى الأثر وإعادة المستند إلى صاحبه.</desc>
-<defs><linearGradient id="mark" x1="40" y1="20" x2="140" y2="145" gradientUnits="userSpaceOnUse"><stop stop-color="#9AC7A2"/><stop offset=".55" stop-color="#9DC5D0"/><stop offset="1" stop-color="#6F9B78"/></linearGradient></defs>
+<defs><linearGradient id="mark" x1="40" y1="20" x2="140" y2="145" gradientUnits="userSpaceOnUse"><stop stop-color="#D58B6C"/><stop offset=".55" stop-color="#A3C1B9"/><stop offset="1" stop-color="#B96A4B"/></linearGradient></defs>
 <g transform="translate(35 12) scale(1.35)" stroke-linecap="round" stroke-linejoin="round">
 <path d="M18 67C10 50 16 28 34 17C47 9 62 11 71 18" stroke="url(#mark)" stroke-width="6"/>
 <path d="M24 75C36 63 46 60 59 64C74 69 84 57 86 41L89 22L96 13L93 47C90 72 74 88 54 88C42 88 31 83 24 75Z" stroke="url(#mark)" stroke-width="5"/>
 <path d="M31 48C31 36 39 28 50 28C61 28 69 36 69 48C69 59 50 73 50 73C50 73 31 59 31 48Z" stroke="url(#mark)" stroke-width="3.5"/>
 <path d="M40 48C40 42 44 38 50 38C56 38 60 42 60 48C60 54 50 62 50 62C50 62 40 54 40 48Z" stroke="url(#mark)" stroke-width="2.5"/>
-<circle cx="50" cy="47" r="3.5" fill="#9AC7A2" stroke="none"/>
-<path d="M65 13H84L77 21H62M67 28H80L72 37V50" stroke="#EDF3ED" stroke-width="4"/>
+<circle cx="50" cy="47" r="3.5" fill="#D58B6C" stroke="none"/>
+<path d="M65 13H84L77 21H62M67 28H80L72 37V50" stroke="#F1EEE7" stroke-width="4"/>
 </g>
-<text x="570" y="82" text-anchor="end" direction="rtl" font-family="Tahoma,Arial,sans-serif" font-size="48" font-weight="800" fill="#EDF3ED">أثر <tspan fill="#9AC7A2">معروف</tspan></text>
-<text x="568" y="116" text-anchor="end" font-family="Arial,sans-serif" font-size="16" letter-spacing="4" font-weight="600" fill="#A6B4A8">ATHAR MAAROOF</text>
-<path d="M258 143H570" stroke="#9AC7A2" stroke-opacity=".42" stroke-linecap="round"/>
-<circle cx="243" cy="143" r="4" fill="#9AC7A2"/>
+<text x="570" y="82" text-anchor="end" direction="rtl" font-family="Tahoma,Arial,sans-serif" font-size="48" font-weight="800" fill="#F1EEE7">أثر <tspan fill="#D58B6C">معروف</tspan></text>
+<text x="568" y="116" text-anchor="end" font-family="Arial,sans-serif" font-size="16" letter-spacing="4" font-weight="600" fill="#C0BBAE">ATHAR MAAROOF</text>
+<path d="M258 143H570" stroke="#D58B6C" stroke-opacity=".42" stroke-linecap="round"/><circle cx="243" cy="143" r="4" fill="#D58B6C"/>
 </svg>
