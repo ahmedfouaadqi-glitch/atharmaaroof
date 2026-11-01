@@ -1612,3 +1612,28 @@ hr { border-color: var(--color-border); }
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
+
+.ar-cancel-draft,
+.voice-cancel-draft {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  margin-inline-start: 8px;
+  padding: 7px 11px;
+  color: var(--color-muted);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color .18s ease, color .18s ease, border-color .18s ease;
+}
+.ar-cancel-draft:hover,
+.voice-cancel-draft:hover {
+  color: var(--color-ink);
+  border-color: var(--color-primary);
+  background: var(--color-canvas-raised);
+}
+.voice-cancel-draft { width: 100%; margin: 8px 0 0; }
