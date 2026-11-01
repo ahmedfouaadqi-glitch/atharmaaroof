@@ -7,7 +7,7 @@ import VoiceAssistant from "@/components/VoiceAssistant";
 import { useInteractiveSound } from "@/components/useInteractiveSound";
 import Link from "next/link";
 import {
-  ArrowUp, Bell, BookOpen, Check, CheckCircle2, ChevronLeft, CircleHelp, Clock3,
+  ArrowUp, BookOpen, Check, CheckCircle2, ChevronLeft, CircleHelp, Clock3,
   CreditCard, Download, FileText, Fingerprint, HeartHandshake, House,
   KeyRound, MapPin, MapPinned, Menu, Plus, Search, ShieldCheck,
   Smartphone, Sparkles, Volume2, VolumeX, Wallet, X, Navigation, LocateFixed, UserRoundCheck
@@ -482,17 +482,15 @@ export default function HomePage() {
             <BrandMark />
             <span className="brand-copy">
               <strong>أثر <b>معروف</b></strong>
-              <small>كل ما ضاع، له أثر</small>
+              <small>سجلّ المفقودات والمعثورات</small>
             </span>
           </Link>
 
           <nav className="desktop-nav athar-primary-nav" aria-label="التنقل الرئيسي">
             <button className={activeNav === "home" ? "nav-link active" : "nav-link"} onClick={() => scrollTo("home", "home")}>الرئيسية</button>
             <button className={activeNav === "reports" ? "nav-link active" : "nav-link"} onClick={() => scrollTo("reports", "reports")}>البلاغات</button>
-            <Link className="nav-link" href="/about">عن أثر معروف</Link>
-            <Link className="nav-link" href="/faq">الأسئلة الشائعة</Link>
-            <Link className="nav-link" href="/privacy">الخصوصية</Link>
-            <Link className="nav-link" href="/terms">الاستخدام</Link>
+            <Link className="nav-link" href="/about">عن الخدمة</Link>
+            <Link className="nav-link" href="/faq">مركز المساعدة</Link>
           </nav>
 
           <div className="header-actions">
@@ -510,11 +508,7 @@ export default function HomePage() {
             <button className="icon-action install-action" onClick={() => void installApplication()} aria-label="تثبيت التطبيق" title="تثبيت التطبيق">
               <Download size={18} />
             </button>
-            <button className="icon-action notification-action" onClick={() => notify("لا توجد إشعارات جديدة حالياً.")} aria-label="الإشعارات">
-              <Bell size={19} />
-              <i className="notification-dot" />
-            </button>
-            <Link className="account-link" href="/login"><span className="avatar">م</span><span>حسابي</span></Link>
+                        <Link className="account-link" href="/login"><span className="avatar">م</span><span>حسابي</span></Link>
             <button className="icon-action mobile-menu-button" onClick={() => setMenuOpen((value) => !value)} aria-label="فتح القائمة">
               {menuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
@@ -585,7 +579,7 @@ export default function HomePage() {
           <section className="reports-section reveal" id="reports">
             <div className="section-heading">
               <div>
-                <span className="section-kicker"><MapPinned size={14} /> من المجتمع</span>
+                <span className="section-kicker"><MapPinned size={14} /> سجلّ البلاغات</span>
                 <h2>البلاغات المنشورة</h2>
                 <p>تظهر هنا البلاغات التي نُشرت بعد مراجعتها، دون بيانات اتصال شخصية.</p>
               </div>
@@ -613,7 +607,7 @@ export default function HomePage() {
             <div className="reports-toolbar">
               <label className="report-search">
                 <Search size={18} />
-                <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="ابحث بنوع المستمسك أو المدينة..." aria-label="بحث في البلاغات" />
+                <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="نوع المستند أو المدينة أو المنطقة" aria-label="بحث في البلاغات" />
                 {query && <button onClick={() => setQuery("")} aria-label="مسح البحث"><X size={14} /></button>}
               </label>
               <div className="filter-pills" role="group" aria-label="تصفية البلاغات">
@@ -626,7 +620,7 @@ export default function HomePage() {
 
             <div className="report-results">
               {reportsLoading ? (
-                <div className="empty-state"><span className="loader-ring" /><b>جارٍ تحميل البلاغات المنشورة</b><small>نطلب البيانات من الخادم.</small></div>
+                <div className="empty-state"><span className="loader-ring" /><b>جارٍ تحميل البلاغات المنشورة</b><small>ستظهر النتائج هنا بعد اكتمال التحميل.</small></div>
               ) : reportsError ? (
                 <div className="empty-state error-state"><ShieldCheck size={27} /><b>تعذر الاتصال بخدمة البلاغات</b><small>{reportsError} لم نعرض بيانات بديلة أو تجريبية.</small><button onClick={() => setReloadKey((value) => value + 1)}>إعادة المحاولة <ChevronLeft size={15} /></button></div>
               ) : shownReports.length ? (
@@ -645,7 +639,7 @@ export default function HomePage() {
                 <div className="empty-state"><Search size={27} /><b>لا توجد نتائج مطابقة حالياً</b><small>جرّب تغيير المدينة أو نوع البلاغ أو كلمة البحث.</small><button onClick={() => { setCity("الكل"); setFilter("all"); setQuery(""); }}>عرض جميع البلاغات</button></div>
               )}
             </div>
-            <div className="results-foot"><span>النتائج الآمنة المنشورة فقط</span><button onClick={() => openReportForm("lost")}>أضف بلاغاً جديداً <Plus size={15} /></button></div>
+            <div className="results-foot"><span>تُعرض البلاغات بعد مراجعتها ونشرها</span><button onClick={() => openReportForm("lost")}>أضف بلاغاً جديداً <Plus size={15} /></button></div>
           </section>
 
           <section className="safety-section reveal" id="safety">
@@ -653,7 +647,7 @@ export default function HomePage() {
             <div className="safety-text">
               <span className="section-kicker">الأمان جزء من التصميم</span>
               <h2>خصوصيتك جزء أساسي من الخدمة.</h2>
-              <p>لا تنشر رقم الهوية أو صورة المستند أو بيانات البطاقة المصرفية. استخدم وصفاً عاماً وموقعاً تقريبياً فقط.</p>
+              <p>احمِ خصوصيتك: لا تنشر صورة المستند أو رقمه الكامل أو بيانات البطاقة المصرفية. استخدم وصفاً عاماً وموقعاً تقريبياً.</p>
             </div>
             <div className="safety-points">
               <span><Check size={15} /> لا صور مستمسكات في البلاغ العام</span>
@@ -670,7 +664,7 @@ export default function HomePage() {
 
           <footer className="site-footer">
             <div className="footer-brand"><BrandMark /><span><b>أثر معروف</b><small>منصة للبحث عن المفقودات والمعثورات</small></span></div>
-            <span>© {new Date().getFullYear()} أثر معروف. جميع الحقوق محفوظة.</span>
+            <span>© {new Date().getFullYear()} أثر معروف</span>
             <nav className="footer-links">
               <Link href="/about">عن أثر معروف</Link>
               <Link href="/privacy">سياسة الخصوصية</Link>
