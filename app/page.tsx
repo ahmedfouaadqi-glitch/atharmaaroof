@@ -586,7 +586,7 @@ export default function HomePage() {
             <div className="section-heading">
               <div>
                 <span className="section-kicker"><MapPinned size={14} /> من المجتمع</span>
-                <h2>بلاغات المفقودات والمعثورات</h2>
+                <h2>البلاغات المنشورة</h2>
                 <p>تظهر هنا البلاغات التي نُشرت بعد مراجعتها، دون بيانات اتصال شخصية.</p>
               </div>
               <button className="text-button" onClick={() => { setCity("الكل"); setFilter("all"); setQuery("");  }}>إعادة ضبط <X size={15} /></button>
@@ -652,8 +652,8 @@ export default function HomePage() {
             <div className="safety-symbol"><ShieldCheck size={30} /></div>
             <div className="safety-text">
               <span className="section-kicker">الأمان جزء من التصميم</span>
-              <h2>مستمسكك إلك، وخصوصيتك إلنا.</h2>
-              <p>لا تنشر رقم الهوية أو صورة المستمسك أو بيانات البطاقة المصرفية. استخدم وصفاً عاماً ومنطقة تقريبية فقط.</p>
+              <h2>خصوصيتك جزء أساسي من الخدمة.</h2>
+              <p>لا تنشر رقم الهوية أو صورة المستند أو بيانات البطاقة المصرفية. استخدم وصفاً عاماً وموقعاً تقريبياً فقط.</p>
             </div>
             <div className="safety-points">
               <span><Check size={15} /> لا صور مستمسكات في البلاغ العام</span>
@@ -664,7 +664,7 @@ export default function HomePage() {
 
           <section className="install-card reveal">
             <div className="install-icon"><Smartphone size={22} /></div>
-            <div><b>خلّي أثر معروف قريب منك</b><p>ثبّت التطبيق على الشاشة الرئيسية للوصول إليه مثل التطبيقات المعتادة.</p></div>
+            <div><b>احتفظ بأثر معروف على جهازك</b><p>ثبّت التطبيق على الشاشة الرئيسية للوصول إليه مثل التطبيقات المعتادة.</p></div>
             <button onClick={() => void installApplication()}><Download size={16} /> تثبيت التطبيق</button>
           </section>
 
