@@ -1,1 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none" role="img" aria-labelledby="title"><title id="title">أيقونة أثر معروف</title><defs><linearGradient id="bg" x1="8" y1="0" x2="120" y2="128" gradientUnits="userSpaceOnUse"><stop stop-color="#102B3C"/><stop offset="1" stop-color="#07141F"/></linearGradient><linearGradient id="mark" x1="20" y1="16" x2="110" y2="110" gradientUnits="userSpaceOnUse"><stop stop-color="#73F4E3"/><stop offset=".52" stop-color="#27D7D0"/><stop offset="1" stop-color="#79BFFF"/></linearGradient></defs><rect width="128" height="128" rx="30" fill="url(#bg)"/><rect x="1" y="1" width="126" height="126" rx="29" stroke="#6DEBDD" stroke-opacity=".45"/><g transform="translate(15 14)" stroke-linecap="round" stroke-linejoin="round"><path d="M18 67C10 50 16 28 34 17C47 9 62 11 71 18" stroke="url(#mark)" stroke-width="6"/><path d="M24 75C36 63 46 60 59 64C74 69 84 57 86 41L89 22L96 13L93 47C90 72 74 88 54 88C42 88 31 83 24 75Z" stroke="url(#mark)" stroke-width="5"/><path d="M31 48C31 36 39 28 50 28C61 28 69 36 69 48C69 59 50 73 50 73C50 73 31 59 31 48Z" stroke="url(#mark)" stroke-width="3.5"/><path d="M40 48C40 42 44 38 50 38C56 38 60 42 60 48C60 54 50 62 50 62C50 62 40 54 40 48Z" stroke="url(#mark)" stroke-width="2.5"/><circle cx="50" cy="47" r="3.5" fill="#A6FFF2" stroke="none"/><path d="M65 13H84L77 21H62M67 28H80L72 37V50" stroke="#E8FCFF" stroke-width="4"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none" role="img" aria-labelledby="title">
+<title id="title">أيقونة أثر معروف</title>
+<defs>
+<linearGradient id="bg" x1="8" y1="0" x2="120" y2="128" gradientUnits="userSpaceOnUse"><stop stop-color="#202D23"/><stop offset="1" stop-color="#111713"/></linearGradient>
+<linearGradient id="mark" x1="20" y1="16" x2="110" y2="110" gradientUnits="userSpaceOnUse"><stop stop-color="#9AC7A2"/><stop offset=".55" stop-color="#9DC5D0"/><stop offset="1" stop-color="#6F9B78"/></linearGradient>
+</defs>
+<rect width="128" height="128" rx="30" fill="url(#bg)"/>
+<rect x="1" y="1" width="126" height="126" rx="29" stroke="#9AC7A2" stroke-opacity=".46"/>
+<g transform="translate(15 14)" stroke-linecap="round" stroke-linejoin="round">
+<path d="M18 67C10 50 16 28 34 17C47 9 62 11 71 18" stroke="url(#mark)" stroke-width="6"/>
+<path d="M24 75C36 63 46 60 59 64C74 69 84 57 86 41L89 22L96 13L93 47C90 72 74 88 54 88C42 88 31 83 24 75Z" stroke="url(#mark)" stroke-width="5"/>
+<path d="M31 48C31 36 39 28 50 28C61 28 69 36 69 48C69 59 50 73 50 73C50 73 31 59 31 48Z" stroke="url(#mark)" stroke-width="3.5"/>
+<path d="M40 48C40 42 44 38 50 38C56 38 60 42 60 48C60 54 50 62 50 62C50 62 40 54 40 48Z" stroke="url(#mark)" stroke-width="2.5"/>
+<circle cx="50" cy="47" r="3.5" fill="#9AC7A2" stroke="none"/>
+<path d="M65 13H84L77 21H62M67 28H80L72 37V50" stroke="#EDF3ED" stroke-width="4"/>
+</g>
+</svg>
