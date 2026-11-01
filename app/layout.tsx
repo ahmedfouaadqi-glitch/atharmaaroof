@@ -4,7 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
 export const metadata: Metadata = {
-  title: "أثر معروف | لأن كل شيء له أثر",
+  title: "أثر معروف | كل ما ضاع، له أثر",
   description: "أثر معروف خدمة عراقية للبحث عن المفقودات والمعثورات. ابحث عن مستند، أبلغ عن معثور، واكتشف البلاغات القريبة بموافقتك.",
   applicationName: "أثر معروف",
   manifest: "/manifest.webmanifest",
