@@ -241,9 +241,8 @@ export async function POST(request: NextRequest) {
     const shouldGuide = intent.action === "guide" || intent.action === "create_report" || continueDraft;
 
     if (shouldGuide) {
-      const action = intent.action === "create_report" || continueDraft || hasRecognizedFields
-        ? "create_report"
-        : "guide";
+      const action: "create_report" | "guide" =
+        intent.action === "create_report" || continueDraft ? "create_report" : "guide";
       const draft: ReportDraft | null = action === "create_report" || hasRecognizedFields
         ? {
             kind: intent.kind ?? existingDraft?.kind ?? null,
@@ -260,14 +259,15 @@ export async function POST(request: NextRequest) {
       const summary = draft
         ? [draft.kind === "lost" ? "مفقود" : draft.kind === "found" ? "معثور عليه" : null, draft.category, draft.city, draft.area].filter(Boolean).join(" · ")
         : "";
-      const fallbackReply = draft
+      const fallbackReply = action === "create_report" && draft
         ? missing.length
           ? (continueDraft ? "تم تحديث المسودة. " : "بدأت مسودة البلاغ. ") +
             (summary ? "المعلومات الحالية: " + summary + ". " : "") +
             "المتبقي: " + missing.join("، ") + ". اكتب المعلومات الناقصة هنا. لا تكتب رقم المستند أو بيانات صاحبه."
           : "اكتملت المسودة الأولية: " + summary + ". راجعها وافتح نموذج البلاغ لتأكيد التفاصيل قبل الإرسال. لا تُرفق صورة المستند أو رقمه."
-        : "أستطيع إرشادك. لا تنشر صورة المستند أو رقمه أو بيانات البطاقة؛ وإذا فُقد مستند رسمي، تواصل مع الجهة المصدرة. يمكنك أن تطلب إنشاء بلاغ عام متى رغبت.";
-      const reply = await generateActionReply(input, intent, draft, missing) ?? fallbackReply;
+        : "أفهم أنك تسأل عن الإجراء. لا تسلّم المستند اعتماداً على تشابه الوصف فقط، ولا تنشر صورته أو رقمه أو بيانات صاحبه. إذا كان مستنداً رسمياً مفقوداً أو معثوراً عليه، تواصل مع الجهة المصدرة أو القنوات الرسمية. " +
+          (draft ? "يمكنك أيضاً فتح مسودة اختيارية بالمعلومات التي ذكرتها." : "يمكنك طلب إنشاء بلاغ عام متى رغبت.");
+      const reply = await generateActionReply(input, { ...intent, action }, draft, missing) ?? fallbackReply;
       return NextResponse.json({
         assistant: { mode: "guided_search", action, reply, source: "assistant_intent_router", draft, missing },
         reports: []
