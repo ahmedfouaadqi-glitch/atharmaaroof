@@ -227,8 +227,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "اكتب وصفاً قصيراً للمفقود أو المعثور عليه." }, { status: 400 });
   }
   const digits = input.replace(/\D/g, "");
-  if (digits.length >= 8 || /\b(CVV|CVC|PIN|OTP)\b|الرقم الوطني|رقم البطاقة|رمز التحقق/i.test(input)) {
-    return NextResponse.json({ error: "لا تكتب أرقام المستمسكات أو بيانات البطاقة أو رموز التحقق. استخدم وصفاً عاماً." }, { status: 400 });
+  const iraqiMobile = /(?:07[3-9]\d{8}|9647[3-9]\d{8})/.test(digits);
+  const email = /[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}/i.test(input);
+  if (digits.length >= 8 || iraqiMobile || email || /\b(CVV|CVC|PIN|OTP)\b|الرقم الوطني|رقم البطاقة|رمز التحقق/i.test(input)) {
+    return NextResponse.json({ error: "لا تكتب أرقام المستمسكات أو أرقام الهاتف أو البريد الإلكتروني أو بيانات البطاقة أو رموز التحقق. استخدم وصفاً عاماً." }, { status: 400 });
   }
 
   try {
