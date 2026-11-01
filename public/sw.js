@@ -1,4 +1,4 @@
-const CACHE_NAME = "athar-maarouf-static-v1";
+const CACHE_NAME = "athar-maarouf-static-v3";
 const STATIC_ASSETS = ["/icon.svg", "/brand.svg", "/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
@@ -12,7 +12,10 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((key) => key.startsWith("athar-maarouf-") && key !== CACHE_NAME).map((key) => caches.delete(key))))
+      .then((keys) => Promise.all(
+        keys.filter((key) => key.startsWith("athar-maarouf-") && key !== CACHE_NAME)
+          .map((key) => caches.delete(key))
+      ))
       .then(() => self.clients.claim())
   );
 });
@@ -22,10 +25,23 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET") return;
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
-  // Never cache authentication, personal reports, admin responses, or APIs.
-  if (url.pathname.startsWith("/api/") || url.pathname.startsWith("/auth/") || url.pathname.startsWith("/login") || url.pathname.startsWith("/admin")) return;
 
-  if (url.pathname.startsWith("/_next/static/") || url.pathname === "/icon.svg" || url.pathname === "/brand.svg" || url.pathname === "/manifest.webmanifest") {
+  // Never cache authentication, personal reports, admin responses, or APIs.
+  if (
+    url.pathname.startsWith("/api/") ||
+    url.pathname.startsWith("/auth/") ||
+    url.pathname.startsWith("/login") ||
+    url.pathname.startsWith("/admin") ||
+    url.pathname.startsWith("/control-center")
+  ) return;
+
+  // Cache immutable, hashed Next assets and versioned brand assets only.
+  if (
+    url.pathname.startsWith("/_next/static/") ||
+    url.pathname === "/icon.svg" ||
+    url.pathname === "/brand.svg" ||
+    url.pathname === "/manifest.webmanifest"
+  ) {
     event.respondWith(
       caches.match(request).then((cached) => {
         if (cached) return cached;
@@ -35,7 +51,7 @@ self.addEventListener("fetch", (event) => {
             void caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
           }
           return response;
-        });
+        })
       })
     );
   }

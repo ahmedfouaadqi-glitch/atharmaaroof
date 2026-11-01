@@ -1,9 +1,11 @@
 import type { Metadata, Viewport } from "next";
+import "leaflet/dist/leaflet.css";
 import "./globals.css";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 export const metadata: Metadata = {
-  title: "أثر معروف | كل ما ضاع، له أثر",
-  description: "أثر معروف منصة عراقية آمنة للمفقودات والمعثورات. ابحث عن المستندات المفقودة، أبلغ عن معثور، واكتشف البلاغات القريبة بموافقتك.",
+  title: "أثر معروف | لأن كل شيء له أثر",
+  description: "أثر معروف مبادرة عراقية للمفقودات والمعثورات. ابحث عن مستند، أبلغ عن معثور، واكتشف البلاغات القريبة بموافقتك.",
   applicationName: "أثر معروف",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
@@ -27,14 +29,16 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#06191e",
-  colorScheme: "dark"
+  themeColor: "#071b2b",
+  colorScheme: "light dark"
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="ar" dir="rtl">
-      <body>{children}</body>
+    <html lang="ar" dir="rtl" data-theme="dark">
+      <body>
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }

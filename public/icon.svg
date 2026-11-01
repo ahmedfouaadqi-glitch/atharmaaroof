@@ -1,18 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none" role="img" aria-labelledby="title">
+<title id="title">أيقونة أثر معروف</title>
 <defs>
-  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#06191e"/><stop offset="1" stop-color="#0b3434"/></linearGradient>
-  <linearGradient id="sweep" x1="58" y1="435" x2="420" y2="34" gradientUnits="userSpaceOnUse"><stop stop-color="#13B89F"/><stop offset=".56" stop-color="#35E4C4"/><stop offset="1" stop-color="#A9FFF0"/></linearGradient>
-  <linearGradient id="stroke" x1="315" y1="40" x2="400" y2="455" gradientUnits="userSpaceOnUse"><stop stop-color="#F8FFFF"/><stop offset="1" stop-color="#25C7B0"/></linearGradient>
+  <linearGradient id="icon-bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071B2B"/><stop offset="1" stop-color="#0D3946"/></linearGradient>
 </defs>
-<rect width="512" height="512" rx="112" fill="url(#bg)"/>
-<rect x="10" y="10" width="492" height="492" rx="102" stroke="#59DCC5" stroke-opacity=".25" stroke-width="8"/>
-<path d="M64 424C25 330 46 190 128 108C196 40 289 19 356 25" stroke="url(#sweep)" stroke-width="38" stroke-linecap="round"/>
-<path d="M75 389C105 269 195 187 302 156" stroke="#27D7BA" stroke-width="19" stroke-linecap="round"/>
-<path d="M244 448L291 93L432 93L362 450" stroke="url(#stroke)" stroke-width="42" stroke-linejoin="round"/>
-<path d="M292 47H436" stroke="#F5FFFF" stroke-width="39" stroke-linecap="round"/>
-<circle cx="344" cy="103" r="47" fill="#2FDCC0" stroke="#9CFFEB" stroke-width="9"/>
-<path d="M143 337C143 276 188 229 250 229C312 229 356 274 356 333" stroke="#13BDA5" stroke-width="22" stroke-linecap="round"/>
-<path d="M172 353C172 306 203 272 250 272C297 272 328 305 328 348" stroke="#16CDB0" stroke-width="18" stroke-linecap="round"/>
-<path d="M209 370C209 337 224 316 250 316C276 316 291 337 291 369" stroke="#35E5C6" stroke-width="16" stroke-linecap="round"/>
-<path d="M250 371V405" stroke="#B6FFF0" stroke-width="16" stroke-linecap="round"/>
+<rect width="256" height="256" rx="58" fill="url(#icon-bg)"/>
+<rect x="5" y="5" width="246" height="246" rx="53" stroke="#42D8CF" stroke-opacity=".36" stroke-width="3"/>
+<g transform="translate(17 21) scale(1.02)">
+<defs>
+  <linearGradient id="icon-sweep" x1="20" y1="20" x2="172" y2="185" gradientUnits="userSpaceOnUse"><stop stop-color="#45E9DC"/><stop offset=".52" stop-color="#18C9CB"/><stop offset="1" stop-color="#28BCEB"/></linearGradient>
+  <linearGradient id="icon-right" x1="153" y1="12" x2="199" y2="170" gradientUnits="userSpaceOnUse"><stop stop-color="#54D7FA"/><stop offset="1" stop-color="#079DC9"/></linearGradient>
+  <linearGradient id="icon-white" x1="129" y1="18" x2="183" y2="145" gradientUnits="userSpaceOnUse"><stop stop-color="#FFFFFF"/><stop offset=".56" stop-color="#DFFBFA"/><stop offset="1" stop-color="#3ED6D0"/></linearGradient>
+  <radialGradient id="icon-drop" cx="0" cy="0" r="1" gradientTransform="matrix(0 38 -30 0 106 35)" gradientUnits="userSpaceOnUse"><stop stop-color="#A8FFF4"/><stop offset=".5" stop-color="#39E5D9"/><stop offset="1" stop-color="#08B9C4"/></radialGradient>
+  <filter id="icon-shadow" x="0" y="0" width="220" height="210" filterUnits="userSpaceOnUse"><feGaussianBlur in="SourceAlpha" stdDeviation="5"/><feOffset dy="5"/><feComponentTransfer><feFuncA type="linear" slope=".24"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<g filter="url(#icon-shadow)">
+  <path d="M76 18C45 25 22 51 15 85C8 119 17 151 35 177L57 158C45 139 40 118 43 95C46 72 58 52 81 42L76 18Z" fill="url(#icon-sweep)"/>
+  <path d="M34 174C58 151 80 157 104 155C143 153 159 126 163 88L167 39L191 39L187 97C184 143 162 176 125 190C92 203 58 193 31 193L9 193L34 174Z" fill="url(#icon-sweep)"/>
+  <path d="M145 178C173 157 190 123 192 80L194 48L215 27C216 87 206 141 178 176L145 178Z" fill="url(#icon-right)"/>
+  <path d="M135 15H193L181 29H127L135 15Z" fill="url(#icon-white)"/>
+  <path d="M131 36H184V51L158 77V118H135V47H131V36Z" fill="url(#icon-white)"/>
+  <path d="M138 44H178L151 69V47H138V44Z" fill="#071F2B" fill-opacity=".82"/>
+  <path d="M143 45L158 60L171 45M143 58L156 71L169 57M148 72L160 84" stroke="#42D8E5" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M188 28C191 18 199 13 207 13V51C201 58 195 63 190 73V117" stroke="#43CAE9" stroke-width="4" stroke-linecap="round"/>
+  <path d="M190 91C201 80 208 72 211 61M190 124C202 115 210 105 213 92" stroke="#64D8F0" stroke-width="3" stroke-linecap="round"/>
+  <path d="M105 13C91 26 87 36 91 48C95 61 106 68 118 63C130 57 134 45 127 33C122 24 114 17 105 13Z" fill="url(#icon-drop)"/>
+  <path d="M62 111C67 91 84 81 102 81C120 81 136 92 142 109" stroke="#22D6CC" stroke-width="5" stroke-linecap="round"/>
+  <path d="M55 124C59 102 79 91 101 91C123 91 140 103 147 124" stroke="#25D8CE" stroke-width="5" stroke-linecap="round"/>
+  <path d="M58 139C74 132 73 111 85 105C96 98 110 101 116 112C123 124 118 139 112 151" stroke="#28DCCE" stroke-width="5" stroke-linecap="round"/>
+  <path d="M73 151C88 144 86 124 96 117C104 111 114 116 115 126C117 138 108 151 99 159" stroke="#2ADFD0" stroke-width="5" stroke-linecap="round"/>
+  <path d="M88 162C105 155 114 143 113 131C112 122 105 120 100 126C95 132 98 145 90 151" stroke="#30E1D2" stroke-width="5" stroke-linecap="round"/>
+  <path d="M101 166C118 156 128 141 126 124" stroke="#25D2C9" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M133 117C139 123 139 130 138 137" stroke="#32DDCF" stroke-width="4" stroke-linecap="round"/>
+  <path d="M110 164L109 171" stroke="#7DFFF0" stroke-width="4.5" stroke-linecap="round"/>
+</g>
+</g>
 </svg>

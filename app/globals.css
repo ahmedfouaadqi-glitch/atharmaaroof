@@ -1287,3 +1287,608 @@ a { color: inherit; }
   .athar-v2-document { animation: none !important; }
   .athar-v2-brand,.athar-v2-documents { transition: none !important; }
 }
+
+
+/* ---------------------------------------------------------
+   ATHAR MAAROOF — real map, theme system, policy cards
+   --------------------------------------------------------- */
+
+/* Theme-aware root surfaces */
+:root {
+  color-scheme: dark;
+  --athar-page: #071a2b;
+  --athar-panel: rgba(9, 31, 47, .91);
+  --athar-panel-strong: #0c2a3d;
+  --athar-ink: #eff8fb;
+  --athar-muted: #a5becb;
+  --athar-line: rgba(105, 211, 223, .2);
+  --athar-accent: #31d8cb;
+  --athar-accent-2: #31a9dc;
+  --athar-shadow: 0 22px 65px rgba(0, 11, 22, .27);
+}
+html[data-theme="light"] {
+  color-scheme: light;
+  --athar-page: #eef4f9;
+  --athar-panel: rgba(255, 255, 255, .94);
+  --athar-panel-strong: #ffffff;
+  --athar-ink: #152d3e;
+  --athar-muted: #627b8a;
+  --athar-line: rgba(45, 115, 146, .17);
+  --athar-accent: #0b9d97;
+  --athar-accent-2: #277da8;
+  --athar-shadow: 0 18px 45px rgba(33, 75, 101, .12);
+}
+html[data-theme="light"] body {
+  color: var(--athar-ink);
+  background: #eef4f9;
+}
+html[data-theme="light"] .app-shell {
+  color: var(--athar-ink);
+  background:
+    radial-gradient(ellipse at 10% 12%, rgba(30, 174, 175, .12), transparent 32%),
+    radial-gradient(ellipse at 90% 56%, rgba(96, 151, 212, .12), transparent 37%),
+    linear-gradient(180deg, #f6fafc 0%, #eaf2f8 100%);
+}
+html[data-theme="light"] .app-shell::before { opacity: .06; }
+html[data-theme="light"] .topbar {
+  background: rgba(248, 252, 255, .9);
+  border-bottom-color: rgba(56, 112, 136, .15);
+  box-shadow: 0 7px 24px rgba(30, 77, 103, .06);
+}
+html[data-theme="light"] .brand-copy strong { color: #173347; }
+html[data-theme="light"] .brand-copy small { color: #69818e; }
+html[data-theme="light"] .nav-link { color: #5d7786; }
+html[data-theme="light"] .nav-link:hover,
+html[data-theme="light"] .nav-link.active {
+  color: #0a7377;
+  background: rgba(25, 173, 160, .09);
+}
+html[data-theme="light"] .icon-action {
+  color: #3b657b;
+  background: rgba(255, 255, 255, .86);
+  border-color: rgba(45, 115, 146, .17);
+}
+html[data-theme="light"] .account-link { color: #31586c; }
+html[data-theme="light"] .mobile-menu {
+  background: rgba(249, 253, 255, .98);
+  border-color: rgba(45, 115, 146, .16);
+  box-shadow: var(--athar-shadow);
+}
+html[data-theme="light"] .mobile-menu button,
+html[data-theme="light"] .mobile-menu a { color: #31596c; }
+html[data-theme="light"] .install-banner {
+  color: #24495c;
+  background: rgba(249, 253, 255, .96);
+  border-color: rgba(20, 164, 151, .24);
+}
+html[data-theme="light"] .install-hint {
+  color: #24495c;
+  background: #f9fdff;
+}
+html[data-theme="light"] .page-content { color: #18364a; }
+html[data-theme="light"] .reports-section .section-heading h2,
+html[data-theme="light"] .section-heading h2 { color: #173b50; }
+html[data-theme="light"] .section-heading p,
+html[data-theme="light"] .action-copy p,
+html[data-theme="light"] .metric-note { color: #6b8290; }
+html[data-theme="light"] .insight-card,
+html[data-theme="light"] .action-panel,
+html[data-theme="light"] .report-results,
+html[data-theme="light"] .report-search,
+html[data-theme="light"] .city-field,
+html[data-theme="light"] .filter-pills,
+html[data-theme="light"] .nearby-results {
+  color: #18364a;
+  background: rgba(255, 255, 255, .92);
+  border-color: rgba(46, 121, 148, .16);
+  box-shadow: 0 10px 30px rgba(41, 84, 112, .06);
+}
+html[data-theme="light"] .insight-card strong,
+html[data-theme="light"] .report-title-row b { color: #17384c; }
+html[data-theme="light"] .insight-label,
+html[data-theme="light"] .insight-card small,
+html[data-theme="light"] .report-meta,
+html[data-theme="light"] .report-state { color: #6d8795; }
+html[data-theme="light"] .report-item { border-bottom-color: rgba(45, 115, 146, .1); }
+html[data-theme="light"] .report-item:hover { background: rgba(27, 167, 153, .06); }
+html[data-theme="light"] .report-search input,
+html[data-theme="light"] .city-field select { color: #1c4053; }
+html[data-theme="light"] .report-search input::placeholder { color: #8296a1; }
+html[data-theme="light"] .filter-pills button { color: #617e8c; }
+html[data-theme="light"] .filter-pills button.selected {
+  color: #087d7e;
+  background: rgba(27, 177, 163, .1);
+}
+html[data-theme="light"] .type-badge.lost { color: #9a601d; background: rgba(233, 168, 75, .13); }
+html[data-theme="light"] .type-badge.found { color: #087d69; background: rgba(35, 185, 151, .12); }
+html[data-theme="light"] .text-button { color: #547185; background: #fff; }
+html[data-theme="light"] .secondary-action { color: #315c70; background: #fff; border-color: rgba(45,115,146,.18); }
+html[data-theme="light"] .athar-v2-stage {
+  border-color: rgba(45, 131, 153, .16);
+  background:
+    radial-gradient(ellipse at 50% 10%, rgba(39, 188, 177, .14), transparent 43%),
+    linear-gradient(180deg, rgba(255,255,255,.97), rgba(239,247,250,.96));
+  box-shadow: 0 24px 75px rgba(43, 91, 118, .12), inset 0 1px rgba(255,255,255,.9);
+}
+html[data-theme="light"] .athar-v2-atmosphere {
+  background:
+    radial-gradient(circle at 12% 18%, rgba(35, 202, 179, .14), transparent 19%),
+    radial-gradient(circle at 88% 20%, rgba(106, 145, 222, .12), transparent 18%),
+    radial-gradient(ellipse at 50% 74%, rgba(45, 147, 173, .1), transparent 55%);
+}
+html[data-theme="light"] .athar-v2-brand-mark {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+html[data-theme="light"] .athar-v2-brand h1 { color: #17394d; text-shadow: none; }
+html[data-theme="light"] .athar-v2-english { color: #597889; }
+html[data-theme="light"] .athar-v2-brand p { color: #0a9993; text-shadow: none; }
+html[data-theme="light"] .athar-v2-search-wrap {
+  background: linear-gradient(105deg, rgba(255,255,255,.98), rgba(242,251,252,.98));
+  border-color: rgba(31, 174, 164, .65);
+  box-shadow: 0 0 0 3px rgba(31,174,164,.06), 0 8px 28px rgba(38,125,142,.13), inset 0 1px 9px rgba(27,105,125,.04);
+}
+html[data-theme="light"] .athar-v2-search > input { color: #1b3c4f; }
+html[data-theme="light"] .athar-v2-search > input::placeholder { color: #78909d; }
+html[data-theme="light"] .athar-v2-search-note,
+html[data-theme="light"] .athar-v2-search-note small { color: #6c8792; }
+html[data-theme="light"] .athar-v2-shortcuts button {
+  color: #446a7a;
+  background: rgba(255,255,255,.9);
+  border-color: rgba(54, 132, 155, .2);
+  box-shadow: 0 4px 12px rgba(35, 90, 116, .05);
+}
+html[data-theme="light"] .athar-v2-shortcuts button:hover {
+  color: #087f7b;
+  background: #f1fbfa;
+}
+html[data-theme="light"] .athar-v2-assistant-response {
+  color: #254a5a;
+  background: rgba(255,255,255,.97);
+  border-color: rgba(42,160,151,.24);
+}
+html[data-theme="light"] .athar-v2-response-head b,
+html[data-theme="light"] .athar-v2-response-matches b { color: #244658; }
+html[data-theme="light"] .athar-v2-assistant-response > p,
+html[data-theme="light"] .athar-v2-response-matches small { color: #637f8d; }
+html[data-theme="light"] .athar-v2-response-matches article { background: rgba(18,133,130,.045); }
+html[data-theme="light"] .athar-v2-map-section {
+  background: #e4edf2;
+  border-color: rgba(46, 127, 151, .22);
+  box-shadow: 0 15px 40px rgba(41, 87, 111, .1);
+}
+html[data-theme="light"] .athar-v2-map-card {
+  color: #204457;
+  background: linear-gradient(140deg, rgba(255,255,255,.96), rgba(239,249,251,.93));
+  border-color: rgba(45, 146, 155, .24);
+  box-shadow: 0 12px 28px rgba(38, 87, 112, .11), inset 0 1px #fff;
+}
+html[data-theme="light"] .athar-v2-map-card-head b { color: #1c4054; }
+html[data-theme="light"] .athar-v2-map-card p { color: #607d8a; }
+html[data-theme="light"] .athar-v2-map-card > a {
+  color: #137e7a;
+  background: rgba(24, 172, 159, .07);
+  border-color: rgba(24, 172, 159, .2);
+}
+html[data-theme="light"] .athar-v2-motion-row { color: #65818e; }
+html[data-theme="light"] .athar-v2-motion-row button {
+  color: #476c7d;
+  background: rgba(255,255,255,.84);
+  border-color: rgba(45,115,146,.16);
+}
+html[data-theme="light"] .athar-v2-information-heading > span { color: #1d4659; }
+html[data-theme="light"] .athar-v2-information-heading p { color: #6a8793; }
+html[data-theme="light"] .athar-v2-information-card {
+  color: #23465b;
+  background: rgba(255,255,255,.94);
+  border-color: rgba(46, 125, 149, .18);
+  box-shadow: 0 9px 26px rgba(34,84,110,.07);
+}
+html[data-theme="light"] .athar-v2-information-copy b { color: #1c4054; }
+html[data-theme="light"] .athar-v2-information-copy small { color: #6a8592; }
+html[data-theme="light"] .athar-v2-report-actions .found-action {
+  color: #26556b;
+  background: #fff;
+  border-color: rgba(45,115,146,.18);
+}
+html[data-theme="light"] .toast { color: #1e4357; background: #fff; }
+
+/* Theme switch */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid rgba(86, 199, 204, .25);
+  border-radius: 13px;
+  color: #9cefe7;
+  background: rgba(17, 63, 77, .72);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .18s ease, background .18s ease, border-color .18s ease;
+}
+.theme-toggle:hover { transform: translateY(-2px); border-color: rgba(70,224,209,.55); }
+.theme-toggle-compact { width: 42px; min-height: 42px; padding: 0; }
+html[data-theme="light"] .theme-toggle {
+  color: #1a7480;
+  background: rgba(255,255,255,.9);
+  border-color: rgba(42, 131, 151, .2);
+}
+
+/* Real, lazy-loaded Iraq map */
+.athar-v2-map-layout { display: grid; grid-template-columns: minmax(0,1fr); gap: 14px; margin-top: 24px; }
+.athar-v2-map-section {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: clamp(340px, 39vw, 465px);
+  min-height: 320px;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(66,198,181,.19);
+  border-radius: 24px;
+  background: #071b2b;
+  box-shadow: inset 0 0 55px rgba(0,0,0,.24), 0 16px 45px rgba(0,0,0,.19);
+}
+.iraq-map-shell { position: absolute; inset: 0; width: 100%; height: 100%; background: #0a2232; }
+.iraq-leaflet-map { position: absolute; inset: 0; width: 100%; height: 100%; background: #0a2232; font-family: inherit; }
+.iraq-map-dark .leaflet-tile { filter: invert(1) hue-rotate(180deg) brightness(.78) contrast(.91) saturate(.64); }
+.iraq-map-light .leaflet-tile { filter: saturate(.86) contrast(.97); }
+.leaflet-container { font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial, sans-serif; }
+.leaflet-control-attribution {
+  padding: 2px 6px !important;
+  color: #4f6876 !important;
+  background: rgba(255,255,255,.84) !important;
+  border-radius: 6px 0 0 0;
+  font-size: 9px !important;
+}
+.leaflet-control-attribution a { color: #236d91 !important; }
+.athar-map-top-label {
+  position: absolute;
+  z-index: 500;
+  top: 14px;
+  right: 15px;
+  display: grid;
+  gap: 3px;
+  padding: 9px 13px;
+  border: 1px solid rgba(91, 220, 210, .3);
+  border-radius: 12px;
+  color: #efffff;
+  background: rgba(5, 26, 39, .84);
+  box-shadow: 0 8px 24px rgba(0,0,0,.2);
+  pointer-events: none;
+}
+.iraq-map-top-label span { font-size: 12px; font-weight: 800; }
+.iraq-map-top-label small { color: #9dc7d2; font-size: 8px; }
+.athar-map-controls {
+  position: absolute;
+  z-index: 700;
+  top: 84px;
+  right: 14px;
+  display: grid;
+  gap: 5px;
+}
+.athar-map-controls button {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(74, 195, 203, .36);
+  border-radius: 10px;
+  color: #d5ffff;
+  background: rgba(6, 30, 44, .9);
+  box-shadow: 0 5px 15px rgba(0,0,0,.2);
+  cursor: pointer;
+}
+.athar-map-controls button:hover { color: #fff; background: rgba(12, 102, 112, .95); }
+.athar-map-city-tooltip {
+  padding: 4px 8px !important;
+  border: 1px solid rgba(86, 218, 209, .36) !important;
+  border-radius: 99px !important;
+  color: #efffff !important;
+  background: rgba(4, 27, 42, .93) !important;
+  box-shadow: 0 0 18px rgba(24, 218, 204, .28) !important;
+  font-family: Tahoma, Arial, sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  white-space: nowrap;
+}
+.athar-map-city-tooltip::before { display: none !important; }
+.athar-map-popup { display: grid; gap: 4px; min-width: 115px; }
+.athar-map-popup strong { color: #173d50; font-size: 13px; }
+.athar-map-popup small { color: #698492; font-size: 10px; }
+.iraq-map-loading, .iraq-map-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+  color: #a2d4d5;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(34, 197, 193, .13), transparent 35%),
+    linear-gradient(135deg, #081c2d, #102f43);
+  font-size: 11px;
+}
+.iraq-map-placeholder strong { color: #d8f6f1; font-size: 13px; }
+.iraq-map-placeholder span { max-width: 280px; color: #8daeb9; text-align: center; font-size: 9px; line-height: 1.8; }
+.iraq-map-loading > span { width: 22px; height: 22px; border: 2px solid rgba(63,220,207,.25); border-top-color: #46e0d1; border-radius: 50%; animation: atharMapSpin .8s linear infinite; }
+@keyframes atharMapSpin { to { transform: rotate(360deg); } }
+.athar-v2-map-cards { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
+.athar-v2-map-cards .athar-v2-map-card {
+  position: relative;
+  inset: auto;
+  width: auto;
+  min-height: 165px;
+  padding: 17px 18px;
+  border-radius: 20px;
+}
+.athar-v2-map-cards .athar-v2-map-card p { max-width: 360px; }
+.athar-v2-map-cards .privacy-card { margin: 0; }
+.athar-v2-map-cards .nearby-card { margin: 0; }
+
+/* Information and legal navigation cards */
+.athar-v2-information { margin-top: 28px; }
+.athar-v2-information-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 11px; }
+.athar-v2-information-heading > span { color: #d9f7f0; font-size: 14px; font-weight: 800; }
+.athar-v2-information-heading p { margin: 0; color: #86aaa8; font-size: 9px; }
+.athar-v2-information-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; }
+.athar-v2-information-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 92px;
+  padding: 14px 13px;
+  border: 1px solid rgba(115, 204, 208, .2);
+  border-radius: 17px;
+  color: #e5f8f6;
+  background: linear-gradient(145deg, rgba(17,61,79,.91), rgba(7,34,51,.94));
+  box-shadow: 0 9px 26px rgba(0,0,0,.13), inset 0 1px rgba(255,255,255,.06);
+  text-decoration: none;
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.athar-v2-information-card:hover { transform: translateY(-4px); border-color: rgba(79,226,212,.55); box-shadow: 0 15px 30px rgba(0,0,0,.2), 0 0 19px rgba(45,206,194,.12); }
+.athar-v2-information-icon { display: grid; place-items: center; flex: 0 0 42px; width: 42px; height: 42px; border-radius: 13px; color: #4ce1d2; background: rgba(40,210,194,.11); }
+.athar-v2-information-card.violet .athar-v2-information-icon { color: #c8afff; background: rgba(151,116,240,.14); }
+.athar-v2-information-card.blue .athar-v2-information-icon { color: #8bd8ff; background: rgba(71,164,217,.14); }
+.athar-v2-information-card.amber .athar-v2-information-icon { color: #ffd18a; background: rgba(234,167,73,.13); }
+.athar-v2-information-copy { display: grid; gap: 5px; min-width: 0; }
+.athar-v2-information-copy b { color: #e6f8f5; font-size: 10px; }
+.athar-v2-information-copy small { color: #8eafb4; font-size: 8px; line-height: 1.7; }
+.athar-v2-information-arrow { flex: 0 0 auto; margin-inline-start: auto; color: #7ccfc8; }
+
+/* New structured content cards for initiative, legal pages and FAQ */
+.info-header-actions { display: flex; align-items: center; gap: 9px; }
+.info-section-block { margin-top: 26px; }
+.info-section-title { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 11px; }
+.info-section-title > span { color: #c8f4e9; font-size: 14px; font-weight: 800; }
+.info-section-title small { color: #789ba0; font-size: 9px; }
+.about-intro-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 19px;
+  border: 1px solid rgba(67, 211, 193, .25);
+  border-radius: 19px;
+  background: linear-gradient(120deg, rgba(21,102,96,.32), rgba(9,35,53,.72));
+  box-shadow: 0 12px 30px rgba(0,0,0,.12);
+}
+.about-intro-icon { display: grid; place-items: center; flex: 0 0 48px; width: 48px; height: 48px; border-radius: 15px; color: #54e7d4; background: rgba(40,207,186,.13); }
+.about-intro-card h2 { margin: 4px 0 7px; color: #e8fbf5; font-size: 17px; }
+.about-intro-card p { margin: 0; }
+.info-card-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; }
+.info-feature-card {
+  min-height: 150px;
+  padding: 15px;
+  border: 1px solid rgba(108,197,192,.17);
+  border-radius: 17px;
+  background: linear-gradient(145deg, rgba(16,60,67,.62), rgba(6,29,40,.78));
+  transition: transform .18s ease, border-color .18s ease;
+}
+.info-feature-card:hover { transform: translateY(-3px); border-color: rgba(75,218,199,.42); }
+.info-feature-icon { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 12px; border-radius: 13px; color: #55dfcf; background: rgba(39,202,185,.12); }
+.info-feature-card h2 { margin: 0 0 6px; color: #d9f6ee; font-size: 11px; }
+.info-feature-card p { margin: 0; font-size: 9px; line-height: 1.8; }
+.about-steps-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; }
+.about-step-card { padding: 15px; border: 1px solid rgba(117,180,211,.17); border-radius: 16px; background: rgba(13,47,66,.65); }
+.about-step-card > span { color: #3dd7cb; font-family: Arial,sans-serif; font-size: 12px; font-weight: 800; letter-spacing: .12em; }
+.about-step-card h2 { margin: 10px 0 5px; color: #e4f7f6; font-size: 12px; }
+.about-step-card p { margin: 0; font-size: 9px; line-height: 1.9; }
+.about-boundary-card { display: flex; align-items: flex-start; gap: 12px; margin-top: 22px; padding: 15px; border: 1px solid rgba(225,176,104,.2); border-radius: 16px; background: rgba(123,83,36,.1); }
+.about-boundary-card > svg { flex: 0 0 auto; color: #e6b66e; }
+.about-boundary-card h2 { margin: 0 0 5px; color: #e8d0a8; font-size: 11px; }
+.about-boundary-card p { margin: 0; font-size: 9px; line-height: 1.9; }
+.policy-card-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+.policy-card {
+  align-self: start;
+  overflow: hidden;
+  border: 1px solid rgba(103,190,199,.18);
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(15,56,69,.72), rgba(5,27,40,.83));
+  transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+.policy-card:hover { border-color: rgba(76,211,205,.36); box-shadow: 0 10px 26px rgba(0,0,0,.12); }
+.policy-card summary { display: flex; align-items: center; gap: 11px; min-height: 78px; padding: 13px; cursor: pointer; list-style: none; }
+.policy-card summary::-webkit-details-marker { display: none; }
+.policy-card-icon { display: grid; place-items: center; flex: 0 0 40px; width: 40px; height: 40px; border-radius: 13px; color: #5bded2; background: rgba(41,202,190,.12); }
+.policy-card-title { display: grid; gap: 4px; flex: 1; min-width: 0; }
+.policy-card-title b { color: #e1f6f2; font-size: 11px; }
+.policy-card-title small { color: #8fadb7; font-size: 8px; line-height: 1.65; }
+.policy-card-expand { display: grid; place-items: center; flex: 0 0 27px; width: 27px; height: 27px; border: 1px solid rgba(104,208,207,.22); border-radius: 50%; color: #61dfd1; font-size: 17px; }
+.policy-card[open] .policy-card-expand { transform: rotate(45deg); }
+.policy-card ul { margin: 0; padding: 0 23px 15px 16px; }
+.policy-card li { color: #a8c2c8; font-size: 9px; line-height: 1.95; padding: 2px 0; }
+.legal-card {
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid rgba(90,198,190,.23);
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(14,55,63,.75), rgba(5,27,40,.88));
+}
+.legal-card-heading { display: flex; align-items: center; gap: 11px; margin-bottom: 12px; }
+.legal-card-heading h2 { margin: 0 0 4px; color: #d8f4ec; font-size: 13px; }
+.legal-card-heading p { margin: 0; font-size: 9px; }
+.legal-card > p { line-height: 1.95; }
+.faq-groups { display: grid; gap: 22px; }
+.faq-group .info-section-title { padding-bottom: 8px; border-bottom: 1px solid rgba(118,191,194,.12); }
+.faq-group .info-section-title > span { color: #d8f3ed; font-size: 12px; }
+.faq-list { display: grid; gap: 9px; }
+.faq-item {
+  border: 1px solid rgba(132,208,192,.15);
+  border-radius: 14px;
+  background: rgba(5,31,43,.54);
+  transition: border-color .16s ease, background .16s ease;
+}
+.faq-item[open] { border-color: rgba(65,208,193,.34); background: rgba(12,53,61,.72); }
+.faq-item summary { padding: 14px 15px; color: #d4eee8; font-size: 10px; font-weight: 700; cursor: pointer; list-style: none; }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after { content: "+"; float: left; color: #69d9bd; font-size: 17px; line-height: 1; }
+.faq-item[open] summary::after { content: "−"; }
+.faq-item p { margin: 0; padding: 0 15px 14px; color: #98b5b6; font-size: 9px; line-height: 1.95; }
+
+/* Light theme for policy and initiative cards */
+html[data-theme="light"] .info-page {
+  color: #17394d;
+  background:
+    radial-gradient(ellipse at 86% 0%, rgba(63,177,175,.13), transparent 36%),
+    linear-gradient(180deg, #f6fafc, #eaf2f8);
+}
+html[data-theme="light"] .info-topbar { border-bottom-color: rgba(49,112,136,.14); }
+html[data-theme="light"] .info-back { color: #386f85; }
+html[data-theme="light"] .info-heading h1 { color: #15394f; }
+html[data-theme="light"] .info-heading p { color: #647f8e; }
+html[data-theme="light"] .info-document {
+  color: #25495e;
+  background: rgba(255,255,255,.8);
+  border-color: rgba(54,117,145,.16);
+  box-shadow: 0 20px 65px rgba(37,87,115,.08);
+}
+html[data-theme="light"] .info-document h2 { color: #175a69; }
+html[data-theme="light"] .info-document p,
+html[data-theme="light"] .info-document li { color: #536f7f; }
+html[data-theme="light"] .info-document b { color: #264e62; }
+html[data-theme="light"] .info-document a { color: #087e83; }
+html[data-theme="light"] .info-document section { border-bottom-color: rgba(44,116,140,.11); }
+html[data-theme="light"] .policy-card,
+html[data-theme="light"] .info-feature-card,
+html[data-theme="light"] .about-step-card,
+html[data-theme="light"] .legal-card,
+html[data-theme="light"] .faq-item {
+  color: #23475d;
+  background: rgba(255,255,255,.88);
+  border-color: rgba(54,123,149,.17);
+  box-shadow: 0 8px 20px rgba(41,88,112,.045);
+}
+html[data-theme="light"] .policy-card-title b,
+html[data-theme="light"] .info-feature-card h2,
+html[data-theme="light"] .about-step-card h2,
+html[data-theme="light"] .legal-card-heading h2,
+html[data-theme="light"] .faq-item summary { color: #21495d; }
+html[data-theme="light"] .policy-card-title small,
+html[data-theme="light"] .policy-card li,
+html[data-theme="light"] .info-feature-card p,
+html[data-theme="light"] .about-step-card p,
+html[data-theme="light"] .legal-card p,
+html[data-theme="light"] .faq-item p { color: #627f8d; }
+html[data-theme="light"] .about-intro-card {
+  color: #244b60;
+  background: linear-gradient(120deg, rgba(221,247,241,.94), rgba(238,247,252,.96));
+  border-color: rgba(37,165,151,.22);
+}
+html[data-theme="light"] .about-intro-card h2 { color: #19475a; }
+html[data-theme="light"] .about-boundary-card { background: rgba(239,190,115,.12); }
+html[data-theme="light"] .about-boundary-card h2 { color: #805a26; }
+html[data-theme="light"] .about-boundary-card p { color: #6f634b; }
+html[data-theme="light"] .faq-item[open] { background: #f5fbfc; }
+html[data-theme="light"] .legal-card-heading p { color: #66818d; }
+html[data-theme="light"] .legal-source-links a {
+  color: #176b79;
+  background: #f4fbfc;
+  border-color: rgba(38,137,150,.17);
+}
+html[data-theme="light"] .legal-disclaimer { color: #80633c !important; background: rgba(238,195,129,.14); }
+html[data-theme="light"] .info-next-links a,
+html[data-theme="light"] .about-cta { color: #147b7c; background: rgba(43,181,165,.07); border-color: rgba(43,153,150,.22); }
+html[data-theme="light"] .info-footer { color: #6d8793; }
+html[data-theme="light"] .info-footer a { color: #557b8d; }
+
+/* Responsive layout */
+@media (max-width: 900px) {
+  .athar-v2-information-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .info-card-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 700px) {
+  .athar-v2-map-section { height: 350px; min-height: 320px; border-radius: 17px; }
+  .athar-v2-map-cards { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+  .athar-v2-map-cards .athar-v2-map-card { min-height: 158px; padding: 11px; border-radius: 15px; }
+  .athar-v2-map-cards .athar-v2-map-card-head { gap: 6px; }
+  .athar-v2-map-cards .athar-v2-map-card-head b { font-size: 9px; }
+  .athar-v2-map-cards .athar-v2-map-card p { font-size: 8px; }
+  .athar-v2-map-cards .athar-v2-map-card > a,
+  .athar-v2-map-cards .athar-v2-map-card > button { min-width: 0; font-size: 8px; }
+  .iraq-map-top-label { top: 8px; right: 8px; padding: 7px 9px; }
+  .athar-map-controls { top: 66px; right: 8px; gap: 4px; }
+  .athar-map-controls button { width: 30px; height: 30px; }
+  .athar-map-city-tooltip { padding: 3px 6px !important; font-size: 9px !important; }
+  .athar-v2-information-heading { align-items: flex-start; flex-direction: column; gap: 4px; }
+  .athar-v2-information-grid { gap: 7px; }
+  .athar-v2-information-card { min-height: 76px; padding: 10px; gap: 8px; }
+  .athar-v2-information-icon { flex-basis: 34px; width: 34px; height: 34px; border-radius: 10px; }
+  .athar-v2-information-icon svg { width: 19px; height: 19px; }
+  .athar-v2-information-copy b { font-size: 9px; }
+  .athar-v2-information-copy small { font-size: 7px; }
+  .policy-card-grid { grid-template-columns: 1fr; }
+  .about-steps-grid { grid-template-columns: 1fr; }
+  .about-step-card { display: grid; grid-template-columns: 34px 1fr; column-gap: 9px; }
+  .about-step-card > span { grid-row: 1 / 3; padding-top: 2px; }
+  .about-step-card h2 { margin: 0 0 4px; }
+  .info-section-title { align-items: flex-start; flex-direction: column; gap: 4px; }
+  .legal-source-links { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .athar-v2-documents { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .athar-v2-document { height: 96px; }
+  .athar-v2-map-section { height: 325px; min-height: 300px; }
+  .athar-v2-map-cards { grid-template-columns: 1fr; }
+  .athar-v2-map-cards .athar-v2-map-card { min-height: 0; }
+  .info-card-grid { grid-template-columns: 1fr 1fr; }
+  .about-intro-card { padding: 14px; }
+  .info-footer { align-items: flex-start; flex-wrap: wrap; }
+  .info-footer nav { width: 100%; margin-inline-start: 0; }
+}
+
+.iraq-map-issue {
+  position: absolute;
+  z-index: 500;
+  top: 15px;
+  left: 15px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid rgba(103, 192, 202, .24);
+  border-radius: 99px;
+  color: #d3f7f4;
+  background: rgba(5, 26, 39, .82);
+  font-size: 8px;
+  text-decoration: none;
+}
+.iraq-map-issue:hover { border-color: rgba(65,223,211,.6); color: #fff; }
+.leaflet-popup-content-wrapper { border-radius: 12px !important; }
+.leaflet-popup-content { margin: 11px 13px !important; }
+html[data-theme="light"] .iraq-map-issue {
+  color: #27596b;
+  background: rgba(255,255,255,.9);
+  border-color: rgba(47,130,151,.2);
+}
+html[data-theme="light"] .leaflet-popup-content-wrapper,
+html[data-theme="light"] .leaflet-popup-tip { background: #fff; }
+@media (max-width: 520px) {
+  .iraq-map-issue { top: auto; left: 8px; bottom: 8px; min-height: 26px; font-size: 7px; }
+}

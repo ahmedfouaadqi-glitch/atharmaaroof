@@ -1,14 +1,21 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import type { FormEvent, RefObject } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
-  CarFront, CheckCircle2, ChevronLeft, FileText, Fingerprint,
-  Globe, MapPin, Navigation, Search, ShieldCheck, Smartphone
+  BookOpen, CarFront, CheckCircle2, ChevronLeft, CircleHelp, FileText,
+  Fingerprint, Globe, MapPin, Navigation, Scale, Search, ShieldCheck,
+  Smartphone
 } from "lucide-react";
 import { BrandMark } from "@/components/brand";
 import VoiceAssistant from "@/components/VoiceAssistant";
-import IraqNightMap from "@/components/IraqNightMap";
+
+const IraqInteractiveMap = dynamic(() => import("@/components/IraqInteractiveMap"), {
+  ssr: false,
+  loading: () => <div className="iraq-map-loading" role="status"><span /> جارٍ تحميل خريطة العراق...</div>
+});
 
 type Match = {
   id: string;
@@ -33,57 +40,106 @@ type Props = {
   nearbySearching: boolean;
   nearbyError: string;
   onNearbySearch: () => void;
-  motionStatus: string;
+  motionStatus: "ready" | "enabled" | "unsupported" | string;
   onEnableMotion: () => void;
   onDisableMotion: () => void;
   onOpenReportForm: (kind: "lost" | "found") => void;
 };
 
 const shortcuts = [
-  { label: "بحث بالمفقودات", query: "مفقود", Icon: Search },
   { label: "بطاقة وطنية", query: "بطاقة وطنية", Icon: Fingerprint },
   { label: "جواز سفر", query: "جواز سفر", Icon: Globe },
   { label: "رخصة قيادة", query: "رخصة قيادة", Icon: CarFront },
   { label: "مستندات أخرى", query: "مستندات أخرى", Icon: FileText }
 ];
 
+const informationCards = [
+  {
+    href: "/about",
+    title: "عن المبادرة",
+    description: "رسالة المبادرة وأهدافها وخدمة المجتمع.",
+    Icon: BookOpen,
+    tone: "mint"
+  },
+  {
+    href: "/privacy",
+    title: "سياسة الخصوصية",
+    description: "كيف نحمي بياناتك ونحترم اختياراتك.",
+    Icon: ShieldCheck,
+    tone: "blue"
+  },
+  {
+    href: "/terms",
+    title: "سياسة الاستخدام",
+    description: "حقوق المستخدم ومسؤولياته وضوابط البلاغات.",
+    Icon: Scale,
+    tone: "violet"
+  },
+  {
+    href: "/faq",
+    title: "الأسئلة الشائعة",
+    description: "إجابات مختصرة عن استخدام المنصة.",
+    Icon: CircleHelp,
+    tone: "amber"
+  }
+] as const;
+
 export default function AtharReferenceHome(props: Props) {
+  const mapViewportRef = useRef<HTMLDivElement>(null);
+  const [mapVisible, setMapVisible] = useState(false);
+
+  useEffect(() => {
+    const target = mapViewportRef.current;
+    if (!target) {
+      setMapVisible(true);
+      return;
+    }
+    if (!("IntersectionObserver" in window)) {
+      setMapVisible(true);
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        setMapVisible(true);
+        observer.disconnect();
+      }
+    }, { rootMargin: "180px 0px" });
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section className="athar-v2-stage reveal" ref={props.stageRef} aria-label="أثر معروف — الصفحة الرئيسية">
       <div className="athar-v2-atmosphere" aria-hidden="true" />
-
-      <div className="athar-v2-documents" aria-hidden="true">
-        <article className="athar-v2-document doc-passport">
-          <small>جواز سفر</small>
-          <div className="athar-v2-doc-art"><Globe size={36} strokeWidth={1.2} /></div>
-          <div className="athar-v2-doc-lines"><i /><i /><i /></div>
-          <span className="athar-v2-doc-code">PASSPORT</span>
-        </article>
-        <article className="athar-v2-document doc-national">
-          <small>بطاقة وطنية</small>
-          <div className="athar-v2-doc-art"><Fingerprint size={34} strokeWidth={1.25} /></div>
-          <div className="athar-v2-doc-lines"><i /><i /></div>
-          <span className="athar-v2-doc-code">IRAQ ID</span>
-        </article>
-        <article className="athar-v2-document doc-license">
-          <small>رخصة قيادة</small>
-          <div className="athar-v2-doc-art"><CarFront size={37} strokeWidth={1.25} /></div>
-          <div className="athar-v2-doc-lines"><i /><i /></div>
-          <span className="athar-v2-doc-code">DRIVING</span>
-        </article>
-        <article className="athar-v2-document doc-other">
-          <small>مستندات أخرى</small>
-          <div className="athar-v2-doc-art"><FileText size={35} strokeWidth={1.25} /></div>
-          <div className="athar-v2-doc-lines"><i /><i /><i /></div>
-          <span className="athar-v2-doc-code">DOCUMENT</span>
-        </article>
-      </div>
 
       <div className="athar-v2-brand">
         <BrandMark className="athar-v2-brand-mark" />
         <h1>أثر <b>معروف</b></h1>
         <span className="athar-v2-english">ATHAR MAAROOF</span>
         <p>لأن كل شيء له أثر... ونوصله لأصحابه</p>
+      </div>
+
+      <div className="athar-v2-documents" aria-label="أنواع المستندات">
+        <article className="athar-v2-document doc-passport">
+          <small>جواز سفر</small>
+          <div className="athar-v2-doc-art"><Globe size={36} strokeWidth={1.2} /></div>
+          <div className="athar-v2-doc-lines"><i /><i /><i /></div>
+        </article>
+        <article className="athar-v2-document doc-national">
+          <small>بطاقة وطنية</small>
+          <div className="athar-v2-doc-art"><Fingerprint size={34} strokeWidth={1.25} /></div>
+          <div className="athar-v2-doc-lines"><i /><i /></div>
+        </article>
+        <article className="athar-v2-document doc-license">
+          <small>رخصة قيادة</small>
+          <div className="athar-v2-doc-art"><CarFront size={37} strokeWidth={1.25} /></div>
+          <div className="athar-v2-doc-lines"><i /><i /></div>
+        </article>
+        <article className="athar-v2-document doc-other">
+          <small>مستندات أخرى</small>
+          <div className="athar-v2-doc-art"><FileText size={35} strokeWidth={1.25} /></div>
+          <div className="athar-v2-doc-lines"><i /><i /><i /></div>
+        </article>
       </div>
 
       <div className="athar-v2-search-area">
@@ -150,34 +206,44 @@ export default function AtharReferenceHome(props: Props) {
         </div>
       </div>
 
-      <div className="athar-v2-map-section">
-        <IraqNightMap />
-        <div className="athar-v2-map-shade" aria-hidden="true" />
-        <aside className="athar-v2-map-card privacy-card">
-          <div className="athar-v2-map-card-head">
-            <span className="athar-v2-map-card-icon"><ShieldCheck size={27} /></span>
-            <b>خصوصيتك أولاً</b>
-          </div>
-          <p>موقعك يُستخدم فقط لعرض البلاغات القريبة منك وبموافقتك.</p>
-          <Link href="/privacy">معرفة المزيد <ChevronLeft size={13} /></Link>
-        </aside>
+      <div className="athar-v2-map-layout">
+        <div className="athar-v2-map-section" ref={mapViewportRef}>
+          {mapVisible ? <IraqInteractiveMap /> : (
+            <div className="iraq-map-placeholder">
+              <MapPin size={26} />
+              <strong>خريطة العراق التفاعلية</strong>
+              <span>ستُحمّل الخريطة عند ظهور هذا القسم لتقليل وقت فتح الصفحة.</span>
+            </div>
+          )}
+        </div>
 
-        <aside className="athar-v2-map-card nearby-card">
-          <div className="athar-v2-map-card-head">
-            <span className="athar-v2-map-card-icon"><MapPin size={25} /></span>
-            <b>اكتشاف البلاغات القريبة</b>
-          </div>
-          <p>بموافقتك نعرض لك البلاغات الأقرب إلى موقعك الحالي.</p>
-          {props.nearbyError && <small className="athar-v2-location-error" role="alert">{props.nearbyError}</small>}
-          <button type="button" onClick={props.onNearbySearch} disabled={props.nearbySearching}>
-            {props.nearbySearching ? <span className="assistant-spinner" /> : <Navigation size={14} />}
-            {props.nearbySearching ? "جارٍ تحديد الموقع..." : "تفعيل الموقع"}
-          </button>
-        </aside>
+        <div className="athar-v2-map-cards">
+          <aside className="athar-v2-map-card privacy-card">
+            <div className="athar-v2-map-card-head">
+              <span className="athar-v2-map-card-icon"><ShieldCheck size={27} /></span>
+              <b>خصوصيتك أولاً</b>
+            </div>
+            <p>نحافظ على خصوصيتك، ولا نطلب موقعك الدقيق إلا بموافقتك.</p>
+            <Link href="/privacy">معرفة المزيد <ChevronLeft size={13} /></Link>
+          </aside>
+
+          <aside className="athar-v2-map-card nearby-card">
+            <div className="athar-v2-map-card-head">
+              <span className="athar-v2-map-card-icon"><MapPin size={25} /></span>
+              <b>اكتشاف البلاغات القريبة</b>
+            </div>
+            <p>بموافقتك نعرض البلاغات الأقرب إلى موقعك الحالي.</p>
+            {props.nearbyError && <small className="athar-v2-location-error" role="alert">{props.nearbyError}</small>}
+            <button type="button" onClick={props.onNearbySearch} disabled={props.nearbySearching}>
+              {props.nearbySearching ? <span className="assistant-spinner" /> : <Navigation size={14} />}
+              {props.nearbySearching ? "جارٍ تحديد الموقع..." : "تفعيل الموقع"}
+            </button>
+          </aside>
+        </div>
       </div>
 
       <div className="athar-v2-motion-row">
-        <span><MapPin size={13} /> خريطة إرشادية لمدن العراق</span>
+        <span><MapPin size={13} /> المدن المضيئة: بغداد، كربلاء، النجف، سامراء، البصرة</span>
         {props.motionStatus !== "unsupported" && (
           <button
             type="button"
@@ -199,6 +265,25 @@ export default function AtharReferenceHome(props: Props) {
           <FileText size={16} /> عثرت على مستند
         </button>
       </div>
+
+      <section className="athar-v2-information" aria-label="معلومات المنصة">
+        <div className="athar-v2-information-heading">
+          <span>معلومات تهمك</span>
+          <p>كل ما تحتاج معرفته عن «أثر معروف» في بطاقات واضحة وسريعة.</p>
+        </div>
+        <div className="athar-v2-information-grid">
+          {informationCards.map(({ href, title, description, Icon, tone }) => (
+            <Link href={href} className={"athar-v2-information-card " + tone} key={href}>
+              <span className="athar-v2-information-icon"><Icon size={24} /></span>
+              <span className="athar-v2-information-copy">
+                <b>{title}</b>
+                <small>{description}</small>
+              </span>
+              <ChevronLeft size={17} className="athar-v2-information-arrow" />
+            </Link>
+          ))}
+        </div>
+      </section>
     </section>
   );
 }
