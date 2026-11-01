@@ -1,11 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import "leaflet/dist/leaflet.css";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
 export const metadata: Metadata = {
   title: "أثر معروف | كل ما ضاع، له أثر",
-  description: "أثر معروف خدمة عراقية للبحث عن المفقودات والمعثورات. ابحث عن مستند، أبلغ عن معثور، واكتشف البلاغات القريبة بموافقتك.",
+  description: "أثر معروف خدمة للبحث عن المفقودات والمعثورات، وإضافة البلاغات ومتابعة النتائج القريبة بموافقتك.",
   applicationName: "أثر معروف",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
@@ -29,7 +28,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#071b2b",
+  themeColor: "#06141f",
   colorScheme: "light dark"
 };
 
