@@ -1,9 +1,29 @@
 {
   "name": "أثر معروف — ATHAR MAAROOF",
   "short_name": "أثر معروف",
-  "description": "خدمة للبحث عن المفقودات والمعثورات مع خيار عرض البلاغات القريبة بموافقة المستخدم.",
-  "lang": "ar", "dir": "rtl", "start_url": "/", "scope": "/", "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"], "background_color": "#06141f", "theme_color": "#06141f",
-  "prefer_related_applications": false, "categories": ["utilities", "lifestyle"],
-  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+  "description": "خدمة للبحث عن المستندات المفقودة والمعثورة، وإضافة البلاغات ومتابعة النتائج القريبة بموافقتك.",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "background_color": "#111713",
+  "theme_color": "#111713",
+  "prefer_related_applications": false,
+  "categories": [
+    "utilities",
+    "lifestyle"
+  ],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }
