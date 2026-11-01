@@ -6,8 +6,8 @@ import {
 import InfoPageShell from "@/components/InfoPageShell";
 
 export const metadata: Metadata = {
-  title: "عن أثر معروف | المبادرة",
-  description: "تعرف على مبادرة أثر معروف للمفقودات والمعثورات في العراق."
+  title: "عن أثر معروف",
+  description: "تعرف على خدمة أثر معروف للبحث عن المفقودات والمعثورات في العراق."
 };
 
 const principles = [
@@ -42,9 +42,9 @@ const steps = [
 export default function AboutPage() {
   return (
     <InfoPageShell
-      kicker="عن المبادرة"
-      title="أثر معروف — لأن كل شيء له أثر"
-      description="مبادرة عراقية مجتمعية تساعد على تنظيم بلاغات المفقودات والمعثورات وتقريبها إلى أصحابها."
+      kicker="عن أثر معروف"
+      title="أثر معروف — كل ما ضاع، له أثر"
+      description="خدمة مجتمعية عراقية تساعد على تنظيم بلاغات المفقودات والمعثورات وتقريبها إلى أصحابها."
     >
       <section className="about-intro-card">
         <span className="about-intro-icon"><MapPin size={27} /></span>
@@ -57,8 +57,8 @@ export default function AboutPage() {
 
       <section className="info-section-block">
         <div className="info-section-title">
-          <span>مبادئ المبادرة</span>
-          <small>ما يوجّه طريقة تقديم الخدمة</small>
+          <span>مبادئ الخدمة</span>
+          <small>ما يوجّه طريقة عمل الخدمة</small>
         </div>
         <div className="info-card-grid">
           {principles.map(({ Icon, title, text }) => (
@@ -73,7 +73,7 @@ export default function AboutPage() {
 
       <section className="info-section-block">
         <div className="info-section-title">
-          <span>كيف تعمل المبادرة؟</span>
+          <span>كيف تعمل الخدمة؟</span>
           <small>ثلاث خطوات واضحة</small>
         </div>
         <div className="about-steps-grid">
@@ -91,7 +91,7 @@ export default function AboutPage() {
         <Sparkles size={20} />
         <div>
           <h2>دور المنصة وحدوده</h2>
-          <p>أثر معروف مبادرة مستقلة وليست جهة حكومية أو جهة إصدار للمستندات. تساعد المنصة في تنظيم البلاغات والبحث، لكنها لا تثبت الملكية ولا تضمن استعادة كل مفقود. يجب التحقق من هوية صاحب المستند قبل تسليمه.</p>
+          <p>أثر معروف خدمة مستقلة وليست جهة حكومية أو جهة إصدار للمستندات. تساعد المنصة في تنظيم البلاغات والبحث، لكنها لا تثبت الملكية ولا تضمن استعادة كل مفقود. يجب التحقق من هوية صاحب المستند قبل تسليمه.</p>
         </div>
       </section>
 

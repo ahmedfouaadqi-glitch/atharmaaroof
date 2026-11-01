@@ -4,8 +4,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
 export const metadata: Metadata = {
-  title: "أثر معروف | لأن كل شيء له أثر",
-  description: "أثر معروف مبادرة عراقية للمفقودات والمعثورات. ابحث عن مستند، أبلغ عن معثور، واكتشف البلاغات القريبة بموافقتك.",
+  title: "أثر معروف | كل ما ضاع، له أثر",
+  description: "أثر معروف خدمة عراقية للبحث عن المفقودات والمعثورات. ابحث عن مستند، أبلغ عن معثور، واكتشف البلاغات القريبة بموافقتك.",
   applicationName: "أثر معروف",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "أثر معروف — ATHAR MAAROOF",
-    description: "لأن كل شيء له أثر... ونوصله لأصحابه",
+    description: "كل ما ضاع، له أثر — نساعدك على الوصول إلى البلاغات ذات الصلة",
     type: "website",
     locale: "ar_IQ"
   }

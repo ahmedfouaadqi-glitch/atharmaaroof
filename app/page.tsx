@@ -489,7 +489,7 @@ export default function HomePage() {
           <nav className="desktop-nav athar-primary-nav" aria-label="التنقل الرئيسي">
             <button className={activeNav === "home" ? "nav-link active" : "nav-link"} onClick={() => scrollTo("home", "home")}>الرئيسية</button>
             <button className={activeNav === "reports" ? "nav-link active" : "nav-link"} onClick={() => scrollTo("reports", "reports")}>البلاغات</button>
-            <Link className="nav-link" href="/about">عن المبادرة</Link>
+            <Link className="nav-link" href="/about">عن أثر معروف</Link>
             <Link className="nav-link" href="/faq">الأسئلة الشائعة</Link>
             <Link className="nav-link" href="/privacy">الخصوصية</Link>
             <Link className="nav-link" href="/terms">الاستخدام</Link>
@@ -525,7 +525,7 @@ export default function HomePage() {
               <button onClick={() => scrollTo("home", "home")}><House size={17} /> الرئيسية</button>
               <button onClick={() => scrollTo("reports", "reports")}><FileText size={17} /> البلاغات</button>
               <button onClick={() => scrollTo("safety", "safety")}><ShieldCheck size={17} /> الأمان والخصوصية</button>
-              <Link href="/about"><BookOpen size={17} /> عن المبادرة</Link>
+              <Link href="/about"><BookOpen size={17} /> عن أثر معروف</Link>
               <Link href="/privacy"><ShieldCheck size={17} /> سياسة الخصوصية</Link>
               <Link href="/terms"><FileText size={17} /> سياسة الاستخدام</Link>
               <Link href="/faq"><CircleHelp size={17} /> الأسئلة الشائعة</Link>
@@ -669,10 +669,10 @@ export default function HomePage() {
           </section>
 
           <footer className="site-footer">
-            <div className="footer-brand"><BrandMark /><span><b>أثر معروف</b><small>منصة عراقية للمفقودات والمعثورات</small></span></div>
+            <div className="footer-brand"><BrandMark /><span><b>أثر معروف</b><small>منصة للبحث عن المفقودات والمعثورات</small></span></div>
             <span>© {new Date().getFullYear()} أثر معروف. جميع الحقوق محفوظة.</span>
             <nav className="footer-links">
-              <Link href="/about">عن المبادرة</Link>
+              <Link href="/about">عن أثر معروف</Link>
               <Link href="/privacy">سياسة الخصوصية</Link>
               <Link href="/terms">شروط الاستخدام</Link>
               <Link href="/faq">الأسئلة الشائعة</Link>
