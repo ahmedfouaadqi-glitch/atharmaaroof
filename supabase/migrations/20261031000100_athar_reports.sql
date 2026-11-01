@@ -133,7 +133,7 @@ returns table (id uuid, public_code text, status text, updated_at timestamptz)
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $$
 declare
   v_previous_status text;
 begin
@@ -171,7 +171,7 @@ begin
 
   return next;
 end;
-$;
+$$;
 
 revoke all on function public.athar_admin_set_report_status(uuid, text) from public, anon;
 grant execute on function public.athar_admin_set_report_status(uuid, text) to authenticated;

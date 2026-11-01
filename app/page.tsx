@@ -2,18 +2,24 @@
 
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { BrandMark } from "@/components/brand";
-import { useDeviceMotion } from "@/components/useDeviceMotion";
 import VoiceAssistant from "@/components/VoiceAssistant";
 import { useInteractiveSound } from "@/components/useInteractiveSound";
 import Link from "next/link";
 import {
-  ArrowUp, Bell, BookOpen, Check, CheckCircle2, ChevronLeft, CircleHelp, Clock3,
+  ArrowUp, BookOpen, Check, CheckCircle2, ChevronLeft, CircleHelp, Clock3,
   CreditCard, Download, FileText, Fingerprint, HeartHandshake, House,
   KeyRound, MapPin, MapPinned, Menu, Plus, Search, ShieldCheck,
   Smartphone, Sparkles, Volume2, VolumeX, Wallet, X, Navigation, LocateFixed, UserRoundCheck
 } from "lucide-react";
 import AtharReferenceHome from "@/components/AtharReferenceHome";
 import ThemeToggle from "@/components/ThemeToggle";
+
+type AssistantDraft = {
+  kind: "lost" | "found" | null;
+  category: string | null;
+  city: string | null;
+  area: string | null;
+};
 
 type Report = {
   id: string;
@@ -35,7 +41,7 @@ type InstallPromptEvent = Event & {
 
 const cities = ["الكل", "بغداد", "كربلاء", "النجف", "البصرة", "سامراء"];
 const categories = [
-  "بطاقة وطنية", "بطاقة سكن", "بطاقة تموينية", "إجازة سياقة",
+  "بطاقة وطنية", "جواز سفر", "بطاقة سكن", "بطاقة تموينية", "إجازة سياقة",
   "سنوية سيارة", "بطاقة مصرفية", "محفظة", "مفاتيح", "أخرى"
 ];
 
@@ -80,9 +86,12 @@ export default function HomePage() {
   const [assistantReply, setAssistantReply] = useState("");
   const [assistantMatches, setAssistantMatches] = useState<Report[]>([]);
   const [assistantMode, setAssistantMode] = useState<"ai" | "guided_search" | null>(null);
+  const [assistantAction, setAssistantAction] = useState<"search" | "create_report" | "guide" | null>(null);
+  const [assistantDraft, setAssistantDraft] = useState<AssistantDraft | null>(null);
   const [assistantSearching, setAssistantSearching] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
-  const [kind, setKind] = useState<"lost" | "found">("lost");
+  const [legalAccepted, setLegalAccepted] = useState(false);
+  const [kind, setKind] = useState<"lost" | "found" | null>("lost");
   const [category, setCategory] = useState(categories[0]);
   const [formCity, setFormCity] = useState("بغداد");
   const [area, setArea] = useState("");
@@ -104,8 +113,6 @@ export default function HomePage() {
   const [nearbyMessage, setNearbyMessage] = useState("");
   const [nearbyRadiusKm] = useState(5);
   const sound = useInteractiveSound();
-  const heroVisualRef = useRef<HTMLDivElement>(null);
-  const deviceMotion = useDeviceMotion(heroVisualRef);
   const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(null);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [isIOSDevice, setIsIOSDevice] = useState(false);
@@ -114,7 +121,6 @@ export default function HomePage() {
   const [activeNav, setActiveNav] = useState("home");
   const [reloadKey, setReloadKey] = useState(0);
   const toastTimer = useRef<number | null>(null);
-  const autoMotionStarted = useRef(false);
 
   const shownReports = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase("ar");
@@ -138,14 +144,19 @@ export default function HomePage() {
   function scrollTo(id: string, nav = id) {
     setActiveNav(nav);
     setMenuOpen(false);
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document.getElementById(id)?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
     
   }
 
-  function openReportForm(nextKind: "lost" | "found", nextCategory?: string) {
-    setKind(nextKind);
-    if (nextCategory) setCategory(nextCategory);
+  function openReportForm(nextKind: "lost" | "found", nextCategory?: string, draft?: AssistantDraft) {
+    setKind(draft ? draft.kind : nextKind);
+    setCategory(draft ? (draft.category ?? "") : (nextCategory ?? categories[0]));
+    setFormCity(draft ? (draft.city ?? "") : "بغداد");
+    setArea(draft?.area ?? "");
+    setDetails("");
     setFormOpen(true);
+    setLegalAccepted(false);
     setShowInstallHelp(false);
     setReportLocation(null);
     setGuestMessage("");
@@ -260,13 +271,6 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    if (deviceMotion.status === "ready" && !isIOSDevice && !autoMotionStarted.current) {
-      autoMotionStarted.current = true;
-      void deviceMotion.enable();
-    }
-  }, [deviceMotion.status, deviceMotion.enable, isIOSDevice]);
-
-  useEffect(() => {
     const nodes = document.querySelectorAll<HTMLElement>(".reveal");
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduceMotion || !("IntersectionObserver" in window)) {
@@ -285,7 +289,7 @@ export default function HomePage() {
     return () => observer.disconnect();
   }, [reports.length, reportsLoading, formOpen]);
 
-  async function runAssistantSearch(rawQuery: string) {
+  async function runAssistantSearch(rawQuery: string, continueDraft = true) {
     const value = rawQuery.trim();
     if (!value || assistantSearching) return;
 
@@ -293,22 +297,28 @@ export default function HomePage() {
     setAssistantReply("");
     setAssistantMatches([]);
     setAssistantMode(null);
+    setAssistantAction(null);
+    setAssistantDraft(null);
     try {
       const response = await fetch("/api/assistant/search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: value }),
+        body: JSON.stringify({ query: value, ...(continueDraft && assistantAction === "create_report" && assistantDraft ? { draft: assistantDraft } : {}) }),
         cache: "no-store"
       });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "تعذر تنفيذ البحث.");
       setAssistantReply(payload.assistant?.reply ?? "اكتمل البحث في البلاغات المنشورة.");
       setAssistantMode(payload.assistant?.mode ?? "guided_search");
+      setAssistantAction(payload.assistant?.action ?? "search");
+      setAssistantDraft((payload.assistant?.draft ?? null) as AssistantDraft | null);
       setAssistantMatches((payload.reports ?? []) as Report[]);
       setAssistantText(value);
     } catch (error) {
       setAssistantReply(error instanceof Error ? error.message : "تعذر الاتصال بالمساعد.");
       setAssistantMode("guided_search");
+      setAssistantAction("guide");
+      setAssistantDraft(null);
       setAssistantMatches([]);
     } finally {
       setAssistantSearching(false);
@@ -360,16 +370,6 @@ export default function HomePage() {
     }
   }
 
-  async function enableDeviceMotion() {
-    const enabled = await deviceMotion.enable();
-    notify(
-      enabled
-        ? "تم تفعيل الاستجابة لحركة الجهاز. يمكنك إيقافها من إعدادات الموقع في المتصفح."
-        : "لم يسمح المتصفح بقراءة حركة الجهاز. يمكنك الاستمرار باستخدام اللمس والمؤشر.",
-      enabled ? "success" : "tap"
-    );
-  }
-
   function dismissInstallBanner() {
     setShowInstallBanner(false);
     try { localStorage.setItem("athar-maaroof-install-dismissed", "1"); } catch { /* storage can be unavailable */ }
@@ -397,10 +397,17 @@ export default function HomePage() {
 
   async function submitReport(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const reportKind = kind;
+    if (!reportKind) {
+      notify("حدد نوع البلاغ أولاً: مفقود أو معثور عليه.");
+      return;
+    }
     const combined = [category, area, details].join(" ");
     const digits = combined.replace(/\D/g, "");
-    if (digits.length >= 12 || /\b(CVV|CVC|PIN|OTP)\b|الرقم الوطني|رقم البطاقة|رمز التحقق/i.test(combined)) {
-      notify("احذف أرقام المستمسكات وبيانات البطاقة والرموز السرية قبل الإرسال.");
+    const iraqiMobile = /(?:07[3-9]\d{8}|9647[3-9]\d{8})/.test(digits);
+    const email = /[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}/i.test(combined);
+    if (digits.length >= 12 || iraqiMobile || email || /\b(CVV|CVC|PIN|OTP)\b|الرقم الوطني|رقم البطاقة|رمز التحقق/i.test(combined)) {
+      notify("احذف أرقام المستمسكات وأرقام الهاتف والبريد الإلكتروني وبيانات البطاقة والرموز السرية قبل الإرسال.");
       return;
     }
     setBusy(true);
@@ -409,9 +416,9 @@ export default function HomePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          kind,
+          kind: reportKind,
           category,
-          title: category + (kind === "lost" ? " مفقودة" : " معثور عليها"),
+          title: category + (reportKind === "lost" ? " مفقودة" : " معثور عليها"),
           city: formCity,
           area,
           details,
@@ -482,17 +489,15 @@ export default function HomePage() {
             <BrandMark />
             <span className="brand-copy">
               <strong>أثر <b>معروف</b></strong>
-              <small>كل ما ضاع، له أثر</small>
+              <small>سجلّ المفقودات والمعثورات</small>
             </span>
           </Link>
 
           <nav className="desktop-nav athar-primary-nav" aria-label="التنقل الرئيسي">
             <button className={activeNav === "home" ? "nav-link active" : "nav-link"} onClick={() => scrollTo("home", "home")}>الرئيسية</button>
             <button className={activeNav === "reports" ? "nav-link active" : "nav-link"} onClick={() => scrollTo("reports", "reports")}>البلاغات</button>
-            <Link className="nav-link" href="/about">عن أثر معروف</Link>
-            <Link className="nav-link" href="/faq">الأسئلة الشائعة</Link>
-            <Link className="nav-link" href="/privacy">الخصوصية</Link>
-            <Link className="nav-link" href="/terms">الاستخدام</Link>
+            <Link className="nav-link" href="/about">عن الخدمة</Link>
+            <Link className="nav-link" href="/faq">مركز المساعدة</Link>
           </nav>
 
           <div className="header-actions">
@@ -510,11 +515,7 @@ export default function HomePage() {
             <button className="icon-action install-action" onClick={() => void installApplication()} aria-label="تثبيت التطبيق" title="تثبيت التطبيق">
               <Download size={18} />
             </button>
-            <button className="icon-action notification-action" onClick={() => notify("لا توجد إشعارات جديدة حالياً.")} aria-label="الإشعارات">
-              <Bell size={19} />
-              <i className="notification-dot" />
-            </button>
-            <Link className="account-link" href="/login"><span className="avatar">م</span><span>حسابي</span></Link>
+                        <Link className="account-link" href="/login"><span className="avatar">م</span><span>حسابي</span></Link>
             <button className="icon-action mobile-menu-button" onClick={() => setMenuOpen((value) => !value)} aria-label="فتح القائمة">
               {menuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
@@ -559,14 +560,17 @@ export default function HomePage() {
 
         <main className="page-content">
           <AtharReferenceHome
-            stageRef={heroVisualRef}
             assistantText={assistantText}
             setAssistantText={setAssistantText}
             onAssistantSubmit={handleAssistantSubmit}
-            onQuickSearch={(value) => { setAssistantText(value); void runAssistantSearch(value); }}
+            onQuickSearch={(value) => { setAssistantText(value); setAssistantAction(null); setAssistantDraft(null); void runAssistantSearch(value, false); }}
             assistantSearching={assistantSearching}
             assistantReply={assistantReply}
             assistantMode={assistantMode}
+            assistantAction={assistantAction}
+            assistantDraft={assistantDraft}
+            onStartReport={(draft) => { openReportForm(draft.kind ?? "lost", draft.category ?? undefined, draft); setAssistantAction(null); setAssistantDraft(null); }}
+            onCancelDraft={() => { setAssistantAction(null); setAssistantDraft(null); setAssistantReply(""); setAssistantText(""); }}
             assistantMatches={assistantMatches}
             onShowMatches={() => {
               setReports(assistantMatches);
@@ -576,17 +580,14 @@ export default function HomePage() {
             nearbySearching={nearbySearching}
             nearbyError={nearbyError}
             onNearbySearch={() => void searchNearbyReports()}
-            motionStatus={deviceMotion.status}
-            onEnableMotion={() => void enableDeviceMotion()}
-            onDisableMotion={deviceMotion.disable}
             onOpenReportForm={openReportForm}
           />
 
           <section className="reports-section reveal" id="reports">
             <div className="section-heading">
               <div>
-                <span className="section-kicker"><MapPinned size={14} /> من المجتمع</span>
-                <h2>بلاغات المفقودات والمعثورات</h2>
+                <span className="section-kicker"><MapPinned size={14} /> سجلّ البلاغات</span>
+                <h2>البلاغات المنشورة</h2>
                 <p>تظهر هنا البلاغات التي نُشرت بعد مراجعتها، دون بيانات اتصال شخصية.</p>
               </div>
               <button className="text-button" onClick={() => { setCity("الكل"); setFilter("all"); setQuery("");  }}>إعادة ضبط <X size={15} /></button>
@@ -613,7 +614,7 @@ export default function HomePage() {
             <div className="reports-toolbar">
               <label className="report-search">
                 <Search size={18} />
-                <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="ابحث بنوع المستمسك أو المدينة..." aria-label="بحث في البلاغات" />
+                <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="نوع المستند أو المدينة أو المنطقة" aria-label="بحث في البلاغات" />
                 {query && <button onClick={() => setQuery("")} aria-label="مسح البحث"><X size={14} /></button>}
               </label>
               <div className="filter-pills" role="group" aria-label="تصفية البلاغات">
@@ -626,7 +627,7 @@ export default function HomePage() {
 
             <div className="report-results">
               {reportsLoading ? (
-                <div className="empty-state"><span className="loader-ring" /><b>جارٍ تحميل البلاغات المنشورة</b><small>نطلب البيانات من الخادم.</small></div>
+                <div className="empty-state"><span className="loader-ring" /><b>جارٍ تحميل البلاغات المنشورة</b><small>ستظهر النتائج هنا بعد اكتمال التحميل.</small></div>
               ) : reportsError ? (
                 <div className="empty-state error-state"><ShieldCheck size={27} /><b>تعذر الاتصال بخدمة البلاغات</b><small>{reportsError} لم نعرض بيانات بديلة أو تجريبية.</small><button onClick={() => setReloadKey((value) => value + 1)}>إعادة المحاولة <ChevronLeft size={15} /></button></div>
               ) : shownReports.length ? (
@@ -645,15 +646,15 @@ export default function HomePage() {
                 <div className="empty-state"><Search size={27} /><b>لا توجد نتائج مطابقة حالياً</b><small>جرّب تغيير المدينة أو نوع البلاغ أو كلمة البحث.</small><button onClick={() => { setCity("الكل"); setFilter("all"); setQuery(""); }}>عرض جميع البلاغات</button></div>
               )}
             </div>
-            <div className="results-foot"><span>النتائج الآمنة المنشورة فقط</span><button onClick={() => openReportForm("lost")}>أضف بلاغاً جديداً <Plus size={15} /></button></div>
+            <div className="results-foot"><span>تُعرض البلاغات بعد مراجعتها ونشرها</span><button onClick={() => openReportForm("lost")}>أضف بلاغاً جديداً <Plus size={15} /></button></div>
           </section>
 
           <section className="safety-section reveal" id="safety">
             <div className="safety-symbol"><ShieldCheck size={30} /></div>
             <div className="safety-text">
               <span className="section-kicker">الأمان جزء من التصميم</span>
-              <h2>مستمسكك إلك، وخصوصيتك إلنا.</h2>
-              <p>لا تنشر رقم الهوية أو صورة المستمسك أو بيانات البطاقة المصرفية. استخدم وصفاً عاماً ومنطقة تقريبية فقط.</p>
+              <h2>خصوصيتك جزء أساسي من الخدمة.</h2>
+              <p>احمِ خصوصيتك: لا تنشر صورة المستند أو رقمه الكامل أو بيانات البطاقة المصرفية. استخدم وصفاً عاماً وموقعاً تقريبياً.</p>
             </div>
             <div className="safety-points">
               <span><Check size={15} /> لا صور مستمسكات في البلاغ العام</span>
@@ -664,13 +665,13 @@ export default function HomePage() {
 
           <section className="install-card reveal">
             <div className="install-icon"><Smartphone size={22} /></div>
-            <div><b>خلّي أثر معروف قريب منك</b><p>ثبّت التطبيق على الشاشة الرئيسية للوصول إليه مثل التطبيقات المعتادة.</p></div>
+            <div><b>احتفظ بأثر معروف على جهازك</b><p>ثبّت التطبيق على الشاشة الرئيسية للوصول إليه مثل التطبيقات المعتادة.</p></div>
             <button onClick={() => void installApplication()}><Download size={16} /> تثبيت التطبيق</button>
           </section>
 
           <footer className="site-footer">
             <div className="footer-brand"><BrandMark /><span><b>أثر معروف</b><small>منصة للبحث عن المفقودات والمعثورات</small></span></div>
-            <span>© {new Date().getFullYear()} أثر معروف. جميع الحقوق محفوظة.</span>
+            <span>© {new Date().getFullYear()} أثر معروف</span>
             <nav className="footer-links">
               <Link href="/about">عن أثر معروف</Link>
               <Link href="/privacy">سياسة الخصوصية</Link>
@@ -695,15 +696,15 @@ export default function HomePage() {
             <section className="report-modal" role="dialog" aria-modal="true" aria-labelledby="report-form-title">
               <button className="modal-close" onClick={() => setFormOpen(false)} aria-label="إغلاق"><X size={19} /></button>
               <span className="section-kicker"><ShieldCheck size={14} /> بلاغ آمن</span>
-              <h2 id="report-form-title">{kind === "lost" ? "سجّل مستمسكاً مفقوداً" : "سجّل مستمسكاً عثرت عليه"}</h2>
+              <h2 id="report-form-title">{kind === "lost" ? "سجّل مستمسكاً مفقوداً" : kind === "found" ? "سجّل مستمسكاً عثرت عليه" : "حدد نوع البلاغ"}</h2>
               <p>لا ترفع صورة المستمسك ولا تكتب رقمه أو أي بيانات شخصية حساسة.</p>
               <div className="kind-switch">
                 <button className={kind === "lost" ? "active" : ""} onClick={() => setKind("lost")}>فقدت شيئاً</button>
                 <button className={kind === "found" ? "active" : ""} onClick={() => setKind("found")}>عثرت على شيء</button>
               </div>
               <form onSubmit={(event) => void submitReport(event)} className="report-form">
-                <label>نوع المستمسك أو الغرض<select value={category} onChange={(event) => setCategory(event.target.value)}>{categories.map((item) => <option key={item}>{item}</option>)}</select></label>
-                <label>المدينة<select value={formCity} onChange={(event) => setFormCity(event.target.value)}>{cities.slice(1).map((item) => <option key={item}>{item}</option>)}</select></label>
+                <label>نوع المستمسك أو الغرض<select required value={category} onChange={(event) => setCategory(event.target.value)}><option value="" disabled>اختر نوع المستند</option>{categories.map((item) => <option key={item}>{item}</option>)}</select></label>
+                <label>المدينة<select required value={formCity} onChange={(event) => setFormCity(event.target.value)}><option value="" disabled>اختر المدينة</option>{cities.slice(1).map((item) => <option key={item}>{item}</option>)}</select></label>
                 <label>المنطقة التقريبية <small>اختياري</small><input value={area} onChange={(event) => setArea(event.target.value)} maxLength={100} placeholder="مثلاً: الكرادة" /></label>
                 <label>تفاصيل عامة غير حساسة <small>اختياري</small><textarea value={details} onChange={(event) => setDetails(event.target.value)} maxLength={500} placeholder="اكتب وصفاً عاماً لا يكشف أرقاماً أو معلومات خاصة." /></label>
                 <div className="report-location-choice">
@@ -735,7 +736,16 @@ export default function HomePage() {
                   </div>
                 )}
                 <div className="privacy-warning"><ShieldCheck size={18} /><span>لا تكتب الرقم الوطني أو رقم البطاقة أو PIN أو CVV أو OTP.</span></div>
-                <button className="form-submit" type="submit" disabled={busy}>{busy ? "جارٍ إرسال البلاغ..." : "إرسال البلاغ"} <ArrowUp size={17} /></button>
+                <label className="legal-consent">
+                  <input
+                    type="checkbox"
+                    checked={legalAccepted}
+                    onChange={(event) => setLegalAccepted(event.target.checked)}
+                    required
+                  />
+                  <span>أؤكد أن المعلومات التي أدخلتها عامة وغير حساسة، وأقرّ باطلاعي على <a href="/terms" target="_blank" rel="noopener noreferrer">شروط الاستخدام وإخلاء المسؤولية</a> و<a href="/privacy" target="_blank" rel="noopener noreferrer">سياسة الخصوصية</a>.</span>
+                </label>
+                <button className="form-submit" type="submit" disabled={busy || !legalAccepted || !kind || !category || !formCity}>{busy ? "جارٍ إرسال البلاغ..." : "إرسال البلاغ"} <ArrowUp size={17} /></button>
                 <small className="form-footnote">لا يتطلب تسجيل دخول تقليدي. البلاغ لا يظهر للعامة قبل مراجعته ونشره.</small>
               </form>
             </section>

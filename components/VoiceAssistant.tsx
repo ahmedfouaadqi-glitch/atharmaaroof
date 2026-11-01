@@ -20,9 +20,16 @@ type Recognition = {
   abort: () => void;
 };
 type RecognitionConstructor = new () => Recognition;
+type ReportDraft = {
+  kind: "lost" | "found" | null;
+  category: string | null;
+  city: string | null;
+  area: string | null;
+};
+type Props = { onStartReport: (draft: ReportDraft) => void };
 type VoiceReport = { id: string; public_code: string; title: string; city: string; area?: string | null; kind: string; approx_distance_km?: number };
 
-export default function VoiceAssistant() {
+export default function VoiceAssistant({ onStartReport }: Props) {
   const [open, setOpen] = useState(false);
   const [listening, setListening] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -33,6 +40,7 @@ export default function VoiceAssistant() {
   const [reply, setReply] = useState("");
   const [error, setError] = useState("");
   const [reports, setReports] = useState<VoiceReport[]>([]);
+  const [reportDraft, setReportDraft] = useState<ReportDraft | null>(null);
   const [voiceOutput, setVoiceOutput] = useState(true);
   const [fallbackText, setFallbackText] = useState("");
   const recognitionRef = useRef<Recognition | null>(null);
@@ -73,11 +81,12 @@ export default function VoiceAssistant() {
     setError("");
     setReply("");
     setReports([]);
+    setReportDraft(null);
     try {
       const response = await fetch("/api/assistant/search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: question }),
+        body: JSON.stringify({ query: question, ...(reportDraft ? { draft: reportDraft } : {}) }),
         cache: "no-store"
       });
       const payload = await response.json();
@@ -85,6 +94,9 @@ export default function VoiceAssistant() {
       const answer = payload.assistant?.reply ?? "اكتمل البحث في البلاغات المنشورة.";
       setReply(answer);
       setReports((payload.reports ?? []) as VoiceReport[]);
+      setReportDraft((payload.assistant?.action === "create_report" || payload.assistant?.action === "guide")
+        ? (payload.assistant?.draft as ReportDraft | null)
+        : null);
       speak(answer);
     } catch (err) {
       setError(err instanceof Error ? err.message : "تعذر الاتصال بالمساعد.");
@@ -100,6 +112,7 @@ export default function VoiceAssistant() {
     setSpeaking(false);
     setError("");
     setReply("");
+    setReportDraft(null);
     setTranscript("");
     setInterim("");
     finalTextRef.current = "";
@@ -231,6 +244,20 @@ export default function VoiceAssistant() {
             )}
 
             {reply && <div className="voice-answer"><b>رد المساعد</b><p>{reply}</p>{reports.length > 0 && <small>تم العثور على {reports.length} بلاغ منشور مطابق.</small>}</div>}
+            {reportDraft && (
+              <button
+                type="button"
+                className="voice-start-report"
+                onClick={() => { onStartReport(reportDraft); setReportDraft(null); close(); }}
+              >
+                مراجعة المسودة واستكمال البلاغ <ArrowUp size={16} />
+              </button>
+            )}
+            {reportDraft && (
+              <button type="button" className="voice-cancel-draft" onClick={() => setReportDraft(null)}>
+                إلغاء مسودة البلاغ
+              </button>
+            )}
             {error && <div className="voice-error" role="alert">{error}</div>}
 
             <div className="voice-privacy-note">

@@ -6,19 +6,19 @@ import './SpotlightCard.css';
 
 const THEMES = {
   dark: {
-    surface: 'rgba(8, 35, 37, 0.96)',
-    border: 'rgba(100, 213, 197, 0.18)',
-    shadow: '0 25px 100px rgba(0, 0, 0, 0.22)',
-    light: '#36dfc2',
-    fill: 1,
-    edge: 1
+    surface: '#292e29',
+    border: '#424940',
+    shadow: '0 18px 48px rgba(0, 0, 0, 0.18)',
+    light: '#d58b6c',
+    fill: 0.34,
+    edge: 0.652
   },
   light: {
-    surface: '#ffffff',
-    border: 'rgba(24, 24, 27, 0.1)',
-    shadow: '0 1px 2px rgba(24, 24, 27, 0.04), 0 18px 40px -20px rgba(24, 24, 27, 0.16)',
-    light: '#18181b',
-    fill: 0.28,
+    surface: '#fffdf8',
+    border: '#ddd6c9',
+    shadow: '0 12px 34px rgba(65, 52, 38, 0.08)',
+    light: '#a65338',
+    fill: 0.24,
     edge: 0.7
   }
 };

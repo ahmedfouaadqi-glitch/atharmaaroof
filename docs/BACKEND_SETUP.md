@@ -10,16 +10,19 @@
 
 ## Setup
 1. Create or select a Supabase project dedicated to ATHAR. Do not reuse a project for an unrelated application.
-2. Apply `supabase/migrations/20261031000100_athar_reports.sql` using the Supabase migration workflow/SQL editor.
-3. Copy `.env.example` to `.env.local` and set the project's URL and publishable key.
-4. Configure Supabase Auth providers and redirect URLs for local and production domains.
-5. Create the first account through `/login`, then promote only the intended administrator from the Supabase SQL Editor (replace the email below with that account's exact email):
+2. Apply all migrations in timestamp order: `20261031000100_athar_reports.sql`, `20261101000100_athar_security_hardening.sql`, then `20261101000200_athar_nearby_reports.sql`. The first migration defines the owner-scoped report schema and the administrator moderation RPC.
+3. Copy `.env.example` to `.env.local` and set the project URL plus either `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (preferred) or `NEXT_PUBLIC_SUPABASE_ANON_KEY`. The server client accepts both names.
+4. On Netlify, install/enable the official Supabase integration for the team, then open **Project configuration → General → Supabase**, connect the ATHAR site to the exact ATHAR Supabase project, and select **Next.js**. Verify `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` under **Project configuration → Environment variables**. Do not connect an unrelated project.
+5. Ensure both Builds and Functions/runtime scopes are enabled for the variables; re-deploy after changing them. Never copy a service-role/secret key into any `NEXT_PUBLIC_*` variable.
+6. Configure Supabase Auth anonymous sign-ins and the email provider, plus redirect URLs for local, deploy-preview, and production domains as applicable.
+7. Create the first account through `/login`, then promote only the intended administrator from the Supabase SQL Editor (replace the email below with that account's exact email):
 ```sql
 insert into public.athar_admins (user_id)
 select id from auth.users where lower(email) = lower('admin@example.com')
 on conflict (user_id) do nothing;
 ```
-6. Run `npm install`, then `npm run dev`; verify signup/login, authenticated insert, anonymous public listing, and that non-admin users receive `403` from the admin API.
+8. Run `npm install`, then `npm run dev`; verify signup/login, anonymous session creation, authenticated report insert, anonymous public listing, report moderation, and that non-admin users receive `403` from the admin API.
+9. Before production use, confirm the migration list includes all three migrations, check the Supabase Data API exposure settings, and run security/performance advisors. Every exposed table/view requires explicit grants and RLS policies appropriate to its access model.
 
 ## API
 - `GET /api/reports?city=بغداد&kind=found&limit=20`
@@ -34,6 +37,12 @@ on conflict (user_id) do nothing;
   "details": "فُقدت قرب مكان عام"
 }
 ```
+
+## Netlify deployment notes
+- Netlify's official Supabase integration injects Next.js project variables such as `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+- Supabase credentials are project-specific. A URL alone is insufficient; the URL and public key must originate from the same Supabase project.
+- Optional AI completion uses `ATHAR_AI_CHAT_COMPLETIONS_URL`, `ATHAR_AI_API_KEY`, and `ATHAR_AI_MODEL` as server-only variables. Without all three, the assistant uses database-backed search and deterministic guidance.
+- Netlify environment changes take effect only after a new build/deploy. Apply variables separately to deploy previews and production as intended.
 
 ## Explicit limitations
 - The project code is not yet confirmed as migrated to the live Supabase project; verify the migration list and test the endpoints after applying it.

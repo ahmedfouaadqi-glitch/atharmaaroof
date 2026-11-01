@@ -14,9 +14,12 @@ function cleanText(value: unknown, max: number): string | null {
 }
 
 function looksSensitive(value: string): boolean {
-  // Conservative guard against likely long identity/card numbers and common payment secrets.
+  // Block likely identity/payment numbers and direct contact data from public report text.
   const digits = value.replace(/\D/g, "");
-  return digits.length >= 12 || /\b(CVV|CVC|PIN|OTP|رمز التحقق|الرقم الوطني|رقم البطاقة)\b/i.test(value);
+  const iraqiMobile = /(?:07[3-9]\d{8}|9647[3-9]\d{8})/.test(digits);
+  const email = /[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}/i.test(value);
+  return digits.length >= 12 || iraqiMobile || email ||
+    /\b(CVV|CVC|PIN|OTP|رمز التحقق|الرقم الوطني|رقم البطاقة)\b/i.test(value);
 }
 
 export async function GET(request: NextRequest) {

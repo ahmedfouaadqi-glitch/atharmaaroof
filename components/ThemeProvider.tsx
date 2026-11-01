@@ -12,7 +12,7 @@ type ThemeContextValue = {
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<AtharTheme>("dark");
+  const [theme, setTheme] = useState<AtharTheme>("light");
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -20,11 +20,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       const saved = window.localStorage.getItem("athar-maaroof-theme");
       if (saved === "light" || saved === "dark") {
         setTheme(saved);
-      } else if (window.matchMedia?.("(prefers-color-scheme: light)").matches) {
-        setTheme("light");
       }
     } catch {
-      // Storage may be unavailable; keep the dark default.
+      // Storage may be unavailable; keep the daylight default.
     }
     setReady(true);
   }, []);

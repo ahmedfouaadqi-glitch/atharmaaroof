@@ -1,18 +1,29 @@
 {
   "name": "أثر معروف — ATHAR MAAROOF",
   "short_name": "أثر معروف",
-  "description": "خدمة عراقية للبحث عن المفقودات والمعثورات.",
+  "description": "منصة مجتمعية للبحث في بلاغات المستندات المفقودة والمعثورة وإضافة بلاغات جديدة مع احترام الخصوصية.",
   "lang": "ar",
   "dir": "rtl",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
-  "background_color": "#071b2b",
-  "theme_color": "#071b2b",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "background_color": "#f4f0e8",
+  "theme_color": "#f4f0e8",
   "prefer_related_applications": false,
-  "categories": ["utilities", "lifestyle"],
+  "categories": [
+    "utilities",
+    "lifestyle"
+  ],
   "icons": [
-    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
   ]
 }
