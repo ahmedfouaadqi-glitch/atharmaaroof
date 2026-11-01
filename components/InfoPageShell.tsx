@@ -22,7 +22,7 @@ export default function InfoPageShell({
           <BrandMark />
           <span className="brand-copy">
             <strong>أثر <b>معروف</b></strong>
-            <small>لأن كل شيء له أثر</small>
+            <small>كل ما ضاع، له أثر</small>
           </span>
         </Link>
         <div className="info-header-actions">
@@ -47,7 +47,7 @@ export default function InfoPageShell({
             <Link href="/privacy">الخصوصية</Link>
             <Link href="/terms">الاستخدام</Link>
             <Link href="/faq">الأسئلة الشائعة</Link>
-            <Link href="/about">عن المبادرة</Link>
+            <Link href="/about">عن أثر معروف</Link>
           </nav>
         </footer>
       </div>
