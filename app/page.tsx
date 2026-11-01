@@ -404,8 +404,10 @@ export default function HomePage() {
     }
     const combined = [category, area, details].join(" ");
     const digits = combined.replace(/\D/g, "");
-    if (digits.length >= 12 || /\b(CVV|CVC|PIN|OTP)\b|الرقم الوطني|رقم البطاقة|رمز التحقق/i.test(combined)) {
-      notify("احذف أرقام المستمسكات وبيانات البطاقة والرموز السرية قبل الإرسال.");
+    const iraqiMobile = /(?:07[3-9]\d{8}|9647[3-9]\d{8})/.test(digits);
+    const email = /[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}/i.test(combined);
+    if (digits.length >= 12 || iraqiMobile || email || /\b(CVV|CVC|PIN|OTP)\b|الرقم الوطني|رقم البطاقة|رمز التحقق/i.test(combined)) {
+      notify("احذف أرقام المستمسكات وأرقام الهاتف والبريد الإلكتروني وبيانات البطاقة والرموز السرية قبل الإرسال.");
       return;
     }
     setBusy(true);
