@@ -2251,3 +2251,129 @@ html[data-theme="light"] .athar-primary-nav .nav-link.active { color:#0c6879; ba
 @media (max-width: 920px) {
   .athar-primary-nav { display:none; }
 }
+
+
+/* React Bits-inspired refinement: compact interactive service and information cards.
+   Keep the supplied brand mark and the real Leaflet map; use motion as progressive enhancement. */
+.athar-home-services {
+  gap: 9px;
+  margin-top: 2px;
+}
+.athar-service-card {
+  position: relative;
+  isolation: isolate;
+  min-height: 68px;
+  padding: 10px 12px;
+  gap: 9px;
+  overflow: hidden;
+  border-radius: 15px;
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(58, 207, 220, .09), transparent 55%),
+    linear-gradient(135deg, rgba(20, 53, 75, .82), rgba(10, 31, 49, .96));
+  transition: transform .24s cubic-bezier(.2,.75,.25,1), border-color .24s, box-shadow .24s, background .24s;
+}
+.athar-service-card::before,
+.athar-info-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 80% 0%, rgba(66, 220, 218, .16), transparent 52%);
+  transition: opacity .24s ease;
+}
+.athar-service-card:hover::before,
+.athar-info-card:hover::before { opacity: 1; }
+.athar-service-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(64, 211, 219, .48);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .15), 0 0 0 1px rgba(64, 211, 219, .04);
+}
+.athar-service-icon {
+  flex-basis: 34px;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+}
+.athar-service-icon svg { width: 20px; height: 20px; }
+.athar-service-copy { gap: 3px; }
+.athar-service-copy b { font-size: 10px; line-height: 1.5; }
+.athar-service-copy small { font-size: 8px; line-height: 1.55; }
+.athar-service-arrow { width: 14px; height: 14px; }
+.athar-report-actions { margin-top: 10px; gap: 8px; }
+.athar-report-actions button { min-height: 37px; border-radius: 11px; font-size: 9px; }
+.athar-info-area { margin-top: 32px; padding-top: 22px; }
+.athar-info-heading { margin-bottom: 12px; }
+.athar-info-grid { gap: 9px; }
+.athar-info-card {
+  position: relative;
+  isolation: isolate;
+  min-height: 69px;
+  padding: 10px 11px;
+  gap: 9px;
+  overflow: hidden;
+  border-radius: 14px;
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(58, 207, 220, .07), transparent 55%),
+    var(--athar-panel);
+  transition: transform .24s cubic-bezier(.2,.75,.25,1), border-color .24s, box-shadow .24s;
+}
+.athar-info-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(63, 211, 216, .43);
+  box-shadow: 0 11px 24px rgba(0, 0, 0, .12);
+}
+.athar-info-icon {
+  flex-basis: 32px;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+}
+.athar-info-icon svg { width: 19px; height: 19px; }
+.athar-info-copy { gap: 3px; }
+.athar-info-copy b { font-size: 10px; line-height: 1.45; }
+.athar-info-copy small { font-size: 8px; line-height: 1.5; }
+.athar-info-arrow { width: 14px; height: 14px; }
+html[data-theme="light"] .athar-service-card {
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(16, 157, 163, .07), transparent 55%),
+    linear-gradient(135deg, rgba(255,255,255,.99), rgba(239,248,251,.98));
+}
+html[data-theme="light"] .athar-info-card {
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(16, 157, 163, .055), transparent 55%),
+    rgba(255,255,255,.94);
+}
+@media (max-width: 1080px) {
+  .athar-service-card { min-height: 65px; padding: 9px 10px; }
+  .athar-info-card { min-height: 66px; padding: 9px 10px; }
+}
+@media (max-width: 760px) {
+  .athar-home-services { gap: 7px; }
+  .athar-service-card { min-height: 64px; padding: 8px; gap: 7px; border-radius: 13px; }
+  .athar-service-icon { flex-basis: 30px; width: 30px; height: 30px; }
+  .athar-service-icon svg { width: 18px; height: 18px; }
+  .athar-service-copy b { font-size: 9px; }
+  .athar-service-copy small { font-size: 7.5px; }
+  .athar-report-actions { gap: 7px; }
+  .athar-report-actions button { min-height: 36px; }
+  .athar-info-area { margin-top: 26px; padding-top: 18px; }
+  .athar-info-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  .athar-info-card { min-height: 62px; padding: 8px; gap: 7px; border-radius: 12px; }
+  .athar-info-icon { flex-basis: 28px; width: 28px; height: 28px; }
+  .athar-info-icon svg { width: 17px; height: 17px; }
+  .athar-info-copy b { font-size: 9px; }
+  .athar-info-copy small { font-size: 7px; }
+  .athar-info-arrow { display: none; }
+}
+@media (max-width: 390px) {
+  .athar-service-card { min-height: 60px; padding: 7px; gap: 6px; }
+  .athar-service-copy small { font-size: 7px; }
+  .athar-info-card { min-height: 58px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .athar-service-card, .athar-info-card,
+  .athar-service-card::before, .athar-info-card::before { transition: none !important; }
+  .athar-service-card:hover, .athar-info-card:hover { transform: none; }
+}
