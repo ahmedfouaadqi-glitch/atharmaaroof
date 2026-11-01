@@ -90,6 +90,7 @@ export default function HomePage() {
   const [assistantDraft, setAssistantDraft] = useState<AssistantDraft | null>(null);
   const [assistantSearching, setAssistantSearching] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
+  const [legalAccepted, setLegalAccepted] = useState(false);
   const [kind, setKind] = useState<"lost" | "found">("lost");
   const [category, setCategory] = useState(categories[0]);
   const [formCity, setFormCity] = useState("بغداد");
@@ -154,6 +155,7 @@ export default function HomePage() {
     setArea(draft?.area ?? "");
     setDetails("");
     setFormOpen(true);
+    setLegalAccepted(false);
     setShowInstallHelp(false);
     setReportLocation(null);
     setGuestMessage("");
@@ -725,7 +727,16 @@ export default function HomePage() {
                   </div>
                 )}
                 <div className="privacy-warning"><ShieldCheck size={18} /><span>لا تكتب الرقم الوطني أو رقم البطاقة أو PIN أو CVV أو OTP.</span></div>
-                <button className="form-submit" type="submit" disabled={busy}>{busy ? "جارٍ إرسال البلاغ..." : "إرسال البلاغ"} <ArrowUp size={17} /></button>
+                <label className="legal-consent">
+                  <input
+                    type="checkbox"
+                    checked={legalAccepted}
+                    onChange={(event) => setLegalAccepted(event.target.checked)}
+                    required
+                  />
+                  <span>أؤكد أن المعلومات التي أدخلتها عامة وغير حساسة، وأقرّ باطلاعي على <a href="/terms" target="_blank" rel="noopener noreferrer">شروط الاستخدام وإخلاء المسؤولية</a> و<a href="/privacy" target="_blank" rel="noopener noreferrer">سياسة الخصوصية</a>.</span>
+                </label>
+                <button className="form-submit" type="submit" disabled={busy || !legalAccepted}>{busy ? "جارٍ إرسال البلاغ..." : "إرسال البلاغ"} <ArrowUp size={17} /></button>
                 <small className="form-footnote">لا يتطلب تسجيل دخول تقليدي. البلاغ لا يظهر للعامة قبل مراجعته ونشره.</small>
               </form>
             </section>
