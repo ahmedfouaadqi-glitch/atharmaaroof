@@ -256,7 +256,7 @@ export async function POST(request: NextRequest) {
         !draft.kind ? "نوع البلاغ (مفقود أو معثور عليه)" : null,
         !draft.category ? "نوع المستند" : null,
         !draft.city ? "المدينة" : null
-      ].filter(Boolean) : [];
+      ].filter((value): value is string => Boolean(value)) : [];
       const summary = draft
         ? [draft.kind === "lost" ? "مفقود" : draft.kind === "found" ? "معثور عليه" : null, draft.category, draft.city, draft.area].filter(Boolean).join(" · ")
         : "";
