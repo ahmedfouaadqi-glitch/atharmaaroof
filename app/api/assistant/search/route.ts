@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
   try {
     const intent = parseIntent(input);
     if (intent.action === "create_report" || intent.action === "guide") {
-      const draft = intent.kind || intent.category || intent.city || intent.area
+      const draft = intent.action === "create_report" || intent.kind || intent.category || intent.city || intent.area
         ? { kind: intent.kind, category: intent.category, city: intent.city, area: intent.area }
         : null;
       const missing = [
