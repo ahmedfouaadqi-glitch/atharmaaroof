@@ -43,7 +43,7 @@ export default function AboutPage() {
   return (
     <InfoPageShell
       kicker="عن أثر معروف"
-      title="أثر معروف — لأن كل شيء له أثر"
+      title="أثر معروف — كل ما ضاع، له أثر"
       description="خدمة مجتمعية عراقية تساعد على تنظيم بلاغات المفقودات والمعثورات وتقريبها إلى أصحابها."
     >
       <section className="about-intro-card">
