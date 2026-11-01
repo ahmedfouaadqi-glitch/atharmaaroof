@@ -60,7 +60,7 @@ function parseIntent(input: string) {
   const text = normalize(input);
   const city = CITIES.find((item) => item.aliases.some((alias) => text.includes(normalize(alias))))?.name ?? null;
   const category = CATEGORIES.find((item) => item.aliases.some((alias) => text.includes(normalize(alias))))?.name ?? null;
-  const kind = ["فقدت", "ضاع", "ضاعت", "مفقود", "مفقوده", "انفقد"].some((word) => text.includes(normalize(word)))
+  const kind: ReportDraft["kind"] = ["فقدت", "ضاع", "ضاعت", "مفقود", "مفقوده", "انفقد"].some((word) => text.includes(normalize(word)))
     ? "lost"
     : ["لقيت", "لكيت", "وجدت", "عثرت", "معثور"].some((word) => text.includes(normalize(word)))
       ? "found"
