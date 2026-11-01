@@ -191,7 +191,6 @@ export default function AtharReferenceHome(props: Props) {
             duration={420}
             shape="dot"
             gravity={0.08}
-            disabled={theme === "dark" && typeof window === "undefined"}
           >
           <div className="ar-search-shortcuts" aria-label="بحث سريع حسب نوع المستند">
             {searchShortcuts.map(({ label, query, Icon }) => (
