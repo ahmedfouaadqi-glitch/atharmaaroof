@@ -1536,7 +1536,7 @@ html[data-theme="light"] .theme-toggle {
 }
 .iraq-map-shell { position: absolute; inset: 0; width: 100%; height: 100%; background: #0a2232; }
 .iraq-leaflet-map { position: absolute; inset: 0; width: 100%; height: 100%; background: #0a2232; font-family: inherit; }
-.iraq-map-dark .leaflet-tile { filter: invert(1) hue-rotate(180deg) brightness(.78) contrast(.91) saturate(.64); }
+.iraq-map-dark .leaflet-tile { filter: saturate(.88) contrast(1.02) brightness(.96); }
 .iraq-map-light .leaflet-tile { filter: saturate(.86) contrast(.97); }
 .leaflet-container { font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial, sans-serif; }
 .leaflet-control-attribution {
