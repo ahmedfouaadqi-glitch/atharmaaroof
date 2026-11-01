@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { BrandMark } from "@/components/brand";
-import { useDeviceMotion } from "@/components/useDeviceMotion";
 import VoiceAssistant from "@/components/VoiceAssistant";
 import { useInteractiveSound } from "@/components/useInteractiveSound";
 import Link from "next/link";
@@ -104,8 +103,6 @@ export default function HomePage() {
   const [nearbyMessage, setNearbyMessage] = useState("");
   const [nearbyRadiusKm] = useState(5);
   const sound = useInteractiveSound();
-  const heroVisualRef = useRef<HTMLDivElement>(null);
-  const deviceMotion = useDeviceMotion(heroVisualRef);
   const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(null);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [isIOSDevice, setIsIOSDevice] = useState(false);
@@ -114,7 +111,6 @@ export default function HomePage() {
   const [activeNav, setActiveNav] = useState("home");
   const [reloadKey, setReloadKey] = useState(0);
   const toastTimer = useRef<number | null>(null);
-  const autoMotionStarted = useRef(false);
 
   const shownReports = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase("ar");
@@ -258,13 +254,6 @@ export default function HomePage() {
       if (toastTimer.current !== null) window.clearTimeout(toastTimer.current);
     };
   }, []);
-
-  useEffect(() => {
-    if (deviceMotion.status === "ready" && !isIOSDevice && !autoMotionStarted.current) {
-      autoMotionStarted.current = true;
-      void deviceMotion.enable();
-    }
-  }, [deviceMotion.status, deviceMotion.enable, isIOSDevice]);
 
   useEffect(() => {
     const nodes = document.querySelectorAll<HTMLElement>(".reveal");
@@ -553,7 +542,6 @@ export default function HomePage() {
 
         <main className="page-content">
           <AtharReferenceHome
-            stageRef={heroVisualRef}
             assistantText={assistantText}
             setAssistantText={setAssistantText}
             onAssistantSubmit={handleAssistantSubmit}
@@ -570,9 +558,6 @@ export default function HomePage() {
             nearbySearching={nearbySearching}
             nearbyError={nearbyError}
             onNearbySearch={() => void searchNearbyReports()}
-            motionStatus={deviceMotion.status}
-            onEnableMotion={() => void enableDeviceMotion()}
-            onDisableMotion={deviceMotion.disable}
             onOpenReportForm={openReportForm}
           />
 
