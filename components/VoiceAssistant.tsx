@@ -86,7 +86,7 @@ export default function VoiceAssistant({ onStartReport }: Props) {
       const response = await fetch("/api/assistant/search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: question }),
+        body: JSON.stringify({ query: question, ...(reportDraft ? { draft: reportDraft } : {}) }),
         cache: "no-store"
       });
       const payload = await response.json();
@@ -248,9 +248,14 @@ export default function VoiceAssistant({ onStartReport }: Props) {
               <button
                 type="button"
                 className="voice-start-report"
-                onClick={() => { onStartReport(reportDraft); close(); }}
+                onClick={() => { onStartReport(reportDraft); setReportDraft(null); close(); }}
               >
                 مراجعة المسودة واستكمال البلاغ <ArrowUp size={16} />
+              </button>
+            )}
+            {reportDraft && (
+              <button type="button" className="voice-cancel-draft" onClick={() => setReportDraft(null)}>
+                إلغاء مسودة البلاغ
               </button>
             )}
             {error && <div className="voice-error" role="alert">{error}</div>}
