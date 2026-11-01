@@ -516,13 +516,20 @@ export default function HomePage() {
               <Download size={18} />
             </button>
                         <Link className="account-link" href="/login"><span className="avatar">م</span><span>حسابي</span></Link>
-            <button className="icon-action mobile-menu-button" onClick={() => setMenuOpen((value) => !value)} aria-label="فتح القائمة">
+            <button
+              type="button"
+              className="icon-action mobile-menu-button"
+              onClick={() => setMenuOpen((value) => !value)}
+              aria-label={menuOpen ? "إغلاق القائمة" : "فتح القائمة"}
+              aria-expanded={menuOpen}
+              aria-controls="athar-mobile-menu"
+            >
               {menuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
 
           {menuOpen && (
-            <div className="mobile-menu">
+            <div className="mobile-menu" id="athar-mobile-menu">
               <button onClick={() => scrollTo("home", "home")}><House size={17} /> الرئيسية</button>
               <button onClick={() => scrollTo("reports", "reports")}><FileText size={17} /> البلاغات</button>
               <button onClick={() => scrollTo("safety", "safety")}><ShieldCheck size={17} /> الأمان والخصوصية</button>
