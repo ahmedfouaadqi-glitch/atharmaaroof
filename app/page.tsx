@@ -91,7 +91,7 @@ export default function HomePage() {
   const [assistantSearching, setAssistantSearching] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
   const [legalAccepted, setLegalAccepted] = useState(false);
-  const [kind, setKind] = useState<"lost" | "found">("lost");
+  const [kind, setKind] = useState<"lost" | "found" | null>("lost");
   const [category, setCategory] = useState(categories[0]);
   const [formCity, setFormCity] = useState("بغداد");
   const [area, setArea] = useState("");
@@ -150,8 +150,8 @@ export default function HomePage() {
   }
 
   function openReportForm(nextKind: "lost" | "found", nextCategory?: string, draft?: AssistantDraft) {
-    setKind(draft?.kind ?? nextKind);
-    setCategory(draft ? (draft.category ?? "أخرى") : (nextCategory ?? categories[0]));
+    setKind(draft ? draft.kind : nextKind);
+    setCategory(draft ? (draft.category ?? "") : (nextCategory ?? categories[0]));
     setFormCity(draft ? (draft.city ?? "") : "بغداد");
     setArea(draft?.area ?? "");
     setDetails("");
@@ -397,6 +397,11 @@ export default function HomePage() {
 
   async function submitReport(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const reportKind = kind;
+    if (!reportKind) {
+      notify("حدد نوع البلاغ أولاً: مفقود أو معثور عليه.");
+      return;
+    }
     const combined = [category, area, details].join(" ");
     const digits = combined.replace(/\D/g, "");
     if (digits.length >= 12 || /\b(CVV|CVC|PIN|OTP)\b|الرقم الوطني|رقم البطاقة|رمز التحقق/i.test(combined)) {
@@ -409,9 +414,9 @@ export default function HomePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          kind,
+          kind: reportKind,
           category,
-          title: category + (kind === "lost" ? " مفقودة" : " معثور عليها"),
+          title: category + (reportKind === "lost" ? " مفقودة" : " معثور عليها"),
           city: formCity,
           area,
           details,
@@ -689,14 +694,14 @@ export default function HomePage() {
             <section className="report-modal" role="dialog" aria-modal="true" aria-labelledby="report-form-title">
               <button className="modal-close" onClick={() => setFormOpen(false)} aria-label="إغلاق"><X size={19} /></button>
               <span className="section-kicker"><ShieldCheck size={14} /> بلاغ آمن</span>
-              <h2 id="report-form-title">{kind === "lost" ? "سجّل مستمسكاً مفقوداً" : "سجّل مستمسكاً عثرت عليه"}</h2>
+              <h2 id="report-form-title">{kind === "lost" ? "سجّل مستمسكاً مفقوداً" : kind === "found" ? "سجّل مستمسكاً عثرت عليه" : "حدد نوع البلاغ"}</h2>
               <p>لا ترفع صورة المستمسك ولا تكتب رقمه أو أي بيانات شخصية حساسة.</p>
               <div className="kind-switch">
                 <button className={kind === "lost" ? "active" : ""} onClick={() => setKind("lost")}>فقدت شيئاً</button>
                 <button className={kind === "found" ? "active" : ""} onClick={() => setKind("found")}>عثرت على شيء</button>
               </div>
               <form onSubmit={(event) => void submitReport(event)} className="report-form">
-                <label>نوع المستمسك أو الغرض<select required value={category} onChange={(event) => setCategory(event.target.value)}>{categories.map((item) => <option key={item}>{item}</option>)}</select></label>
+                <label>نوع المستمسك أو الغرض<select required value={category} onChange={(event) => setCategory(event.target.value)}><option value="" disabled>اختر نوع المستند</option>{categories.map((item) => <option key={item}>{item}</option>)}</select></label>
                 <label>المدينة<select required value={formCity} onChange={(event) => setFormCity(event.target.value)}><option value="" disabled>اختر المدينة</option>{cities.slice(1).map((item) => <option key={item}>{item}</option>)}</select></label>
                 <label>المنطقة التقريبية <small>اختياري</small><input value={area} onChange={(event) => setArea(event.target.value)} maxLength={100} placeholder="مثلاً: الكرادة" /></label>
                 <label>تفاصيل عامة غير حساسة <small>اختياري</small><textarea value={details} onChange={(event) => setDetails(event.target.value)} maxLength={500} placeholder="اكتب وصفاً عاماً لا يكشف أرقاماً أو معلومات خاصة." /></label>
@@ -738,7 +743,7 @@ export default function HomePage() {
                   />
                   <span>أؤكد أن المعلومات التي أدخلتها عامة وغير حساسة، وأقرّ باطلاعي على <a href="/terms" target="_blank" rel="noopener noreferrer">شروط الاستخدام وإخلاء المسؤولية</a> و<a href="/privacy" target="_blank" rel="noopener noreferrer">سياسة الخصوصية</a>.</span>
                 </label>
-                <button className="form-submit" type="submit" disabled={busy || !legalAccepted}>{busy ? "جارٍ إرسال البلاغ..." : "إرسال البلاغ"} <ArrowUp size={17} /></button>
+                <button className="form-submit" type="submit" disabled={busy || !legalAccepted || !kind || !category || !formCity}>{busy ? "جارٍ إرسال البلاغ..." : "إرسال البلاغ"} <ArrowUp size={17} /></button>
                 <small className="form-footnote">لا يتطلب تسجيل دخول تقليدي. البلاغ لا يظهر للعامة قبل مراجعته ونشره.</small>
               </form>
             </section>
