@@ -1488,7 +1488,6 @@ hr { border-color: var(--color-border); }
 .ar-search-panel-spotlight .spotlight-card__edge {
   mix-blend-mode: normal;
 }
-.ar-search-panel-spotlight .spotlight-card__light { opacity: .16 !important; }
 .ar-search-panel-spotlight .spotlight-card__border { background: var(--color-border) !important; }
 .ar-action-grid-magnetic > .ar-action-magnet {
   width: 100%;
