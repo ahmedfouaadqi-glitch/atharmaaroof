@@ -2189,3 +2189,27 @@ html[data-theme="light"] .athar-map-overlay-label { color:#17364a; background:rg
 }
 html[data-theme="light"] .athar-map-caption, html[data-theme="light"] .athar-quick-searches > b,
 html[data-theme="light"] .athar-assistant-label, html[data-theme="light"] .athar-info-heading h2 { color:#17364a; }
+
+/* Keep the direct voice-assistant action legible beside the primary search field. */
+.athar-call-button .voice-call-trigger {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  width:100%;
+  height:100%;
+  min-height:70px;
+  padding:5px 2px;
+  border:0;
+  border-radius:inherit;
+  background:transparent;
+  text-align:center;
+}
+.athar-call-button .voice-call-trigger:hover { transform:none; background:rgba(45,221,192,.08); }
+.athar-call-button .voice-call-icon { width:29px; height:29px; flex:0 0 29px; }
+.athar-call-button .voice-call-trigger > span:nth-child(2) { display:block; text-align:center; }
+.athar-call-button .voice-call-trigger b { display:block; font-size:8px; line-height:1.3; white-space:nowrap; }
+.athar-call-button .voice-call-trigger small,
+.athar-call-button .voice-call-trigger > svg:last-child { display:none; }
+html[data-theme="light"] .athar-call-button .voice-call-trigger { color:#154c5a; }
