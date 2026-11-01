@@ -1,17 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 128" fill="none" role="img" aria-labelledby="title desc">
-<title id="title">أثر معروف — ATHAR MAAROOF</title><desc id="desc">رمز الأثر والموقع مع الاسم العربي والإنجليزي.</desc>
-<g transform="translate(418 12) scale(1.04)"><defs>
-<linearGradient id="main" x1="8" y1="8" x2="92" y2="92" gradientUnits="userSpaceOnUse"><stop stop-color="#64F5E5"/><stop offset=".52" stop-color="#18CFC7"/><stop offset="1" stop-color="#39AEEA"/></linearGradient>
-<linearGradient id="shine" x1="56" y1="14" x2="83" y2="76" gradientUnits="userSpaceOnUse"><stop stop-color="#F4FFFF"/><stop offset="1" stop-color="#64DDF2"/></linearGradient>
-</defs>
-<path d="M50 6C26 6 8 24 8 47C8 69 25 87 47 91" stroke="url(#main)" stroke-width="5" stroke-linecap="round"/>
-<path d="M20 73C30 64 40 63 51 66C66 70 79 60 82 44L87 19L96 10L92 47C89 71 73 87 51 89" stroke="url(#main)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M51 19C40 19 31 28 31 39C31 52 51 70 51 70C51 70 71 52 71 39C71 28 62 19 51 19Z" fill="url(#main)" fill-opacity=".2" stroke="url(#shine)" stroke-width="3"/>
-<circle cx="51" cy="39" r="7" fill="url(#shine)"/>
-<path d="M18 57C25 48 34 46 43 49M24 66C31 59 38 58 45 60" stroke="url(#main)" stroke-width="3" stroke-linecap="round"/>
-<path d="M63 13H84L77 21H61M65 29H80L70 39V53" stroke="url(#shine)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g>
-<text x="396" y="55" text-anchor="end" direction="rtl" font-family="Tahoma, Arial, sans-serif" font-size="34" font-weight="800" fill="#F1FBFF">أثر <tspan fill="#29DCCF">معروف</tspan></text>
-<text x="396" y="81" text-anchor="end" font-family="Arial, sans-serif" font-size="12" letter-spacing="2.4" font-weight="600" fill="#8FB8C9">ATHAR MAAROOF</text>
-<path d="M165 105H395" stroke="#25E0D0" stroke-opacity=".24" stroke-linecap="round"/>
-<circle cx="151" cy="105" r="3" fill="#25E0D0"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 180" fill="none" role="img" aria-labelledby="title desc"><title id="title">أثر معروف — ATHAR MAAROOF</title><desc id="desc">هوية خطية تجريدية ترمز إلى الأثر وإعادة المستند إلى صاحبه.</desc><defs><linearGradient id="mark" x1="40" y1="20" x2="140" y2="145" gradientUnits="userSpaceOnUse"><stop stop-color="#73F4E3"/><stop offset=".52" stop-color="#27D7D0"/><stop offset="1" stop-color="#79BFFF"/></linearGradient></defs><g transform="translate(35 12) scale(1.35)" stroke-linecap="round" stroke-linejoin="round"><path d="M18 67C10 50 16 28 34 17C47 9 62 11 71 18" stroke="url(#mark)" stroke-width="6"/><path d="M24 75C36 63 46 60 59 64C74 69 84 57 86 41L89 22L96 13L93 47C90 72 74 88 54 88C42 88 31 83 24 75Z" stroke="url(#mark)" stroke-width="5"/><path d="M31 48C31 36 39 28 50 28C61 28 69 36 69 48C69 59 50 73 50 73C50 73 31 59 31 48Z" stroke="url(#mark)" stroke-width="3.5"/><path d="M40 48C40 42 44 38 50 38C56 38 60 42 60 48C60 54 50 62 50 62C50 62 40 54 40 48Z" stroke="url(#mark)" stroke-width="2.5"/><circle cx="50" cy="47" r="3.5" fill="#A6FFF2" stroke="none"/><path d="M65 13H84L77 21H62M67 28H80L72 37V50" stroke="#E8FCFF" stroke-width="4"/></g><text x="570" y="82" text-anchor="end" direction="rtl" font-family="Tahoma,Arial,sans-serif" font-size="48" font-weight="800" fill="#F1FBFF">أثر <tspan fill="#39DCCF">معروف</tspan></text><text x="568" y="116" text-anchor="end" font-family="Arial,sans-serif" font-size="16" letter-spacing="4" font-weight="600" fill="#9CC3D0">ATHAR MAAROOF</text><path d="M258 143H570" stroke="#39DCCF" stroke-opacity=".38" stroke-linecap="round"/><circle cx="243" cy="143" r="4" fill="#39DCCF"/></svg>
