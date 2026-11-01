@@ -349,16 +349,6 @@ export default function HomePage() {
     }
   }
 
-  async function enableDeviceMotion() {
-    const enabled = await deviceMotion.enable();
-    notify(
-      enabled
-        ? "تم تفعيل الاستجابة لحركة الجهاز. يمكنك إيقافها من إعدادات الموقع في المتصفح."
-        : "لم يسمح المتصفح بقراءة حركة الجهاز. يمكنك الاستمرار باستخدام اللمس والمؤشر.",
-      enabled ? "success" : "tap"
-    );
-  }
-
   function dismissInstallBanner() {
     setShowInstallBanner(false);
     try { localStorage.setItem("athar-maaroof-install-dismissed", "1"); } catch { /* storage can be unavailable */ }
