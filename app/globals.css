@@ -3789,3 +3789,283 @@ button:disabled { opacity: .56; }
     transition: none !important;
   }
 }
+
+/* Shared component surfaces: no legacy hard-coded night palette in either theme. */
+
+/* Voice assistant and speech states. */
+.voice-call-trigger,
+.nearby-search-button {
+  color: var(--color-ink) !important;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+}
+.voice-call-trigger:hover,
+.nearby-search-button:hover {
+  color: var(--color-primary) !important;
+  background: var(--color-surface-hover) !important;
+  border-color: var(--color-primary) !important;
+}
+.voice-call-trigger b,
+.voice-call-trigger small,
+.nearby-search-button,
+.voice-dialog-brand small,
+.voice-state,
+.voice-transcript label,
+.voice-privacy-note,
+.voice-privacy-note span,
+.voice-privacy-note svg {
+  color: var(--color-muted) !important;
+}
+.voice-call-icon,
+.voice-dialog-brand > span,
+.voice-orb-core {
+  color: var(--color-primary-ink) !important;
+  background: var(--color-primary) !important;
+  box-shadow: none !important;
+}
+.voice-dialog-backdrop {
+  background: color-mix(in srgb, var(--color-canvas) 78%, transparent) !important;
+  backdrop-filter: blur(12px);
+}
+.voice-dialog {
+  color: var(--color-ink) !important;
+  background: var(--color-canvas-raised) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: 0 24px 80px var(--color-shadow) !important;
+}
+.voice-dialog-header,
+.voice-dialog-brand,
+.voice-dialog-brand b,
+.voice-dialog h2,
+.voice-dialog h3 {
+  color: var(--color-ink);
+}
+.voice-close,
+.voice-sound-button,
+.voice-controls button,
+.voice-end-call {
+  color: var(--color-ink) !important;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+}
+.voice-mic-button,
+.voice-mic-button.active,
+.voice-sound-button.active {
+  color: var(--color-primary-ink) !important;
+  background: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+.voice-orb {
+  color: var(--color-primary);
+}
+.voice-orb > i {
+  border-color: color-mix(in srgb, var(--color-primary) 28%, transparent) !important;
+}
+.voice-transcript,
+.voice-answer,
+.voice-fallback-label {
+  color: var(--color-ink) !important;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+}
+.voice-transcript p,
+.voice-answer p,
+.voice-answer small,
+.voice-fallback-label {
+  color: var(--color-muted) !important;
+}
+.voice-answer b { color: var(--color-primary) !important; }
+.voice-error,
+.nearby-inline-error { color: var(--color-danger) !important; }
+.voice-end-call:hover,
+.voice-close:hover { border-color: var(--color-secondary) !important; }
+.voice-fallback-form input {
+  color: var(--color-ink) !important;
+  background: var(--color-canvas) !important;
+  border-color: var(--color-border) !important;
+}
+.voice-fallback-form button {
+  color: var(--color-primary-ink) !important;
+  background: var(--color-primary) !important;
+}
+
+/* Report forms, city selectors and modal controls. */
+.report-form label,
+.report-form label small,
+.form-footnote {
+  color: var(--color-muted) !important;
+}
+.report-form input,
+.report-form select,
+.report-form textarea,
+.report-form input:focus,
+.report-form select:focus,
+.report-form textarea:focus,
+.city-field,
+.city-field select,
+.form-control {
+  color: var(--color-ink) !important;
+  background: var(--color-canvas-raised) !important;
+  border-color: var(--color-border) !important;
+  box-shadow: none;
+}
+.report-form input::placeholder,
+.report-form textarea::placeholder { color: var(--color-subtle) !important; }
+.report-form option,
+.city-field option {
+  color: var(--color-ink) !important;
+  background: var(--color-canvas-raised) !important;
+}
+.form-submit {
+  color: var(--color-primary-ink) !important;
+  background: var(--color-primary) !important;
+  border: 1px solid var(--color-primary) !important;
+  box-shadow: none !important;
+}
+.form-submit:disabled { opacity: .52; }
+.modal-backdrop {
+  background: color-mix(in srgb, var(--color-canvas) 78%, transparent) !important;
+  backdrop-filter: blur(12px);
+}
+.modal-content,
+.dialog-content {
+  color: var(--color-ink) !important;
+  background: var(--color-canvas-raised) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: 0 24px 80px var(--color-shadow) !important;
+}
+.modal-close {
+  color: var(--color-muted) !important;
+  background: var(--color-surface) !important;
+  border-color: var(--color-border) !important;
+}
+
+/* Guest identity, recovery and privacy notices. */
+.guest-session-note,
+.guest-recovery-form,
+.guest-recovery-form input {
+  color: var(--color-ink) !important;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+}
+.guest-session-note b,
+.guest-recovery-form p,
+.guest-recovery-form small,
+.guest-session-note small {
+  color: var(--color-muted) !important;
+}
+.guest-recovery-toggle,
+.guest-recovery-form button {
+  color: var(--color-primary) !important;
+  background: color-mix(in srgb, var(--color-primary) 9%, var(--color-surface)) !important;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 28%, var(--color-border)) !important;
+}
+.guest-recovery-form input::placeholder { color: var(--color-subtle) !important; }
+
+/* Install prompts, notifications and app-level status chips. */
+.install-hint,
+.install-card,
+.install-banner,
+.toast-message,
+.nearby-results,
+.assistant-response {
+  color: var(--color-ink) !important;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: none !important;
+}
+.install-icon {
+  color: var(--color-primary-ink) !important;
+  background: var(--color-primary) !important;
+}
+.install-card b,
+.install-hint b,
+.nearby-results-heading > span,
+.nearby-result-item b,
+.assistant-response b {
+  color: var(--color-ink) !important;
+}
+.install-card p,
+.install-hint span,
+.nearby-results-heading small,
+.nearby-result-item small,
+.assistant-response p {
+  color: var(--color-muted) !important;
+}
+.install-card button,
+.install-hint button,
+.toast-message button,
+.nearby-results-heading button {
+  color: var(--color-secondary) !important;
+  background: var(--color-canvas) !important;
+  border: 1px solid var(--color-border) !important;
+}
+.toast-message > svg,
+.nearby-result-icon { color: var(--color-primary) !important; }
+.nearby-result-item { border-top-color: var(--color-border) !important; }
+.nearby-result-icon {
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface)) !important;
+}
+
+/* Search state, report filters, account actions and secondary data controls. */
+.assistant-status {
+  color: var(--color-primary) !important;
+  background: color-mix(in srgb, var(--color-primary) 9%, var(--color-surface)) !important;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 24%, var(--color-border)) !important;
+  box-shadow: none !important;
+}
+.assistant-status small { color: var(--color-muted) !important; }
+.assistant-input {
+  color: var(--color-ink) !important;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: none !important;
+}
+.assistant-input input {
+  color: var(--color-ink) !important;
+  background: transparent !important;
+}
+.assistant-input input::placeholder { color: var(--color-subtle) !important; }
+.assistant-input > svg { color: var(--color-secondary) !important; }
+.assistant-input button {
+  color: var(--color-primary-ink) !important;
+  background: var(--color-primary) !important;
+  box-shadow: none !important;
+}
+.filter-pills {
+  background: var(--color-canvas-raised) !important;
+  border: 1px solid var(--color-border) !important;
+}
+.filter-pills button { color: var(--color-muted) !important; }
+.filter-pills button:hover { color: var(--color-ink) !important; }
+.filter-pills button.selected {
+  color: var(--color-primary) !important;
+  background: var(--color-surface) !important;
+  box-shadow: inset 0 0 0 1px var(--color-border) !important;
+}
+.report-item { border-bottom-color: var(--color-border) !important; }
+.report-item:hover,
+.nearby-result-item:hover { background: var(--color-surface-hover) !important; }
+.account-link { color: var(--color-ink) !important; }
+.account-link:hover { color: var(--color-primary) !important; }
+
+/* Ensure remaining home sections inherit identical day/night contrast. */
+.section-heading h2,
+.safety-text h2,
+.report-item b,
+.report-item strong,
+.report-item-title,
+.report-item-meta,
+.install-card,
+.install-banner,
+.info-back,
+.info-footer {
+  color: var(--color-ink);
+}
+.section-heading p,
+.safety-text p,
+.report-item small,
+.report-item time,
+.info-footer a {
+  color: var(--color-muted);
+}
