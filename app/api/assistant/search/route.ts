@@ -244,7 +244,7 @@ export async function POST(request: NextRequest) {
       const action = intent.action === "create_report" || continueDraft || hasRecognizedFields
         ? "create_report"
         : "guide";
-      const draft = action === "create_report" || hasRecognizedFields
+      const draft: ReportDraft | null = action === "create_report" || hasRecognizedFields
         ? {
             kind: intent.kind ?? existingDraft?.kind ?? null,
             category: intent.category ?? existingDraft?.category ?? null,
