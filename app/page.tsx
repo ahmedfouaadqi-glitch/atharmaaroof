@@ -289,7 +289,7 @@ export default function HomePage() {
     return () => observer.disconnect();
   }, [reports.length, reportsLoading, formOpen]);
 
-  async function runAssistantSearch(rawQuery: string) {
+  async function runAssistantSearch(rawQuery: string, continueDraft = true) {
     const value = rawQuery.trim();
     if (!value || assistantSearching) return;
 
@@ -303,7 +303,7 @@ export default function HomePage() {
       const response = await fetch("/api/assistant/search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: value }),
+        body: JSON.stringify({ query: value, ...(continueDraft && assistantAction === "create_report" && assistantDraft ? { draft: assistantDraft } : {}) }),
         cache: "no-store"
       });
       const payload = await response.json();
@@ -556,13 +556,14 @@ export default function HomePage() {
             assistantText={assistantText}
             setAssistantText={setAssistantText}
             onAssistantSubmit={handleAssistantSubmit}
-            onQuickSearch={(value) => { setAssistantText(value); void runAssistantSearch(value); }}
+            onQuickSearch={(value) => { setAssistantText(value); setAssistantAction(null); setAssistantDraft(null); void runAssistantSearch(value, false); }}
             assistantSearching={assistantSearching}
             assistantReply={assistantReply}
             assistantMode={assistantMode}
             assistantAction={assistantAction}
             assistantDraft={assistantDraft}
-            onStartReport={(draft) => openReportForm(draft.kind ?? "lost", draft.category ?? undefined, draft)}
+            onStartReport={(draft) => { openReportForm(draft.kind ?? "lost", draft.category ?? undefined, draft); setAssistantAction(null); setAssistantDraft(null); }}
+            onCancelDraft={() => { setAssistantAction(null); setAssistantDraft(null); setAssistantReply(""); setAssistantText(""); }}
             assistantMatches={assistantMatches}
             onShowMatches={() => {
               setReports(assistantMatches);
