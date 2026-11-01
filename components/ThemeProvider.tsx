@@ -20,6 +20,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       const saved = window.localStorage.getItem("athar-maaroof-theme");
       if (saved === "light" || saved === "dark") {
         setTheme(saved);
+      }
     } catch {
       // Storage may be unavailable; keep the daylight default.
     }
