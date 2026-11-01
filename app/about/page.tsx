@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 const principles = [
   {
     Icon: HeartHandshake,
-    title: "خدمة المجتمع",
+    title: "أثر للمجتمع",
     text: "تسهيل إعادة المستندات والأغراض المفقودة إلى أصحابها عبر بلاغات واضحة."
   },
   {
@@ -28,7 +28,7 @@ const principles = [
   },
   {
     Icon: Users,
-    title: "مسؤولية مشتركة",
+    title: "تعاون مسؤول",
     text: "مشاركة واعية تحمي بيانات الأشخاص وتدعم التحقق قبل تسليم المستند."
   }
 ];
@@ -57,7 +57,7 @@ export default function AboutPage() {
 
       <section className="info-section-block">
         <div className="info-section-title">
-          <span>مبادئ الخدمة</span>
+          <span>قيم الخدمة</span>
           <small>ما يوجّه طريقة عمل الخدمة</small>
         </div>
         <div className="info-card-grid">
