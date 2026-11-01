@@ -1,7 +1,7 @@
 {
   "name": "أثر معروف — ATHAR MAAROOF",
   "short_name": "أثر معروف",
-  "description": "خدمة للبحث عن المستندات المفقودة والمعثورة، وإضافة البلاغات ومتابعة النتائج القريبة بموافقتك.",
+  "description": "منصة مجتمعية للبحث في بلاغات المستندات المفقودة والمعثورة وإضافة بلاغات جديدة مع احترام الخصوصية.",
   "lang": "ar",
   "dir": "rtl",
   "start_url": "/",
@@ -11,8 +11,8 @@
     "standalone",
     "minimal-ui"
   ],
-  "background_color": "#111713",
-  "theme_color": "#111713",
+  "background_color": "#1a1c1a",
+  "theme_color": "#1a1c1a",
   "prefer_related_applications": false,
   "categories": [
     "utilities",
