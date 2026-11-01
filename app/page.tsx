@@ -486,10 +486,13 @@ export default function HomePage() {
             </span>
           </Link>
 
-          <nav className="desktop-nav" aria-label="التنقل الرئيسي">
+          <nav className="desktop-nav athar-primary-nav" aria-label="التنقل الرئيسي">
             <button className={activeNav === "home" ? "nav-link active" : "nav-link"} onClick={() => scrollTo("home", "home")}>الرئيسية</button>
             <button className={activeNav === "reports" ? "nav-link active" : "nav-link"} onClick={() => scrollTo("reports", "reports")}>البلاغات</button>
-            <button className={activeNav === "safety" ? "nav-link active" : "nav-link"} onClick={() => scrollTo("safety", "safety")}>الأمان والخصوصية</button>
+            <Link className="nav-link" href="/about">عن المبادرة</Link>
+            <Link className="nav-link" href="/faq">الأسئلة الشائعة</Link>
+            <Link className="nav-link" href="/privacy">الخصوصية</Link>
+            <Link className="nav-link" href="/terms">الاستخدام</Link>
           </nav>
 
           <div className="header-actions">
