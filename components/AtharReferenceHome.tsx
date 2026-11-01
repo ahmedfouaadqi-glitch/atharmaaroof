@@ -1,42 +1,291 @@
 "use client";
+
 import type { FormEvent, RefObject } from "react";
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowLeft, ArrowUpLeft, BellRing, BookOpen, CheckCircle2, ChevronLeft, CircleHelp, FileText, Fingerprint, Globe, Layers3, MapPin, Navigation, Search, ShieldCheck, Sparkles, CarFront, MapPinned } from "lucide-react";
-import { BrandMark } from "@/components/brand";
+import {
+  ArrowLeft,
+  ArrowUpLeft,
+  BadgeCheck,
+  BookOpen,
+  CheckCircle2,
+  CircleHelp,
+  FileText,
+  Fingerprint,
+  Globe,
+  MapPin,
+  MapPinned,
+  Navigation,
+  Search,
+  ShieldCheck
+} from "lucide-react";
 import VoiceAssistant from "@/components/VoiceAssistant";
-type Match = { id: string; title: string; city: string; area: string | null; public_code: string; kind: "lost" | "found" };
-type Props = { stageRef: RefObject<HTMLDivElement | null>; assistantText: string; setAssistantText: (value: string) => void; onAssistantSubmit: (event: FormEvent<HTMLFormElement>) => void; onQuickSearch: (query: string) => void; assistantSearching: boolean; assistantReply: string; assistantMode: "ai" | "guided_search" | null; assistantMatches: Match[]; onShowMatches: () => void; nearbySearching: boolean; nearbyError: string; onNearbySearch: () => void; motionStatus: "ready" | "enabled" | "unsupported" | string; onEnableMotion: () => void; onDisableMotion: () => void; onOpenReportForm: (kind: "lost" | "found") => void };
-const shortcuts = [
- { label: "بطاقة وطنية", query: "بطاقة وطنية", Icon: Fingerprint }, { label: "جواز سفر", query: "جواز سفر", Icon: Globe }, { label: "رخصة قيادة", query: "رخصة قيادة", Icon: CarFront }, { label: "مستندات أخرى", query: "مستندات أخرى", Icon: FileText }
+
+type Match = {
+  id: string;
+  title: string;
+  city: string;
+  area: string | null;
+  public_code: string;
+  kind: "lost" | "found";
+};
+
+type Props = {
+  stageRef: RefObject<HTMLDivElement | null>;
+  assistantText: string;
+  setAssistantText: (value: string) => void;
+  onAssistantSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  onQuickSearch: (query: string) => void;
+  assistantSearching: boolean;
+  assistantReply: string;
+  assistantMode: "ai" | "guided_search" | null;
+  assistantMatches: Match[];
+  onShowMatches: () => void;
+  nearbySearching: boolean;
+  nearbyError: string;
+  onNearbySearch: () => void;
+  motionStatus: "ready" | "enabled" | "unsupported" | string;
+  onEnableMotion: () => void;
+  onDisableMotion: () => void;
+  onOpenReportForm: (kind: "lost" | "found") => void;
+};
+
+const searchShortcuts = [
+  { label: "بطاقة وطنية", query: "بطاقة وطنية", Icon: Fingerprint },
+  { label: "جواز سفر", query: "جواز سفر", Icon: Globe },
+  { label: "إجازة قيادة", query: "إجازة قيادة", Icon: FileText },
+  { label: "بطاقة سكن", query: "بطاقة سكن", Icon: MapPin }
 ];
-const services = [
- { title: "ابحث عن مفقود", description: "ابحث بين البلاغات المتاحة", Icon: Search, tone: "aqua", action: "reports" }, { title: "سجّل ما عثرت عليه", description: "سجّل مستنداً عثرت عليه", Icon: FileText, tone: "mint", action: "found" }, { title: "أبلغ عن مفقود", description: "أنشئ بلاغاً عن مستند فقدته", Icon: MapPin, tone: "blue", action: "lost" }, { title: "البلاغات القريبة", description: "رتّب النتائج حسب القرب بإذنك", Icon: BellRing, tone: "violet", action: "nearby" }
-] as const;
-const informationCards = [
- { href: "/about", title: "عن أثر معروف", description: "ما الخدمة التي يقدمها أثر معروف وكيف تستخدمها.", Icon: BookOpen, tone: "mint" }, { href: "/privacy", title: "سياسة الخصوصية", description: "تعرّف على البيانات التي تُجمع وكيفية التعامل معها.", Icon: ShieldCheck, tone: "blue" }, { href: "/terms", title: "شروط الاستخدام", description: "القواعد التي تنظّم استخدام الخدمة ونشر البلاغات.", Icon: Layers3, tone: "violet" }, { href: "/faq", title: "الأسئلة الشائعة", description: "إجابات عن الأسئلة الأكثر شيوعاً.", Icon: CircleHelp, tone: "amber" }
-] as const;
-function DocumentIllustration({ kind }: { kind: "national" | "passport" | "license" | "other" }) {
- const labels = { national: ["البطاقة الوطنية", "IDENTITY"], passport: ["جواز سفر", "PASSPORT"], license: ["رخصة قيادة", "DRIVING"], other: ["مستند آخر", "DOCUMENT"] } as const;
- const accent = kind === "passport" ? "var(--color-secondary)" : "var(--color-primary)";
- return <svg className="ar-document-art" viewBox="0 0 170 218" fill="none" aria-hidden="true"><defs><linearGradient id={"doc-fill-" + kind} x1="12" y1="4" x2="158" y2="212" gradientUnits="userSpaceOnUse"><stop stopColor={accent} stopOpacity=".28"/><stop offset="1" stopColor="var(--color-canvas)" stopOpacity=".94"/></linearGradient></defs><rect x="9" y="5" width="152" height="208" rx="18" fill={"url(#doc-fill-" + kind + ")"} stroke="currentColor" strokeOpacity=".5"/><rect x="19" y="15" width="132" height="188" rx="12" stroke="currentColor" strokeOpacity=".17"/><path d="M26 53H144" stroke="currentColor" strokeOpacity=".28"/><text x="85" y="38" fill="currentColor" fontSize="10" textAnchor="middle" fontWeight="700">{labels[kind][0]}</text><text x="85" y="47" fill="currentColor" opacity=".58" fontSize="5.5" letterSpacing="1.5" textAnchor="middle">{labels[kind][1]}</text>{kind === "passport" ? <g stroke="currentColor" strokeOpacity=".7" strokeWidth="1.4"><circle cx="85" cy="111" r="35"/><ellipse cx="85" cy="111" rx="16" ry="35"/><ellipse cx="85" cy="111" rx="35" ry="12"/><path d="M51 111H119M56 94H114M56 128H114"/></g> : kind === "license" ? <g stroke="currentColor" strokeOpacity=".75" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M46 105L53 85Q55 80 62 80H108Q115 80 117 85L124 105V122H46Z"/><path d="M55 89H115L120 103H50Z"/><circle cx="58" cy="119" r="5"/><circle cx="112" cy="119" r="5"/><path d="M64 136H106"/></g> : kind === "other" ? <g stroke="currentColor" strokeOpacity=".75" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M61 78H96L116 98V145H61Z"/><path d="M96 78V99H116M72 112H104M72 123H104M72 134H96"/></g> : <g stroke="currentColor" strokeOpacity=".75" strokeWidth="1.5"><rect x="47" y="77" width="34" height="41" rx="5"/><circle cx="64" cy="91" r="7"/><path d="M52 111Q64 96 76 111M91 86H120M91 98H120M91 110H114M47 135H121M47 144H110" strokeLinecap="round"/></g>}<path d="M34 166H136M34 176H119M34 186H128" stroke="currentColor" strokeOpacity=".22" strokeWidth="2" strokeLinecap="round"/><circle cx="139" cy="194" r="3" fill="currentColor" fillOpacity=".5"/></svg>;
-}
+
+const informationLinks = [
+  {
+    href: "/about",
+    title: "عن المبادرة",
+    description: "كيف تعمل الخدمة وما حدود دورها.",
+    Icon: BookOpen
+  },
+  {
+    href: "/privacy",
+    title: "الخصوصية",
+    description: "البيانات التي نستخدمها وخياراتك.",
+    Icon: ShieldCheck
+  },
+  {
+    href: "/terms",
+    title: "شروط الاستخدام",
+    description: "ضوابط نشر البلاغات واستخدام الخدمة.",
+    Icon: BadgeCheck
+  },
+  {
+    href: "/faq",
+    title: "مركز المساعدة",
+    description: "إجابات مباشرة عن الأسئلة الشائعة.",
+    Icon: CircleHelp
+  }
+];
+
 export default function AtharReferenceHome(props: Props) {
- const [selectedShortcut, setSelectedShortcut] = useState("");
- return <section className="athar-rebuild" ref={props.stageRef} aria-label="أثر معروف — الصفحة الرئيسية" dir="rtl">
-  <div className="ar-hero"><div className="ar-hero-ambient ar-ambient-one" aria-hidden="true"/><div className="ar-hero-ambient ar-ambient-two" aria-hidden="true"/>
-   <svg className="ar-orbit-lines" viewBox="0 0 1100 560" preserveAspectRatio="none" aria-hidden="true"><path d="M74 320C70 174 228 85 392 115S690 205 842 119 1068 178 1026 306 823 450 653 412 319 485 173 411 74 320"/><path d="M110 364C194 474 342 448 463 388S710 310 825 392 1003 370 1020 273"/><circle cx="173" cy="411" r="4"/><circle cx="842" cy="119" r="4"/><circle cx="1020" cy="273" r="4"/></svg>
-   <div className="ar-hero-topline"><span className="ar-status-pill"><i/> منصة مجتمعية للمفقودات والمعثورات</span><span className="ar-hero-index">ATHAR / 01</span></div>
-   <div className="ar-hero-brand"><span className="ar-logo-stage"><BrandMark/></span><div className="ar-wordmark"><h1>أثر <em>معروف</em></h1><span className="ar-latin-wordmark">ATHAR MAAROOF</span><p>منصة عراقية لتنظيم بلاغات المستندات المفقودة والمعثورة والبحث في المعلومات المنشورة.</p></div></div>
-   <div className="ar-floating-doc ar-doc-left" aria-hidden="true"><DocumentIllustration kind="national"/><span>بطاقة وطنية</span></div><div className="ar-floating-doc ar-doc-back" aria-hidden="true"><DocumentIllustration kind="passport"/><span>جواز سفر</span></div><div className="ar-floating-doc ar-doc-right" aria-hidden="true"><DocumentIllustration kind="license"/><span>رخصة قيادة</span></div><div className="ar-floating-doc ar-doc-far" aria-hidden="true"><DocumentIllustration kind="other"/><span>مستندات أخرى</span></div>
-   <p className="ar-hero-description">ابدأ بالبحث في البلاغات المنشورة، أو أنشئ بلاغاً جديداً عند الحاجة. لا تشارك أرقام المستندات أو صورها.</p>
-   <div className="ar-search-block"><div className="ar-search-row"><form className="ar-search-form" onSubmit={props.onAssistantSubmit}><Search size={21} className="ar-search-leading" aria-hidden="true"/><input value={props.assistantText} onChange={(event)=>props.setAssistantText(event.target.value)} placeholder="اكتب نوع المستند والمدينة أو المنطقة" aria-label="البحث عن المفقودات والمعثورات" maxLength={120}/><button type="submit" aria-label="بدء البحث" disabled={props.assistantSearching||props.assistantText.trim().length<2}>{props.assistantSearching?<span className="assistant-spinner"/>:<ArrowLeft size={19}/>}</button></form><div className="ar-voice-button"><VoiceAssistant/></div></div><div className="ar-search-meta"><span><ShieldCheck size={14}/> لا تدخل أرقام المستندات أو البيانات الحساسة</span><small>النتائج تقتصر على البلاغات المنشورة</small></div></div>
-   <div className="ar-quick-search" aria-label="تصنيفات البحث">{shortcuts.map(({label,query,Icon})=><button type="button" key={query} className={selectedShortcut===query?"selected":""} onClick={()=>{setSelectedShortcut(query);props.onQuickSearch(query);}}><Icon size={15}/>{label}</button>)}</div>
-   {props.assistantReply&&<section className="ar-assistant-response" aria-live="polite"><div className="ar-response-title"><CheckCircle2 size={17}/><b>{props.assistantMode==="ai"?"مساعد أثر معروف":"نتيجة البحث"}</b><small>{props.assistantMode==="ai"?"رد المساعد":"مطابقة مباشرة"}</small></div><p>{props.assistantReply}</p>{props.assistantMatches.length>0&&<div className="ar-response-matches">{props.assistantMatches.slice(0,3).map(match=><article key={match.id}><span>{match.kind==="found"?<CheckCircle2 size={14}/>:<FileText size={14}/>}</span><div><b>{match.title}</b><small>{match.city}{match.area?" · "+match.area:""} · {match.public_code}</small></div></article>)}</div>}{props.assistantMatches.length>0&&<button type="button" className="ar-show-matches" onClick={props.onShowMatches}>عرض البلاغات المطابقة <ChevronLeft size={15}/></button>}</section>}
-  </div>
-  <section className="ar-location-band" aria-label="البحث حسب الموقع"><div className="ar-location-icon"><Navigation size={26} strokeWidth={1.6}/></div><div className="ar-location-copy"><span className="ar-eyebrow">نطاق بحث اختياري</span><h2>اعرض البلاغات الأقرب إليك</h2><p>مشاركة الموقع اختيارية. لن يُطلب الإذن إلا عند اختيار «تحديد موقعي»، ويمكنك البحث يدوياً بدلاً من ذلك.</p></div><div className="ar-location-action"><span className="ar-location-state"><i/> الموقع اختياري</span><button type="button" onClick={props.onNearbySearch} disabled={props.nearbySearching}>{props.nearbySearching?<span className="assistant-spinner"/>:<MapPinned size={17} />}{props.nearbySearching?"جارٍ تحديد الموقع":"تحديد موقعي"}<ArrowLeft size={16}/></button></div>{props.nearbyError&&<p className="ar-nearby-error" role="alert">{props.nearbyError}</p>}</section>
-  <section className="ar-service-section" aria-label="الخدمات"><div className="ar-section-heading"><div><span className="ar-eyebrow">الخدمات</span><h2>اختر الإجراء المناسب</h2></div><p>ابدأ بالبحث، أو أنشئ بلاغاً عن مستند مفقود أو معثور عليه.</p></div><div className="ar-service-grid">{services.map(({title,description,Icon,tone,action},index)=><button type="button" className={"ar-service-card "+tone} key={title} onClick={()=>action==="reports"?document.getElementById("reports")?.scrollIntoView({behavior:"smooth"}):action==="nearby"?props.onNearbySearch():props.onOpenReportForm(action)}><span className="ar-service-number">0{index+1}</span><span className="ar-service-icon"><Icon size={22} strokeWidth={1.7}/></span><span className="ar-service-copy"><b>{title}</b><small>{description}</small></span><span className="ar-service-arrow"><ArrowUpLeft size={17}/></span></button>)}</div><div className="ar-report-strip"><span className="ar-report-strip-copy"><span className="ar-report-pulse"/> هل لديك مستند مفقود أو عثرت على مستند؟</span><button type="button" onClick={()=>props.onOpenReportForm("lost")}>الإبلاغ عن مفقود <ArrowLeft size={16}/></button><button type="button" onClick={()=>props.onOpenReportForm("found")}>الإبلاغ عن معثور عليه <ArrowLeft size={16}/></button></div></section>
-  {props.motionStatus!=="unsupported"&&<div className="ar-motion-setting"><span><Sparkles size={14}/> الحركة التفاعلية اختيارية</span><button type="button" onClick={()=>props.motionStatus==="enabled"?props.onDisableMotion():props.onEnableMotion()} aria-pressed={props.motionStatus==="enabled"}>{props.motionStatus==="enabled"?"إيقاف الحركة":"تفعيل حركة الجهاز"}</button></div>}
-  <section className="ar-info-section" aria-label="معلومات وسياسات أثر معروف"><div className="ar-section-heading"><div><span className="ar-eyebrow">معلومات أساسية</span><h2>عن الخدمة وسياساتها</h2></div><p>تعرّف على طريقة العمل، والخصوصية، وشروط استخدام المنصة.</p></div><div className="ar-info-grid">{informationCards.map(({href,title,description,Icon,tone})=><Link href={href} className={"ar-info-card "+tone} key={href}><span className="ar-info-icon"><Icon size={20}/></span><span className="ar-info-copy"><b>{title}</b><small>{description}</small></span><ArrowUpLeft size={17} className="ar-info-arrow"/></Link>)}</div></section>
- </section>;
+  const [selectedShortcut, setSelectedShortcut] = useState("");
+
+  return (
+    <section
+      className="athar-rebuild"
+      ref={props.stageRef}
+      aria-label="أثر معروف — الصفحة الرئيسية"
+      dir="rtl"
+    >
+      <section className="ar-editorial-hero" aria-labelledby="athar-home-title">
+        <div className="ar-intro-copy">
+          <div className="ar-overline">
+            <span className="ar-overline-mark" />
+            <span>خدمة مجتمعية مستقلة</span>
+            <span className="ar-overline-divider" />
+            <span>العراق</span>
+            <span className="ar-hero-reference">01 / 03</span>
+          </div>
+
+          <h1 id="athar-home-title">
+            ابحث عن مستندك.
+            <em> فقد يكون له أثر.</em>
+          </h1>
+
+          <p className="ar-intro-lead">
+            يجمع «أثر معروف» بلاغات المستندات المفقودة والمعثورة في مكان واحد،
+            لتسهيل البحث والوصول إلى المعلومات المنشورة.
+          </p>
+
+          <div className="ar-trust-rail" aria-label="إرشادات الخصوصية">
+            <span><i /> لا ترفع صورة المستند</span>
+            <span><i /> لا تكتب رقمه الكامل</span>
+            <span><i /> الموقع اختياري</span>
+          </div>
+        </div>
+
+        <aside className="ar-search-panel" aria-label="البحث في البلاغات">
+          <div className="ar-panel-heading">
+            <div>
+              <span className="ar-panel-kicker">البحث / 01</span>
+              <h2>ابحث في البلاغات المنشورة</h2>
+            </div>
+            <span className="ar-panel-icon"><Search size={19} /></span>
+          </div>
+
+          <p className="ar-search-instruction">
+            اكتب نوع المستند أو المدينة أو المنطقة. لا تدخل أرقاماً أو بيانات شخصية.
+          </p>
+
+          <form className="ar-search-form" onSubmit={props.onAssistantSubmit}>
+            <Search size={19} className="ar-search-leading" aria-hidden="true" />
+            <input
+              value={props.assistantText}
+              onChange={(event) => props.setAssistantText(event.target.value)}
+              placeholder="مثال: بطاقة وطنية في الكرادة"
+              aria-label="البحث عن المفقودات والمعثورات"
+              maxLength={120}
+            />
+            <button
+              type="submit"
+              aria-label="بدء البحث"
+              disabled={props.assistantSearching || props.assistantText.trim().length < 2}
+            >
+              {props.assistantSearching
+                ? <span className="assistant-spinner" />
+                : <ArrowLeft size={19} />}
+            </button>
+          </form>
+
+          <div className="ar-search-support">
+            <span><ShieldCheck size={14} /> تظهر البلاغات المنشورة فقط</span>
+            <div className="ar-voice-button"><VoiceAssistant /></div>
+          </div>
+
+          <div className="ar-search-shortcuts" aria-label="بحث سريع حسب نوع المستند">
+            {searchShortcuts.map(({ label, query, Icon }) => (
+              <button
+                type="button"
+                key={query}
+                className={selectedShortcut === query ? "selected" : ""}
+                onClick={() => {
+                  setSelectedShortcut(query);
+                  props.onQuickSearch(query);
+                }}
+              >
+                <Icon size={14} />
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {props.assistantReply && (
+            <section className="ar-assistant-response" aria-live="polite">
+              <div className="ar-response-title">
+                <CheckCircle2 size={16} />
+                <b>{props.assistantMode === "ai" ? "رد المساعد" : "نتيجة البحث"}</b>
+                <small>{props.assistantMatches.length} نتيجة</small>
+              </div>
+              <p>{props.assistantReply}</p>
+              {props.assistantMatches.length > 0 && (
+                <div className="ar-response-matches">
+                  {props.assistantMatches.slice(0, 3).map((match) => (
+                    <article key={match.id}>
+                      <span>{match.kind === "found" ? <BadgeCheck size={15} /> : <FileText size={15} />}</span>
+                      <div>
+                        <b>{match.title}</b>
+                        <small>{match.city}{match.area ? " · " + match.area : ""} · {match.public_code}</small>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+              {props.assistantMatches.length > 0 && (
+                <button type="button" className="ar-show-matches" onClick={props.onShowMatches}>
+                  عرض النتائج في سجل البلاغات <ArrowUpLeft size={15} />
+                </button>
+              )}
+            </section>
+          )}
+        </aside>
+      </section>
+
+      <section className="ar-action-section" aria-labelledby="ar-action-title">
+        <div className="ar-section-heading">
+          <div>
+            <span className="ar-section-index">02 / الإجراء التالي</span>
+            <h2 id="ar-action-title">ماذا تريد أن تفعل؟</h2>
+          </div>
+          <a href="#reports" className="ar-text-link">
+            تصفّح جميع البلاغات <ArrowLeft size={15} />
+          </a>
+        </div>
+
+        <div className="ar-action-grid">
+          <button
+            type="button"
+            className="ar-action-card ar-action-lost"
+            onClick={() => props.onOpenReportForm("lost")}
+          >
+            <span className="ar-action-count">01</span>
+            <span className="ar-action-icon"><Search size={21} /></span>
+            <span className="ar-action-copy">
+              <b>أبلغ عن مستند مفقود</b>
+              <small>أنشئ بلاغاً بمعلومات عامة وآمنة.</small>
+            </span>
+            <ArrowUpLeft className="ar-action-arrow" size={19} />
+          </button>
+
+          <button
+            type="button"
+            className="ar-action-card ar-action-found"
+            onClick={() => props.onOpenReportForm("found")}
+          >
+            <span className="ar-action-count">02</span>
+            <span className="ar-action-icon"><FileText size={21} /></span>
+            <span className="ar-action-copy">
+              <b>سجّل مستنداً عثرت عليه</b>
+              <small>ساعد صاحبه على الوصول إليه دون كشف بياناته.</small>
+            </span>
+            <ArrowUpLeft className="ar-action-arrow" size={19} />
+          </button>
+        </div>
+      </section>
+
+      <section className="ar-location-band" aria-label="البحث حسب الموقع">
+        <div className="ar-location-icon"><Navigation size={21} /></div>
+        <div className="ar-location-copy">
+          <span className="ar-panel-kicker">03 / بحث اختياري</span>
+          <h2>اعرض البلاغات القريبة منك</h2>
+          <p>لا يُطلب موقعك إلا بعد اختيارك. ويمكنك استخدام البحث بالمدينة دون مشاركة الموقع.</p>
+        </div>
+        <div className="ar-location-action">
+          <span className="ar-location-state"><i /> موقعك لا يُشارك تلقائياً</span>
+          <button type="button" onClick={props.onNearbySearch} disabled={props.nearbySearching}>
+            {props.nearbySearching ? "جارٍ تحديد الموقع..." : "تحديد موقعي"}
+            {props.nearbySearching ? <span className="assistant-spinner" /> : <MapPinned size={16} />}
+          </button>
+        </div>
+        {props.nearbyError && <p className="ar-nearby-error" role="alert">{props.nearbyError}</p>}
+      </section>
+
+      <section className="ar-information-section" aria-label="معلومات أثر معروف">
+        <div className="ar-section-heading">
+          <div>
+            <span className="ar-section-index">معلومات الخدمة</span>
+            <h2>استخدم الخدمة بوضوح واطمئنان</h2>
+          </div>
+        </div>
+        <div className="ar-information-links">
+          {informationLinks.map(({ href, title, description, Icon }) => (
+            <Link href={href} className="ar-information-link" key={href}>
+              <span className="ar-information-icon"><Icon size={17} /></span>
+              <span className="ar-information-copy">
+                <b>{title}</b>
+                <small>{description}</small>
+              </span>
+              <ArrowUpLeft size={16} className="ar-information-arrow" />
+            </Link>
+          ))}
+        </div>
+      </section>
+    </section>
+  );
 }
