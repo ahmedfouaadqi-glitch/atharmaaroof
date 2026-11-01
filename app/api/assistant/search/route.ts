@@ -12,6 +12,13 @@ const CITIES = [
   { name: "سامراء", aliases: ["سامراء", "سامرا"] }
 ] as const;
 
+type ReportDraft = {
+  kind: "lost" | "found" | null;
+  category: string | null;
+  city: string | null;
+  area: string | null;
+};
+
 const CATEGORIES = [
   { name: "بطاقة وطنية", aliases: ["بطاقة وطنية", "البطاقة الوطنية", "الهوية الوطنية", "هوية وطنية", "هوية"] },
   { name: "جواز سفر", aliases: ["جواز سفر", "جواز", "باسبور"] },
@@ -21,7 +28,8 @@ const CATEGORIES = [
   { name: "سنوية سيارة", aliases: ["سنوية سيارة", "سنوية", "مركبة", "سيارة"] },
   { name: "بطاقة مصرفية", aliases: ["بطاقة مصرفية", "بطاقة بنك", "بطاقة مصرف", "ماستر كارد", "فيزا"] },
   { name: "محفظة", aliases: ["محفظة", "محفظتي"] },
-  { name: "مفاتيح", aliases: ["مفاتيح", "مفتاح"] }
+  { name: "مفاتيح", aliases: ["مفاتيح", "مفتاح"] },
+  { name: "أخرى", aliases: ["شي ثاني", "شي اخر", "شيء اخر", "غرض اخر"] }
 ] as const;
 
 const STOP_WORDS = new Set([
@@ -86,8 +94,25 @@ function parseIntent(input: string) {
   for (const item of CATEGORIES) for (const alias of item.aliases) remainder = remainder.replaceAll(normalize(alias), " ");
   for (const areaName of areaNames) remainder = remainder.replaceAll(normalize(areaName), " ");
   const terms = remainder.split(" ").filter((term) => term.length > 1 && !STOP_WORDS.has(term)).slice(0, 4);
-  return { action, city, category, kind, area, terms };
+  return { action, city, category, kind, area, terms, explicitSearch };
 }
+function sanitizeDraft(value: unknown): ReportDraft | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const raw = value as Record<string, unknown>;
+  const kind = raw.kind === "lost" || raw.kind === "found" ? raw.kind : null;
+  const category = typeof raw.category === "string" && CATEGORIES.some((item) => item.name === raw.category)
+    ? raw.category
+    : null;
+  const city = typeof raw.city === "string" && CITIES.some((item) => item.name === raw.city)
+    ? raw.city
+    : null;
+  const area = typeof raw.area === "string" && raw.area.trim().length <= 80 && !/\d{8,}/.test(raw.area)
+    ? raw.area.trim() || null
+    : null;
+  return { kind, category, city, area };
+}
+
+
 async function generateAnswer(input: string, intent: ReturnType<typeof parseIntent>, reports: Array<Record<string, unknown>>) {
   const endpoint = process.env.ATHAR_AI_CHAT_COMPLETIONS_URL;
   const apiKey = process.env.ATHAR_AI_API_KEY;
@@ -180,6 +205,45 @@ export async function POST(request: NextRequest) {
           (draft ? " جهزت لك مسودة أولية اختيارية." : "");
       return NextResponse.json({
         assistant: { mode: "guided_search", action: intent.action, reply, source: "assistant_intent_router", draft },
+        reports: []
+      }, { headers: { "Cache-Control": "no-store, max-age=0" } });
+    }
+
+    const intent = parseIntent(input);
+    const existingDraft = sanitizeDraft((body as Record<string, unknown>).draft);
+    const continueDraft = Boolean(existingDraft && !intent.explicitSearch);
+    const hasRecognizedFields = Boolean(intent.kind || intent.category || intent.city || intent.area);
+    const shouldGuide = intent.action === "guide" || intent.action === "create_report" || continueDraft;
+
+    if (shouldGuide) {
+      const action = intent.action === "create_report" || continueDraft || hasRecognizedFields
+        ? "create_report"
+        : "guide";
+      const draft = action === "create_report" || hasRecognizedFields
+        ? {
+            kind: intent.kind ?? existingDraft?.kind ?? null,
+            category: intent.category ?? existingDraft?.category ?? null,
+            city: intent.city ?? existingDraft?.city ?? null,
+            area: intent.area ?? existingDraft?.area ?? null
+          }
+        : null;
+      const missing = draft ? [
+        !draft.kind ? "نوع البلاغ (مفقود أو معثور عليه)" : null,
+        !draft.category ? "نوع المستند" : null,
+        !draft.city ? "المدينة" : null
+      ].filter(Boolean) : [];
+      const summary = draft
+        ? [draft.kind === "lost" ? "مفقود" : draft.kind === "found" ? "معثور عليه" : null, draft.category, draft.city, draft.area].filter(Boolean).join(" · ")
+        : "";
+      const reply = draft
+        ? missing.length
+          ? (continueDraft ? "تم تحديث المسودة. " : "بدأت مسودة البلاغ. ") +
+            (summary ? "المعلومات الحالية: " + summary + ". " : "") +
+            "المتبقي: " + missing.join("، ") + ". اكتب المعلومات الناقصة هنا. لا تكتب رقم المستند أو بيانات صاحبه."
+          : "اكتملت المسودة الأولية: " + summary + ". راجعها وافتح نموذج البلاغ لتأكيد التفاصيل قبل الإرسال. لا تُرفق صورة المستند أو رقمه."
+        : "أستطيع إرشادك. لا تنشر صورة المستند أو رقمه أو بيانات البطاقة؛ وإذا فُقد مستند رسمي، تواصل مع الجهة المصدرة. يمكنك أن تطلب إنشاء بلاغ عام متى رغبت.";
+      return NextResponse.json({
+        assistant: { mode: "guided_search", action, reply, source: "assistant_intent_router", draft, missing },
         reports: []
       }, { headers: { "Cache-Control": "no-store, max-age=0" } });
     }
